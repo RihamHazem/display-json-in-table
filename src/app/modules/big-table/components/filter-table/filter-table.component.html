@@ -1,0 +1,9 @@
+<div class="table">
+  <ul class="cell">
+    <li *ngFor="let col of columnNames; let i = index">
+      <p style="width: 150px; display: inline-block" >{{columnPresentation[i]}}</p>
+      <input [id]="col" type="checkbox" [checked]="isVisible[i]" (change)="tellTheParent(i)">
+      <label [for]="col"> </label>
+    </li>
+  </ul>
+</div>

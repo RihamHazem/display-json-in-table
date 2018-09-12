@@ -1,0 +1,13 @@
+<app-filter-table (toggleColumnVisibility)="onToggleColumn($event)"></app-filter-table>
+<div class="container">
+  <div class="basic-container">
+    <table>
+      <tr>
+        <th *ngFor="let col of columnPresentation | filterTable: columnVisibility"> {{col}} </th>
+      </tr>
+      <tr *ngFor="let row of rows">
+        <td *ngFor="let col of columnNames | filterTable: columnVisibility"> {{row[col]}} </td>
+      </tr>
+    </table>
+  </div>
+</div>
