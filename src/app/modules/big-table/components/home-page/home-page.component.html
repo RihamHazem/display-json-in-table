@@ -1,0 +1,16 @@
+<div id="nav">
+  <div class="nav-img" (click)="hideSideMenu()">
+    <img src="../assets/images/menu-burger.svg">
+  </div>
+  <h1>Table Information</h1>
+</div>
+
+<div id="main-content">
+  <app-filter-table *ngIf="isSideMenuVisible"
+                    [columnNames]="columnNames"
+                    [isColumnVisible]="columnVisibility"></app-filter-table>
+  <app-table [tableData]="tableData"
+             [columnNames]="columnNames"
+             [columnVisibility]="columnVisibility"></app-table>
+</div>
+
