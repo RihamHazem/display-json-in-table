@@ -1,9 +1,14 @@
-<div class="table">
-  <ul class="cell">
-    <li *ngFor="let col of columnNames; let i = index">
-      <p style="width: 150px; display: inline-block" >{{columnPresentation[i]}}</p>
-      <input [id]="col" type="checkbox" [checked]="isVisible[i]" (change)="tellTheParent(i)">
-      <label [for]="col"> </label>
-    </li>
-  </ul>
+<div id="table-content">
+  <div class="table">
+    <details>
+      <summary>Filter by Column</summary>
+      <ul class="cell">
+        <li *ngFor="let col of columnNames; let i = index">
+          <p style="width: 69%; display: inline-block" >{{columnNames[i]}}</p>
+          <input [id]="col" type="checkbox" [checked]="isColumnVisible[i]" (change)="tellTheParentColumnChanges(i)">
+          <label [for]="col"> </label>
+        </li>
+      </ul>
+    </details>
+  </div>
 </div>

@@ -1,14 +1,18 @@
+#table-content {
+  overflow: auto;
+  padding: 0 10px 0 0;
+}
 .table {
-  display: inline-block;
-  background-color: #f5f5f5;
-  float: left;
-  height: 1000px;
-  width: 20%;
-  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  margin-top: 15px;
+  margin-bottom: 0;
+  overflow: auto;
+  max-height: 585px;
+  /*box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);*/
 }
 li {
   list-style: none;
-  margin: 20px 20px;
+  margin: 10px 0 10px 10px;
+  font-size: medium;
 }
 
 input[type=checkbox] {
@@ -28,4 +32,10 @@ input[type=checkbox]:checked + label {
   padding-left: 50px;
   padding-top: 5px;
   padding-bottom: 5px;
+}
+details {
+  font-size: large;
+  padding: 10px 0 10px 10px;
+  height: 100%;
+  overflow: auto;
 }

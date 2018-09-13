@@ -6,10 +6,11 @@ import { HttpClient } from "@angular/common/http";
   providedIn: 'root'
 })
 export class GetJsonService {
-  private jsonUrl: string = "./data-json.json";
+  private jsonUrl: string = "../assets/test_summary.json";
   constructor(private http: HttpClient) { }
 
-  getJson(): Observable<any[]> {
+  getJson() {
+    // console.log("making the request");
     return this.http.get<any[]>(this.jsonUrl);
   }
 }
