@@ -29,16 +29,3 @@ div.nav-img {
 div.nav-img:hover {
   background-color: rgba(0,0,0,0.2);
 }
-
-#main-content {
-  display: flex;
-}
-
-app-table {
-  overflow: auto;
-  flex: 5;
-}
-
-app-filter-table {
-  flex: 1;
-}

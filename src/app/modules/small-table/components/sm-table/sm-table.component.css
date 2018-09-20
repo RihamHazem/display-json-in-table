@@ -1,0 +1,85 @@
+table {
+  width: 100%;
+  text-align: left;
+  font-size: small;
+}
+
+td, th {
+  padding: 20px 20px;
+  /*text-align: center;*/
+  border-bottom: 1px solid #dddddd;
+}
+tr {
+  border-bottom: 1px solid #000000;
+}
+tr:last-child td {
+  border: 0;
+}
+
+.basic-container {
+  /*width: 95%;*/
+  margin: auto;
+  background-color: #fafafa;
+  color: rgba(0,0,0,.87);
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  overflow: auto;
+}
+.small-container {
+  background-color: #fafafa;
+  color: rgba(0,0,0,.87);
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  position: fixed;
+  left: 10%;
+  width: 80%;
+  top: 10%;
+  height: 80%;
+  overflow: auto;
+}
+.small-container #controls {
+  background-color: #592680;
+  color: #ffffff;
+  padding: 10px 25px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  left: 10%;
+  width: 80%;
+}
+.small-container #controls h2 {
+  flex: 50;
+}
+.small-container #controls span {
+  /*font-weight: bold;*/
+  font-size: x-large;
+  cursor: pointer;
+  flex: 1;
+}
+
+#whole-window {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.container {
+  padding: 20px 20px 10px 20px;
+  overflow: auto;
+}
+div#context-menu {
+  padding: 10px 0;
+  /*border: 1px solid rgba(0, 0, 0, 0.5);*/
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  background-color: #fafafa;
+  position: fixed;
+}
+div#context-menu span {
+  padding: 10px 30px;
+  display: inline-block;
+}
+div#context-menu span:hover {
+  cursor: pointer;
+  background-color: #dedede;
+}

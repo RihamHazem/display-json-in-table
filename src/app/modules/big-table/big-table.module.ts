@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
-import { BigTableRoutesModule } from "./big-table-routing.module";
-import { TableComponent } from './components/table/table.component';
-import { CommonModule } from "@angular/common";
-import { FilterTableComponent } from './components/filter-table/filter-table.component';
+import { BigTableRoutesModule } from './big-table-routing.module';
+import { BgTableComponent } from './components/bg-table/bg-table.component';
+import { CommonModule } from '@angular/common';
+import { BgFilterTableComponent } from './components/bg-filter-table/bg-filter-table.component';
 import { FilterTablePipe } from './shared/filter-table.pipe';
-import { HomePageComponent } from './components/home-page/home-page.component';
+import { BgHomePageComponent } from './components/bg-home-page/bg-home-page.component';
+import {CoreModule} from '../../core/core.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    BigTableRoutesModule
+    BigTableRoutesModule,
+    CoreModule
   ],
-  declarations: [TableComponent, FilterTableComponent, FilterTablePipe, HomePageComponent],
-  entryComponents: [TableComponent]
+  declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, BgHomePageComponent],
+  entryComponents: [BgHomePageComponent]
 })
 export class BigTableModule { }

@@ -1,7 +1,9 @@
-<div id="table-content">
-  <div class="table">
+<div id="sidebar-content">
+  <div class="container"
+       [ngStyle]="{'max-height': windowHeight+'px'}">
     <details>
       <summary>Filter by Column</summary>
+      <span id="select-all" (click)="selectAll()">{{toggleSelectAll}}</span>
       <ul class="cell">
         <li *ngFor="let col of columnNames; let i = index">
           <p style="width: 69%; display: inline-block" >{{columnNames[i]}}</p>

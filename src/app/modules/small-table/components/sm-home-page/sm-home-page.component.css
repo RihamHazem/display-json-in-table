@@ -1,0 +1,12 @@
+#content {
+  display: flex;
+}
+
+app-sm-table {
+  overflow: auto;
+  flex: 5;
+}
+
+app-sm-filter-table {
+  flex: 1;
+}

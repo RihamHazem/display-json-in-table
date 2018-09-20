@@ -1,0 +1,15 @@
+<app-nav-bar
+  [hasBurgerButton]="true"
+  (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
+
+<div id="content">
+  <app-bg-filter-table *ngIf="isSideMenuVisible"
+                    [columnNames]="columnNames"
+                    [isColumnVisible]="columnVisibility"></app-bg-filter-table>
+  <app-table [tableData]="tableData"
+             [columnNames]="columnNames"
+             [columnVisibility]="columnVisibility"
+             [environmentColumnNames]="environmentColumnNames"
+             [environmentTableData]="environmentTableData"></app-table>
+</div>
+

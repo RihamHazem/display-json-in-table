@@ -1,0 +1,35 @@
+<div class="container"
+     (contextmenu)="showContextMenu($event)"
+      (click)="hideAllPopUps()">
+  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
+    <table>
+      <tr>
+        <th *ngFor="let col of columnNames | filterTable: columnVisibility"> {{col}} </th>
+      </tr>
+      <tr *ngFor="let row of tableData">
+        <td *ngFor="let col of columnNames | filterTable: columnVisibility"> {{row[col]}} </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<div id="whole-window"
+     *ngIf="isSubTableVisible"
+     (click)="hideAllPopUps()"></div>
+
+<div id="context-menu"
+     *ngIf="isContextMenuVisible"
+     [ngStyle]="{'left': pos_x+'px', 'top': pos_y+'px'}">
+  <span (click)="showPopUpTable()">Show Hidden Columns</span>
+</div>
+<div class="small-container" *ngIf="isSubTableVisible">
+  <div id="controls">
+    <h2>Environment</h2>
+    <span (click)="hideAllPopUps()">×</span>
+  </div>
+  <table style="margin-top: 50px">
+    <tr *ngFor="let col of environmentColumnNames">
+      <th> {{col}} </th>
+      <td> {{environmentTableData[col]}} </td>
+    </tr>
+  </table>
+</div>

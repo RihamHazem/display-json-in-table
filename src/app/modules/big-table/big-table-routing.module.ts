@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from "@angular/router";
-import {HomePageComponent} from "./components/home-page/home-page.component";
+import {RouterModule, Routes} from '@angular/router';
+import {BgHomePageComponent} from './components/bg-home-page/bg-home-page.component';
 
 const bigTableRoutes: Routes = [
-  {path: '', component: HomePageComponent}
+  {path: '', component: BgHomePageComponent}
 ];
 
 @NgModule({

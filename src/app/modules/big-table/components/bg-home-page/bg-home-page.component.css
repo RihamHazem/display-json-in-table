@@ -1,0 +1,12 @@
+#content {
+  display: flex;
+}
+
+app-table {
+  overflow: auto;
+  flex: 5;
+}
+
+app-bg-filter-table {
+  flex: 1;
+}
