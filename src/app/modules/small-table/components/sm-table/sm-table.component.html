@@ -5,10 +5,17 @@
       <tr>
         <th *ngFor="let col of columnNames"> {{col}} </th>
       </tr>
-      <tr *ngFor="let row of tableData | smFilterTable: rowVisibility"
-          (contextmenu)="showContextMenu($event, map_test_name[row['Tests']])"
-          (click)="hideAllPopUps()">
-        <td  *ngFor="let col of columnNames"> {{row[col]}} <br> <i>{{col === "Status"? row["fStatus"]:""}}</i></td>
+      <tr *ngFor="let row of (tableData | smFilterTable: rowVisibility)"
+          (contextmenu)="showContextMenu($event, row['Tests'])"
+          (click)="hideAllPopUps()"
+          [ngStyle]="{'background-color': 'rgba(0, 0, 255, ' + (isContextMenuVisible === true && map_test_name[row['Tests']] === opacityBlue? '0.2':'0') + ')'}">
+        <td>
+          {{row["Tests"]}}
+        </td>
+        <td style="width: 200px" *ngFor="let cur_Status of row['Data']">
+          <span *ngIf="cur_Status !== undefined">{{cur_Status["Status"]}} <br> {{cur_Status['fStatus']}}</span>
+          <span *ngIf="cur_Status === undefined">---</span>
+        </td>
       </tr>
     </table>
   </div>
@@ -32,7 +39,7 @@
   <table style="margin-top: 50px">
     <tr *ngFor="let col of allColumnData">
       <th> {{col}} </th>
-      <td> {{(curRow[col] === null || curRow[col] === undefined)? "---":curRow[col]}} </td>
+      <td *ngFor="let c of curRow"> {{(c[col] === null || c[col] === undefined)? "---":c[col]}} </td>
     </tr>
   </table>
 </div>
