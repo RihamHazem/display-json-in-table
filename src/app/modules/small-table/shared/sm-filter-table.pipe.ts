@@ -20,16 +20,7 @@ export class SmFilterTablePipe implements PipeTransform {
         });
       }
     }
-    console.log(newArr);
     return newArr;
-    // return rows.filter((item) => {
-    //   // show the row if it's Status and fStatus BOTH marked as visible
-    //   let allTrue = true;
-    //   for (let index in item["fStatus"]) {
-    //     allTrue = allTrue && rowVisibility["Status"][item["Status"][index]] && rowVisibility["fStatus"][item["fStatus"][index]] === true;
-    //   }
-    //   return allTrue;
-    // });
   }
 
 }

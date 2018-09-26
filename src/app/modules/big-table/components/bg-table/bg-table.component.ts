@@ -24,7 +24,7 @@ export class BgTableComponent implements OnInit {
   pos_y = 0;
 
   constructor() {
-    this.heightWindow = (window.innerHeight - 115).toString();
+    this.heightWindow = (window.innerHeight - 110).toString();
   }
 
   ngOnInit() {

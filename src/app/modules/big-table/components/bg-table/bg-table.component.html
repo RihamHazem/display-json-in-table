@@ -1,7 +1,10 @@
 <div class="container"
      (contextmenu)="showContextMenu($event)"
       (click)="hideAllPopUps()">
-  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
+  <div style="text-align: center; width: 100px; margin: 20% auto;" *ngIf="tableData.length === 0">
+    <img style="max-width: 100%" src="../../../../../assets/images/spinner.gif" alt="">
+  </div>
+  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}" *ngIf="tableData.length !== 0">
     <table>
       <tr>
         <th *ngFor="let col of columnNames | filterTable: columnVisibility"> {{col}} </th>

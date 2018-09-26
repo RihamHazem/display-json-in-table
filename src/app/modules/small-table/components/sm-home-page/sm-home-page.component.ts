@@ -167,7 +167,6 @@ export class SmHomePageComponent implements OnInit {
           once = false;
         }
       }
-      console.log(this.allTableData);
     });
   }
 
@@ -177,7 +176,7 @@ export class SmHomePageComponent implements OnInit {
     let ans: string[] = [];
     for (let i in splitter) {
       if (!mp.hasOwnProperty(splitter[i])) {
-        ans.push(splitter[i]);
+        ans.push(" " + splitter[i]);
       }
       mp[splitter[i]] = 1;
     }

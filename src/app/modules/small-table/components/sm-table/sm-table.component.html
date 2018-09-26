@@ -1,6 +1,9 @@
 <!--Container that contains the main table-->
 <div class="container">
-  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
+  <div style="text-align: center; width: 100px; margin: 18% auto;" *ngIf="objectKey(tableData).length === 0">
+    <img style="max-width: 100%" src="../../../../../assets/images/spinner.gif" alt="">
+  </div>
+  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}" *ngIf="objectKey(tableData).length !== 0">
     <table>
       <tr>
         <th *ngFor="let col of columnNames"> {{col}} </th>
@@ -8,13 +11,13 @@
       <tr *ngFor="let row of (tableData | smFilterTable: rowVisibility)"
           (contextmenu)="showContextMenu($event, row['Tests'])"
           (click)="hideAllPopUps()"
-          [ngStyle]="{'background-color': 'rgba(0, 0, 255, ' + (isContextMenuVisible === true && map_test_name[row['Tests']] === opacityBlue? '0.2':'0') + ')'}">
+          [ngStyle]="{'background-color': 'rgba(0, 0, 255, ' + (isContextMenuVisible === true && map_test_name[row['Tests']] === curSelected? '0.2':'0') + ')'}">
         <td>
           {{row["Tests"]}}
         </td>
         <td style="width: 200px" *ngFor="let cur_Status of row['Data']">
-          <span *ngIf="cur_Status !== undefined">{{cur_Status["Status"]}} <br> {{cur_Status['fStatus']}}</span>
-          <span *ngIf="cur_Status === undefined">---</span>
+          <span *ngIf="cur_Status !== undefined">{{cur_Status["Status"]}} <br> <i style="display: inline-block; margin-top: 10px">{{cur_Status['fStatus']}}</i></span>
+          <span *ngIf="cur_Status === undefined">NO STATUS</span>
         </td>
       </tr>
     </table>
