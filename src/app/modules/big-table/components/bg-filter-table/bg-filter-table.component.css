@@ -20,6 +20,7 @@ input[type=checkbox] {
 
 input[type=checkbox] + label {
   background: url('../../../../../assets/images/un-checked.svg') left top no-repeat;
+  background-size: 30px;
   padding-left: 50px;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -27,6 +28,7 @@ input[type=checkbox] + label {
 
 input[type=checkbox]:checked + label {
   background: url('../../../../../assets/images/checked.svg') left top no-repeat;
+  background-size: 30px;
   min-height: 23px;
   padding-left: 50px;
   padding-top: 5px;
