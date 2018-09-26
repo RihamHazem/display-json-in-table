@@ -15,7 +15,7 @@
         <td>
           {{row["Tests"]}}
         </td>
-        <td style="width: 200px" *ngFor="let cur_Status of row['Data']">
+        <td style="min-width: 100px" *ngFor="let cur_Status of row['Data']">
           <span *ngIf="cur_Status !== undefined">{{cur_Status["Status"]}} <br> <i style="display: inline-block; margin-top: 10px">{{cur_Status['fStatus']}}</i></span>
           <span *ngIf="cur_Status === undefined">NO STATUS</span>
         </td>
