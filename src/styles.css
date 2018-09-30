@@ -10,3 +10,26 @@ body {
   overflow: hidden;
   font-family: 'Roboto Condensed', sans-serif;
 }
+context-menu-content .ngx-contextmenu .dropdown-menu {
+  border-radius: 5px;
+  background-color: #fafafa;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  min-width: 200px;
+}
+context-menu-content .ngx-contextmenu li {
+  display: block;
+  border-top: solid 1px #dedede;
+  padding: 5px 0;
+}
+context-menu-content .ngx-contextmenu li:first-child {
+  border-top:none;
+}
+context-menu-content .ngx-contextmenu a {
+  color: #19233E;
+  display: block;
+  padding: 0.5em 1em;
+  text-decoration: none;
+}
+context-menu-content .ngx-contextmenu a:hover {
+  background-color: lightgray;
+}

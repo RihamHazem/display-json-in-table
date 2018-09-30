@@ -2,14 +2,21 @@
   [hasBurgerButton]="true"
   (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
 
-<div id="content">
-  <app-bg-filter-table *ngIf="isSideMenuVisible"
-                    [columnNames]="columnNames"
-                    [isColumnVisible]="columnVisibility"></app-bg-filter-table>
+<div style="text-align: center; width: 100px; position: fixed; left: 45%; top: 45%;" *ngIf="gettingData === true">
+  <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
+</div>
+<div id="vertical-alignment">
+  <div>
+    <app-bg-table-params [hidden]="!isSideMenuVisible" (tableParam)="updateTable($event)"></app-bg-table-params>
+    <app-bg-filter-table [hidden]="!isSideMenuVisible" *ngIf="gettingData === false && tableData.length !== 0"
+                      [columnNames]="columnNames"
+                      [isColumnVisible]="columnVisibility"></app-bg-filter-table>
+  </div>
   <app-table [tableData]="tableData"
              [columnNames]="columnNames"
              [columnVisibility]="columnVisibility"
              [environmentColumnNames]="environmentColumnNames"
-             [environmentTableData]="environmentTableData"></app-table>
+             [environmentTableData]="environmentTableData"
+             *ngIf="gettingData === false && tableData.length !== 0"></app-table>
 </div>
 

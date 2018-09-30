@@ -1,41 +1,91 @@
 <!--Container that contains the main table-->
 <div class="container">
-  <div style="text-align: center; width: 100px; margin: 18% auto;" *ngIf="objectKey(tableData).length === 0">
-    <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
-  </div>
-  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}" *ngIf="objectKey(tableData).length !== 0">
+  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
     <table>
+      <!--(mousedown)="selectMultipleElements($event)"-->
+      <!--(mousemove)="selectMultipleElementsMove($event.target)"-->
+      <!--(mouseup)="releaseClick()"-->
       <tr>
         <th *ngFor="let col of columnNames"> {{col}} </th>
       </tr>
-      <tr *ngFor="let row of (tableData | smFilterTable: rowVisibility)"
-          (contextmenu)="showContextMenu($event, row['Tests'])"
-          (click)="hideAllPopUps()"
-          [ngStyle]="{'background-color': 'rgba(0, 0, 255, ' + (isContextMenuVisible === true && map_test_name[row['Tests']] === curSelected? '0.2':'0') + ')'}">
-        <td>
+      <tr *ngFor="let row of tableData | smFilterTable: rowVisibility; let i = index"
+          [ngClass]="isRowSelected[i] === true? 'selected-cell' : ''">
+        <td class="test-{{i}}"
+            (contextmenu)="setTestSelected(i)"
+            [contextMenu]="testMenu"
+            [contextMenuSubject]="row['Tests']"
+            [ngClass]="selectedMultiple === false && isTestSelected[i] === true? 'selected-cell' : ''">
           {{row["Tests"]}}
         </td>
-        <td style="min-width: 100px" *ngFor="let cur_Status of row['Data']">
-          <span>{{cur_Status["Status"]}}</span><br><br>
-          <span *ngIf="cur_Status['fStatus'][0] === '---'">---</span>
-          <ul *ngIf="cur_Status['fStatus'][0] !== '---'">
-            <li *ngFor="let f_s of cur_Status['fStatus']">{{f_s}}</li>
+        <td class="status-{{i}}-{{j}}"
+            *ngFor="let item of row['Data']; let j=index"
+            (contextmenu)="setStatusSelected(i, j)"
+            [contextMenu]="statusMenu"
+            [contextMenuSubject]="item"
+            [ngClass]="selectedMultiple === false && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''">
+          <span>{{item["Status"]}}</span>
+          <br><br>
+          <span *ngIf="item['fStatus'][0] === '---'">---</span>
+          <ul *ngIf="item['fStatus'][0] !== '---'">
+            <li *ngFor="let f_s of item['fStatus']">{{f_s}}</li>
           </ul>
         </td>
       </tr>
     </table>
   </div>
 </div>
+
+<!-- Context Menu for test name -->
+
+<context-menu #testMenu (close)="deselectAllTest()">
+  <ng-template contextMenuItem
+               (execute)="showMessage('Hi, ' + $event)"
+               [subMenu]="subTestMenu">
+    Say hi!
+  </ng-template>
+  <context-menu #subTestMenu>
+    <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)">
+      ...hi!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Hola, ' + $event.item)">
+      ...hola!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Salut, ' + $event.item)">
+      ...salut!
+    </ng-template>
+  </context-menu>
+  <ng-template contextMenuItem let-item (execute)="showPopUpTable($event.item)">Show More Info</ng-template>
+  <ng-template contextMenuItem let-item (execute)="showMessage($event.item + ' said: ' + $event.item)">
+    Bye, {{item}}
+  </ng-template>
+</context-menu>
+
+<!--Context menu for cells-->
+<context-menu #statusMenu (close)="deselectAllStatus()">
+  <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)" [subMenu]="subStatusMenu">
+    Say hi!
+  </ng-template>
+  <context-menu #subStatusMenu>
+    <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)">
+      ...hi!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Hola, ' + $event.item)">
+      ...hola!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Salut, ' + $event.item)">
+      ...salut!
+    </ng-template>
+  </context-menu>
+  <ng-template contextMenuItem let-item (execute)="showMessage($event.item + ' said: ' + $event.item)">
+    Bye, {{item.Status}}
+  </ng-template>
+</context-menu>
+
 <!--It's just the dark window that appears behind the pop up table-->
 <div id="whole-window"
      *ngIf="isSubTableVisible"
      (click)="hideAllPopUps()"></div>
-<!--The context menu-->
-<div id="context-menu"
-     *ngIf="isContextMenuVisible"
-     [ngStyle]="{'left': pos_x+'px', 'top': pos_y+'px'}">
-  <span (click)="showPopUpTable()">Show More Information</span>
-</div>
+
 <!--The table in which all information of the row appears-->
 <div class="small-container" *ngIf="isSubTableVisible">
   <div id="controls">

@@ -7,8 +7,1481 @@ import { GetJsonService } from '../../../../shared/get-json.service';
   styleUrls: ['./sm-home-page.component.css']
 })
 export class SmHomePageComponent implements OnInit {
+  fixedData =  [
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    },
+    {
+      "Tests": "Hello",
+      "Data": [
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        },
+        {
+          "Status": "PASSED",
+          "fStatus": ["Hello"]
+        }
+      ]
+    }
+  ];
   // it contains all rows for the shown columns ["Tests", "Status"]
   myTableData = {};
+  objectKey = Object.keys;
+  gettingData = false;
   // it contains the columns that being displayed in the table
   columnNames: string[] = ["Tests"];
   // toggle sidebar visibility
@@ -31,10 +1504,14 @@ export class SmHomePageComponent implements OnInit {
   constructor( private _getJsonService: GetJsonService ) { }
 
   ngOnInit() {
-    this.constructTable2();
   }
-  constructTable2() {
-    this._getJsonService.getJsonSmallTable().subscribe(data => {
+
+  updateTable(newParams: string) {
+    console.log("updating...");
+    if (newParams === "" || newParams === null || newParams === undefined) return;
+    this.gettingData = true;
+    this.emptyAllData();
+    this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let once: boolean = true;
       let testIndex: number = 0;
       for (let i in data) {
@@ -70,9 +1547,6 @@ export class SmHomePageComponent implements OnInit {
 
           let temp = {};
           for (let key in curData[j]) {
-            if (key === 'id' || key === 'test_name' || key === 'test_id') {
-              continue;
-            }
             temp[key] = curData[j][key];
             if (once) {
               // saves all the columns
@@ -110,7 +1584,21 @@ export class SmHomePageComponent implements OnInit {
           }
         }
       }
+      this.gettingData = false;
     });
+  }
+
+  private emptyAllData() {
+    this.myTableData = {};
+    this.allTableData = {};
+    this.statusVisibility = {};
+    this.fStatusVisibility = {};
+    this.map_status = {};
+    this.map_fStatus = {};
+    this.map_test_name = {};
+    this.allColumnData = [];
+    this.columnNames = ["Tests"];
+    this.isSideMenuVisible = true;
   }
 
   public getUniqueSubSentences(str: string) {

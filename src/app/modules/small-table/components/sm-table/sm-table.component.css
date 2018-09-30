@@ -9,6 +9,23 @@ td, th {
   /*text-align: center;*/
   border-bottom: 1px solid #dddddd;
 }
+td {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+.selected-cell {
+  background-color: rgba(0, 0, 255, 0.2);
+}
 tr {
   border-bottom: 1px solid #000000;
 }
@@ -24,6 +41,13 @@ tr:last-child td {
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
   overflow: auto;
 }
+.container {
+  padding: 20px 20px 10px 20px;
+  overflow: auto;
+}
+
+/******************************************/
+
 .small-container {
   background-color: #fafafa;
   color: rgba(0,0,0,.87);
@@ -62,24 +86,4 @@ tr:last-child td {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-}
-
-.container {
-  padding: 20px 20px 10px 20px;
-  overflow: auto;
-}
-div#context-menu {
-  padding: 10px 0;
-  /*border: 1px solid rgba(0, 0, 0, 0.5);*/
-  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-  background-color: #fafafa;
-  position: fixed;
-}
-div#context-menu span {
-  padding: 10px 30px;
-  display: inline-block;
-}
-div#context-menu span:hover {
-  cursor: pointer;
-  background-color: #dedede;
 }

@@ -23,7 +23,7 @@ export class SmFilterTableComponent implements OnInit {
 
   constructor() {
     // just sits the height of the sidebar
-    this.windowHeight = (window.innerHeight - 85).toString();
+    this.windowHeight = (window.innerHeight - 190).toString();
   }
 
   ngOnInit() {

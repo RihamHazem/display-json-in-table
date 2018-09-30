@@ -2,17 +2,23 @@
 
 <app-nav-bar [hasBurgerButton]="true"
              (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
-
-<div id="content">
-  <app-sm-filter-table [map_status]="map_status"
-                       [map_fStatus]="map_fStatus"
-                       [isStatusVisible]="statusVisibility"
-                       [isfStatusVisible]="fStatusVisibility"
-                       *ngIf="isSideMenuVisible"></app-sm-filter-table>
+<div style="text-align: center; width: 100px; position: fixed; left: 45%; top: 45%;" *ngIf="gettingData === true">
+  <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
+</div>
+<div id="vertical-alignment">
+  <div>
+    <app-sm-table-params *ngIf="isSideMenuVisible" (tableParam)="updateTable($event)"></app-sm-table-params>
+    <app-sm-filter-table [map_status]="map_status"
+                         [map_fStatus]="map_fStatus"
+                         [isStatusVisible]="statusVisibility"
+                         [isfStatusVisible]="fStatusVisibility"
+                         *ngIf="isSideMenuVisible && gettingData === false && objectKey(myTableData).length !== 0"></app-sm-filter-table>
+  </div>
   <app-sm-table [tableData]="myTableData"
                 [columnNames]="columnNames"
                 [allTableData]="allTableData"
                 [allColumnData]="allColumnData"
                 [rowVisibility]="{'Status': statusVisibility, 'fStatus': fStatusVisibility}"
-                [map_test_name]="map_test_name"></app-sm-table>
+                [map_test_name]="map_test_name" [fixedData]="fixedData"
+                *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-table>
 </div>

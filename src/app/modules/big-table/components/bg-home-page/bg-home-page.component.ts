@@ -9,6 +9,7 @@ import {GetJsonService} from '../../../../shared/get-json.service';
 export class BgHomePageComponent implements OnInit {
   // holds the rows of the json
   tableData: any[] = [];
+  gettingData = false;
   // holds info of one row only of the environment field
   environmentTableData: any = {};
 
@@ -22,14 +23,16 @@ export class BgHomePageComponent implements OnInit {
   isSideMenuVisible = true;
 
   constructor(private _getJsonService: GetJsonService) {
-    this.constructTableData();
   }
 
   ngOnInit() {
   }
   // extracting info from the JSON
-  constructTableData() {
-    this._getJsonService.getJsonBigTable().subscribe(data => {
+  updateTable(newParams: string) {
+    if (newParams === "" || newParams === null || newParams === undefined) return;
+    this.gettingData = true;
+    console.log(newParams);
+    this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let cnt = 0;
       // for all submissions
       for (let index in data) {
@@ -81,6 +84,7 @@ export class BgHomePageComponent implements OnInit {
       this.columnVisibility.fill(false);
       this.columnVisibility[this.columnIndices['name']] = true;
       this.columnVisibility[this.columnIndices['status']] = true;
+      this.gettingData = false;
     });
   }
 

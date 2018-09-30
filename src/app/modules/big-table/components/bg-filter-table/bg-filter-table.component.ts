@@ -15,7 +15,7 @@ export class BgFilterTableComponent implements OnInit {
   toggleSelectAll = "Select All";
 
   constructor() {
-    this.windowHeight = (window.innerHeight - 85).toString();
+    this.windowHeight = (window.innerHeight - 190).toString();
   }
 
   ngOnInit() {
