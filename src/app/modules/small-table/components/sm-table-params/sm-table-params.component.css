@@ -1,0 +1,15 @@
+div {
+  margin: 20px 10px;
+}
+label {
+  font-size: large;
+  margin-left: 5px;
+}
+input {
+  border-radius: 10px;
+  padding: 15px 10px;
+  background-color: #fafafa;
+  border: 1px lightgray solid;
+  outline: none;
+  margin-top: 10px;
+}

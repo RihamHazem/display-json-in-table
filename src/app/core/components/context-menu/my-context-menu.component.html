@@ -1,0 +1,22 @@
+<ul>
+  <li *ngFor="let item of items" [contextMenu]="basicMenu" [contextMenuSubject]="item">Right Click: {{item?.name}}</li>
+</ul>
+<context-menu>
+  <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item.name)" [subMenu]="saySubMenu">
+    Say hi!
+  </ng-template>
+  <context-menu #saySubMenu>
+    <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item.name)">
+      ...hi!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Hola, ' + $event.item.name)">
+      ...hola!
+    </ng-template>
+    <ng-template contextMenuItem (execute)="showMessage('Salut, ' + $event.item.name)">
+      ...salut!
+    </ng-template>
+  </context-menu>
+  <ng-template contextMenuItem let-item (execute)="showMessage($event.item.name + ' said: ' + $event.item.otherProperty)">
+    Bye, {{item?.name}}
+  </ng-template>
+</context-menu>
