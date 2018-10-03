@@ -6,7 +6,7 @@
   <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
 </div>
 <div id="vertical-alignment">
-  <div>
+  <div id="sidebar">
     <app-bg-table-params [hidden]="!isSideMenuVisible" (tableParam)="updateTable($event)"></app-bg-table-params>
     <app-bg-filter-table [hidden]="!isSideMenuVisible" *ngIf="gettingData === false && tableData.length !== 0"
                       [columnNames]="columnNames"

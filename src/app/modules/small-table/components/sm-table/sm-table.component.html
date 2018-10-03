@@ -1,84 +1,102 @@
 <!--Container that contains the main table-->
-<div class="container">
-  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
-    <table>
-      <!--(mousedown)="selectMultipleElements($event)"-->
-      <!--(mousemove)="selectMultipleElementsMove($event.target)"-->
-      <!--(mouseup)="releaseClick()"-->
-      <tr>
-        <th *ngFor="let col of columnNames"> {{col}} </th>
-      </tr>
-      <tr *ngFor="let row of tableData | smFilterTable: rowVisibility; let i = index"
-          [ngClass]="isRowSelected[i] === true? 'selected-cell' : ''">
-        <td class="test-{{i}}"
-            (contextmenu)="setTestSelected(i)"
-            [contextMenu]="testMenu"
-            [contextMenuSubject]="row['Tests']"
-            [ngClass]="selectedMultiple === false && isTestSelected[i] === true? 'selected-cell' : ''">
-          {{row["Tests"]}}
-        </td>
-        <td class="status-{{i}}-{{j}}"
-            *ngFor="let item of row['Data']; let j=index"
-            (contextmenu)="setStatusSelected(i, j)"
-            [contextMenu]="statusMenu"
-            [contextMenuSubject]="item"
-            [ngClass]="selectedMultiple === false && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''">
-          <span>{{item["Status"]}}</span>
-          <br><br>
-          <span *ngIf="item['fStatus'][0] === '---'">---</span>
-          <ul *ngIf="item['fStatus'][0] !== '---'">
-            <li *ngFor="let f_s of item['fStatus']">{{f_s}}</li>
-          </ul>
-        </td>
-      </tr>
-    </table>
+<dts-select-container #container="dts-select-container"
+                      [(selectedItems)]="selectedDocuments"
+                      [selectWithShortcut]="true">
+  <div class="container">
+    <div class="basic-container">
+        <table>
+          <tr>
+            <th *ngFor="let col of columnNames; let i=index">
+              <div style="margin-top: 10px; display: inline-block; cursor:pointer;" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'"
+                   (click)="changeSortingOrder(i)">
+                {{col}}
+                <span style="margin-left: 10px">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
+              </div>
+              <img *ngIf="!searchMode && col === 'Tests'" (click)="enableSearchMode()"
+                   src="./assets/images/search.png"
+                   style="width: 25px; float: right; padding-top: 10px">
+              <!--Input for search-->
+              <form *ngIf="searchMode && col === 'Tests'" id="search">
+                <span style="float: right; font-size: large; cursor: pointer; margin-top: 8px; margin-right: 10px"
+                      (click)="disableSearchMode()"
+                      *ngIf="searchMode && col === 'Tests'">×</span>
+                <input type="text" placeholder="Test Name" name="myInput" [(ngModel)]="curInput" (keyup)="applyChange()">
+              </form>
+            </th>
+          </tr>
+          <tr *ngFor="let row of filteredTable; let i = index"
+              [dtsSelectItem]="row" #item>
+            <td [contextMenu]="testMenu"
+                [contextMenuSubject]="row['Tests']"
+                (contextmenu)="setTestSelected(i)"
+                [ngClass]="selectedDocuments.length === 0 && isTestSelected[i] === true? 'selected-cell' : ''">
+              {{row["Tests"]}}
+            </td>
+            <td class="{{item['Status']}}"
+                *ngFor="let item of row['Data']; let j=index"
+                [contextMenu]="statusMenu"
+                [contextMenuSubject]="{'index': j, 'cur': item}"
+                (contextmenu)="setStatusSelected(i, j)"
+                [ngClass]="selectedDocuments.length === 0 && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''">
+              <span>{{item["Status"]}}</span>
+              <br><br>
+              <span *ngIf="item['fStatus'][0] === '---'">---</span>
+              <ul *ngIf="item['fStatus'][0] !== '---'">
+                <li *ngFor="let f_s of item['fStatus']">{{f_s}}</li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+    </div>
   </div>
-</div>
-
+</dts-select-container>
 <!-- Context Menu for test name -->
 
-<context-menu #testMenu (close)="deselectAllTest()">
-  <ng-template contextMenuItem
+<context-menu #testMenu (close)="isTestSelected = []">
+  <ng-template *ngIf="selectedDocuments.length > 0"
+               contextMenuItem
                (execute)="showMessage('Hi, ' + $event)"
-               [subMenu]="subTestMenu">
-    Say hi!
+               [subMenu]="subTestMenu"
+               let-item>
+    Cur Selected: {{item}}
+  </ng-template>
+  <ng-template *ngIf="selectedDocuments.length === 0"
+               contextMenuItem
+               let-item>
+    Cur Selected: {{item}}
   </ng-template>
   <context-menu #subTestMenu>
-    <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)">
-      ...hi!
-    </ng-template>
-    <ng-template contextMenuItem (execute)="showMessage('Hola, ' + $event.item)">
-      ...hola!
-    </ng-template>
-    <ng-template contextMenuItem (execute)="showMessage('Salut, ' + $event.item)">
-      ...salut!
+    <ng-template contextMenuItem
+                 (execute)="showMessage('Hi, ' + $event.item)"
+                 *ngFor="let doc of selectedDocuments; let i = index">
+      Item {{i+1}}: {{doc['Tests']}}
     </ng-template>
   </context-menu>
-  <ng-template contextMenuItem let-item (execute)="showPopUpTable($event.item)">Show More Info</ng-template>
-  <ng-template contextMenuItem let-item (execute)="showMessage($event.item + ' said: ' + $event.item)">
-    Bye, {{item}}
-  </ng-template>
+  <ng-template contextMenuItem let-item (execute)="showPopUpTable(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['Tests'])">Show More Info</ng-template>
 </context-menu>
 
-<!--Context menu for cells-->
-<context-menu #statusMenu (close)="deselectAllStatus()">
-  <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)" [subMenu]="subStatusMenu">
-    Say hi!
+<!--Context menu for status-->
+<context-menu #statusMenu (close)="isStatusSelected = []">
+  <ng-template *ngIf="selectedDocuments.length > 0"
+               contextMenuItem
+               (execute)="showMessage('Hi, ' + $event.item)"
+               [subMenu]="subStatusMenu"
+               let-data>
+    Cur Selected: {{data['cur']['Status']}}
+  </ng-template>
+  <ng-template *ngIf="selectedDocuments.length === 0"
+               contextMenuItem
+               let-data>
+    Cur Selected: {{data['cur']['Status']}}
   </ng-template>
   <context-menu #subStatusMenu>
-    <ng-template contextMenuItem (execute)="showMessage('Hi, ' + $event.item)">
-      ...hi!
-    </ng-template>
-    <ng-template contextMenuItem (execute)="showMessage('Hola, ' + $event.item)">
-      ...hola!
-    </ng-template>
-    <ng-template contextMenuItem (execute)="showMessage('Salut, ' + $event.item)">
-      ...salut!
+    <ng-template contextMenuItem
+                 (execute)="showMessage('Hi, ' + $event.item)"
+                 *ngFor="let doc of selectedDocuments; let i = index"
+                 let-data>
+      Item {{i+1}}: {{doc['Data'][ data['index'] ]['Status']}}
     </ng-template>
   </context-menu>
-  <ng-template contextMenuItem let-item (execute)="showMessage($event.item + ' said: ' + $event.item)">
-    Bye, {{item.Status}}
-  </ng-template>
 </context-menu>
 
 <!--It's just the dark window that appears behind the pop up table-->
@@ -88,11 +106,18 @@
 
 <!--The table in which all information of the row appears-->
 <div class="small-container" *ngIf="isSubTableVisible">
-  <div id="controls">
-    <h2>More Information</h2>
-    <span (click)="hideAllPopUps()">×</span>
+  <div class="nav-table">
+    <div id="controls">
+      <h2>More Information</h2>
+      <span (click)="hideAllPopUps()">×</span>
+    </div>
+    <div id="pagination">
+      <div class="item" *ngFor="let tab of selectedDocuments; let i=index"
+           [ngClass]="selectedTab === i? 'active-tab':''"
+           (click)="selectTab(tab['Tests'], i)">Tab {{i}}</div>
+    </div>
   </div>
-  <table style="margin-top: 50px">
+  <table style="margin-top: 90px">
     <tr *ngFor="let col of allColumnData">
       <th> {{col}} </th>
       <td *ngFor="let c of curRow"> {{(c === null || c === undefined || c[col] === null || c[col] === undefined)? "---":c[col]}} </td>

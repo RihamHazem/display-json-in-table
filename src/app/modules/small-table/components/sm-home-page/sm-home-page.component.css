@@ -1,12 +1,14 @@
 #vertical-alignment {
-  display: flex;
+  margin-top: 70px;
 }
-
 app-sm-table {
   overflow: auto;
-  flex: 5;
+  width: 75%;
 }
-
-app-sm-filter-table {
-  flex: 1;
+#vertical-alignment>div#sidebar {
+  position: fixed;
+  left: 0;
+}
+app-sm-table {
+  float: right;
 }

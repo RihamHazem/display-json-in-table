@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {CancelContextMenuEvent, CloseContextMenuEvent, ContextMenuComponent, ContextMenuService} from 'ngx-contextmenu';
+import {SelectContainerComponent} from 'ngx-drag-to-select';
 
 @Component({
   selector: 'app-sm-table',
@@ -8,30 +8,40 @@ import {CancelContextMenuEvent, CloseContextMenuEvent, ContextMenuComponent, Con
 })
 export class SmTableComponent implements OnInit {
   heightWindow = "0";
-  curSelected = -1;
-  mouseDown = false;
   @Input() tableData = {};
   @Input() columnNames: string[] = [];
   @Input() allTableData = {};
   @Input() allColumnData: any[] = [];
   @Input() rowVisibility = {};
   @Input() map_test_name = {};
-  @Input() fixedData = [];
-  objectKey = Object.keys;
+  filteredTable = [];
   curRow: any[] = [];
   isSubTableVisible = false;
   isTestSelected = [];
   isStatusSelected = [];
-  isRowSelected = [];
   selectedMultiple = false;
+  selectedTab = -1;
+  selectedDocuments = [];
+  sortingOrder = {};
+  increasing = {'index': 0, 'order': true};
+  objectKeys = Object.keys;
+  searchMode = false;
+  curInput: string = "";
+  allConstTable = [];
+  @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
 
-  constructor(private contextMenuService: ContextMenuService) {
+  constructor() {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
-
   ngOnInit() {
+    this.updateSmallTable(true, 0);
   }
-  @ViewChild(ContextMenuComponent) public testMenu: ContextMenuComponent;
+  deselectAll() {
+    console.log("ESCAPE");
+    this.selectContainer.clearSelection();
+    this.isStatusSelected = [];
+    this.isTestSelected = [];
+  }
   public setTestSelected(i) {
     if (this.selectedMultiple) {
       this.isTestSelected = [];
@@ -39,6 +49,7 @@ export class SmTableComponent implements OnInit {
     }
     this.isTestSelected[i] = true;
   }
+
   public setStatusSelected(i, j) {
     if (this.selectedMultiple) {
       this.isStatusSelected = [];
@@ -48,51 +59,87 @@ export class SmTableComponent implements OnInit {
       this.isStatusSelected[i] = [];
     this.isStatusSelected[i][j] = true;
   }
-  public deselectAllTest() {
-    this.isTestSelected = [];
-  }
-  public deselectAllStatus() {
-    this.isStatusSelected = [];
-  }
-  public showMessage(message: string) {
-    console.log(message);
+  public showMessage(message) {
+    console.log("Message: ", message);
+    this.deselectAll();
   }
   // this function is responsible for hiding the pop up sub-table *that contains all info of the row* and also the context menu
   hideAllPopUps() {
     this.isSubTableVisible = false;
+    this.deselectAll();
   }
   // this function responsible for showing the pop up sub-table
   showPopUpTable(testName) {
-    console.log(testName);
     this.isSubTableVisible = true;
     this.curRow = this.allTableData[testName];
-    this.curSelected = this.map_test_name[testName];
+    this.selectTab(testName, 0);
   }
-  selectMultipleElements(elements) {
-    console.log(this.testMenu);
-    if (elements.which !== 1) {
-      return;
+  selectTab(testName: string, index: number) {
+    this.selectedTab = index;
+    this.curRow = this.allTableData[testName];
+  }
+  changeSortingOrder(colIndex: number) {
+    if (this.sortingOrder[colIndex] === "▼") {
+      this.sortingOrder[colIndex] = "▲";
+      this.increasing = {'index': colIndex, 'order': false};
+    } else {
+      this.sortingOrder[colIndex] = "▼";
+      this.increasing = {'index': colIndex, 'order': true};
     }
-    if (this.selectedMultiple) {
-      this.selectedMultiple = false;
-      this.isRowSelected = [];
-      return;
+  }
+  enableSearchMode() {
+    this.searchMode = true;
+  }
+  disableSearchMode() {
+    this.searchMode = false;
+    this.filteredTable = this.allConstTable;
+    this.curInput = "";
+  }
+  applyChange() {
+    if (this.curInput === "") return;
+    console.log(this.curInput);
+    this.filteredTable = this.allConstTable.filter(item => item['Tests'].indexOf(this.curInput) !== -1);
+  }
+
+  public updateSmallTable(order, indxCol) {
+    console.log(this.tableData);
+    this.filteredTable.length = 0;
+    // order = true means increasing, false means decreasing
+    for (let key in this.tableData) {
+      let allTrue = false;
+      for (let index in this.tableData[key]) {
+        let subTrue = false;
+        for (let fs in this.tableData[key][index]["fStatus"]) {
+          subTrue = subTrue || (this.rowVisibility["fStatus"][ this.tableData[key][index]["fStatus"][fs] ] === true);
+        }
+        allTrue = allTrue || (this.rowVisibility["Status"][ this.tableData[key][index]["Status"] ] === true && subTrue);
+      }
+      if (allTrue)
+        this.filteredTable.push({"Tests": key, "Data": this.tableData[key]});
     }
-    console.log(this.testMenu);
-    this.selectedMultiple = true;
-    let element = elements.target;
-    this.mouseDown = true;
-    let info = element.className.split('-');
-    let i = info[1];
-    this.isRowSelected[i] = true;
+    if (indxCol === 0) {
+      this.filteredTable = this.testSort(order, this.filteredTable);
+    } else if (indxCol >= 1) {
+      this.filteredTable = this.statusSort(order, this.filteredTable, indxCol - 1);
+    }
+    this.allConstTable = this.filteredTable
+    return this.filteredTable;
   }
-  selectMultipleElementsMove(element: any) {
-    if (this.mouseDown === false) return;
-    let info = element.className.split('-');
-    let i = info[1];
-    this.isRowSelected[i] = true;
+
+  private testSort(order: boolean, newArr: any[]) {
+    newArr.sort();
+    if (!order) {
+      newArr.reverse();
+    }
+    return newArr;
   }
-  releaseClick() {
-    this.mouseDown = false;
+  private statusSort(order: boolean, newArr: any[], statusIndex: number) {
+    newArr.sort(function (a: string, b: string) {
+      return a['Data'][statusIndex]['Status'] < b['Data'][statusIndex]['Status']? -1 : 1;
+    });
+    if (!order) {
+      newArr.reverse();
+    }
+    return newArr;
   }
 }

@@ -45,6 +45,30 @@ tr:last-child td {
   padding: 20px 20px 10px 20px;
   overflow: auto;
 }
+#search input {
+  border-radius: 10px;
+  padding: 5px 10px;
+  background-color: #fafafa;
+  border: 1px lightgray solid;
+  outline: none;
+  margin-top: 5px;
+}
+#auto-complete-body {
+  position: absolute;
+  top: 80px;
+  left: 3.7%;
+  background-color: #fafafa;
+  max-height: 300px;
+  overflow: auto;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+}
+#auto-complete-body ul {
+  list-style: none;
+}
+#auto-complete-body ul li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #eeeeee;
+}
 
 /******************************************/
 
@@ -58,10 +82,11 @@ tr:last-child td {
   top: 10%;
   height: 80%;
   overflow: auto;
+  z-index: 1;
 }
 .small-container #controls {
-  background-color: #592680;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #19233E;
   padding: 10px 25px;
   display: flex;
   align-items: center;
@@ -73,12 +98,33 @@ tr:last-child td {
   flex: 50;
 }
 .small-container #controls span {
-  /*font-weight: bold;*/
   font-size: x-large;
   cursor: pointer;
   flex: 1;
 }
-
+#pagination {
+  position: fixed;
+  background-color: #dedede;
+  left: 10%;
+  top: 115px;
+  border-bottom: 1px solid #19233E;
+  width: 80%;
+}
+#pagination .item {
+  color: #333;
+  display: inline-block;
+  padding: 10px 50px;
+  cursor: pointer;
+}
+#pagination .active-tab {
+  background-color: #19233E;
+  color: #dddddd;
+  box-shadow: 5px -5px 5px -3px rgba(0,0,0,.2), 5px -1px 10px 1px rgba(0, 0, 0, 0.22), 5px -5px 14px 2px rgba(0, 0, 0, 0);
+}
+#pagination .item:not(.active-tab):hover {
+  background-color: #9c9c9c;
+  color: #eeeeee;
+}
 #whole-window {
   position: fixed;
   left: 0;
@@ -86,4 +132,10 @@ tr:last-child td {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+/******************************************/
+#select-rectangle {
+  position: fixed;
+  background-color: rgba(0, 0, 255, 0.2);
 }

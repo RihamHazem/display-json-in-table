@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 body {
-  overflow: hidden;
+  overflow: auto;
   font-family: 'Roboto Condensed', sans-serif;
 }
 context-menu-content .ngx-contextmenu .dropdown-menu {

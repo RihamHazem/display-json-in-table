@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-sm-filter-table',
@@ -12,6 +12,7 @@ export class SmFilterTableComponent implements OnInit {
   @Input() map_fStatus: string[] = [];
   // it holds the current state of the status whether it's selected to be displayed or not
   @Input() isStatusVisible = {};
+  @Output() filterMe = new EventEmitter<boolean>();
   // it holds the current state of the fStatus whether it's selected to be displayed or not
   @Input() isfStatusVisible = {};
   objectKeys = Object.keys;
@@ -31,10 +32,12 @@ export class SmFilterTableComponent implements OnInit {
   // it informs the parent component that the user changed status of a column
   tellTheParentColumnChanges_S(item: string) {
     this.isStatusVisible[item] = !this.isStatusVisible[item];
+    this.filterMe.emit(true);
   }
   // it informs the parent component that the user changed fStatus of a column
   tellTheParentColumnChanges_fS(item: string) {
     this.isfStatusVisible[item] = !this.isfStatusVisible[item];
+    this.filterMe.emit(true);
   }
   // it toggles between selecting or deselecting all the sidebar options
   selectAll_S() {
@@ -49,6 +52,7 @@ export class SmFilterTableComponent implements OnInit {
       }
       this.toggleSelectAll = "Deselect All";
     }
+    this.filterMe.emit(true);
   }
   // it toggles between selecting or deselecting all the sidebar options
   selectAll_fS() {
@@ -63,5 +67,6 @@ export class SmFilterTableComponent implements OnInit {
       }
       this.toggle_fSelectAll = "Deselect All";
     }
+    this.filterMe.emit(true);
   }
 }
