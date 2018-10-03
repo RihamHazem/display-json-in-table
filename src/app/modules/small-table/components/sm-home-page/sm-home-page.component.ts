@@ -48,7 +48,7 @@ export class SmHomePageComponent implements OnInit {
       let testIndex: number = 0;
       for (let i in data) {
         let curData = data[i]['test_instances'];
-        this.columnNames.push("Status");
+        this.columnNames.push(data[i]['name']);
         for (let j in curData) {
           let test_name: string = curData[j]['test_name'];
           if (!this.myTableData.hasOwnProperty(test_name)) {
