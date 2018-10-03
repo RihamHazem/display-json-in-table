@@ -23,8 +23,6 @@ export class SmTableComponent implements OnInit {
   selectedTab = -1;
   selectedDocuments = [];
   sortingOrder = {};
-  increasing = {'index': 0, 'order': true};
-  objectKeys = Object.keys;
   searchMode = false;
   curInput: string = "";
   allConstTable = [];
@@ -81,10 +79,10 @@ export class SmTableComponent implements OnInit {
   changeSortingOrder(colIndex: number) {
     if (this.sortingOrder[colIndex] === "▼") {
       this.sortingOrder[colIndex] = "▲";
-      this.increasing = {'index': colIndex, 'order': false};
+      this.updateSmallTable(false, colIndex);
     } else {
       this.sortingOrder[colIndex] = "▼";
-      this.increasing = {'index': colIndex, 'order': true};
+      this.updateSmallTable(true, colIndex);
     }
   }
   enableSearchMode() {

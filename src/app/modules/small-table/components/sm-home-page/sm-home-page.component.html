@@ -1,6 +1,6 @@
 <!--The home page contains three main components: NAV BAR, SIDE BAR and MAIN CONTENT which's the table-->
 
-<app-nav-bar [hasBurgerButton]="true"
+<app-nav-bar [hasBurgerButton]="false"
              (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
 <div style="text-align: center; width: 100px; position: fixed; left: 45%; top: 45%;" *ngIf="gettingData === true">
   <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
