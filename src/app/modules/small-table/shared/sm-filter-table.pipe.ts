@@ -5,9 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SmFilterTablePipe implements PipeTransform {
 
-  transform(testNames: string[], val: string): any {
-    if (val === "") return [];
-    return testNames.filter(item => item.indexOf(val) !== -1).slice(0, 10);
+  transform(data: string[]): any {
+    console.log(data, data.filter(item => item['Status'] != "NO STATUS"));
+    return data.filter(item => item['Status'] != "NO STATUS");
   }
 
 }

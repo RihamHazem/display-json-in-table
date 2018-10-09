@@ -42,7 +42,7 @@ tr:last-child td {
   overflow: auto;
 }
 .container {
-  padding: 20px 20px 10px 20px;
+  padding: 10px 20px 10px 20px;
   overflow: auto;
 }
 #search input {
@@ -102,7 +102,7 @@ tr:last-child td {
   cursor: pointer;
   flex: 1;
 }
-#pagination {
+.pagination {
   position: fixed;
   background-color: #dedede;
   left: 10%;
@@ -110,18 +110,18 @@ tr:last-child td {
   border-bottom: 1px solid #19233E;
   width: 80%;
 }
-#pagination .item {
+.pagination .item {
   color: #333;
   display: inline-block;
   padding: 10px 50px;
   cursor: pointer;
 }
-#pagination .active-tab {
+.pagination .active-tab {
   background-color: #19233E;
   color: #dddddd;
   box-shadow: 5px -5px 5px -3px rgba(0,0,0,.2), 5px -1px 10px 1px rgba(0, 0, 0, 0.22), 5px -5px 14px 2px rgba(0, 0, 0, 0);
 }
-#pagination .item:not(.active-tab):hover {
+.pagination .item:not(.active-tab):hover {
   background-color: #9c9c9c;
   color: #eeeeee;
 }

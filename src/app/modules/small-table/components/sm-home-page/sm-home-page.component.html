@@ -7,7 +7,6 @@
 </div>
 <div id="vertical-alignment">
   <div id="sidebar">
-    <app-sm-table-params *ngIf="isSideMenuVisible" (tableParam)="updateTable($event)"></app-sm-table-params>
     <app-sm-filter-table [map_status]="map_status"
                          [map_fStatus]="map_fStatus"
                          [isStatusVisible]="statusVisibility"
@@ -15,6 +14,7 @@
                          (filterMe)="onFiltering()"
                          *ngIf="isSideMenuVisible && gettingData === false && objectKey(myTableData).length !== 0"></app-sm-filter-table>
   </div>
+  <app-sm-table-params *ngIf="isSideMenuVisible" (tableParam)="updateTable($event)"></app-sm-table-params>
   <app-sm-table [tableData]="myTableData"
                 [columnNames]="columnNames"
                 [allTableData]="allTableData"

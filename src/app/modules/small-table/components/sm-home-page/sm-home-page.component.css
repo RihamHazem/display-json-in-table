@@ -8,7 +8,9 @@ app-sm-table {
 #vertical-alignment>div#sidebar {
   position: fixed;
   left: 0;
+  width: 24%;
+  top: 65px;
 }
-app-sm-table {
+app-sm-table, app-bg-table-params {
   float: right;
 }

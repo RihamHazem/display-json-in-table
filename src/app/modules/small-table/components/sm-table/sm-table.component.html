@@ -35,7 +35,7 @@
             <td class="{{item['Status']}}"
                 *ngFor="let item of row['Data']; let j=index"
                 [contextMenu]="statusMenu"
-                [contextMenuSubject]="{'index': j, 'cur': item}"
+                [contextMenuSubject]="{'index': j, 'cur': item, 'test': row['Tests']}"
                 (contextmenu)="setStatusSelected(i, j)"
                 [ngClass]="selectedDocuments.length === 0 && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''">
               <span>{{item["Status"]}}</span>
@@ -97,6 +97,9 @@
       Item {{i+1}}: {{doc['Data'][ data['index'] ]['Status']}}
     </ng-template>
   </context-menu>
+  <ng-template contextMenuItem
+               let-data
+               (execute)="showPopUpTable(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['Tests'])">Show More Info</ng-template>
 </context-menu>
 
 <!--It's just the dark window that appears behind the pop up table-->
@@ -111,16 +114,20 @@
       <h2>More Information</h2>
       <span (click)="hideAllPopUps()">×</span>
     </div>
-    <div id="pagination">
-      <div class="item" *ngFor="let tab of selectedDocuments; let i=index"
-           [ngClass]="selectedTab === i? 'active-tab':''"
-           (click)="selectTab(tab['Tests'], i)">Tab {{i}}</div>
+    <div class="pagination">
+        <div class="item"
+             *ngFor="let cur_tab of tabs"
+             (click)="selectTab(cur_tab['testName'], {'i': cur_tab.i, 'j': cur_tab.j})"
+             [ngClass]="selectedTab.i === cur_tab.i && selectedTab.j === cur_tab.j? 'active-tab':''">
+          {{cur_tab.val}}
+        </div>
     </div>
   </div>
   <table style="margin-top: 90px">
     <tr *ngFor="let col of allColumnData">
       <th> {{col}} </th>
-      <td *ngFor="let c of curRow"> {{(c === null || c === undefined || c[col] === null || c[col] === undefined)? "---":c[col]}} </td>
+      <td>
+        {{curRow[selectedTab.j][col] === undefined || curRow[selectedTab.j][col] === null? "---" : curRow[selectedTab.j][col]}}</td>
     </tr>
   </table>
 </div>

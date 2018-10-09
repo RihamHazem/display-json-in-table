@@ -20,12 +20,13 @@ export class SmTableComponent implements OnInit {
   isTestSelected = [];
   isStatusSelected = [];
   selectedMultiple = false;
-  selectedTab = -1;
+  selectedTab = {'i': 0, 'j': 0};
   selectedDocuments = [];
   sortingOrder = {};
   searchMode = false;
   curInput: string = "";
   allConstTable = [];
+  tabCounter = 0;
   @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
 
   constructor() {
@@ -35,7 +36,6 @@ export class SmTableComponent implements OnInit {
     this.updateSmallTable(true, 0);
   }
   deselectAll() {
-    console.log("ESCAPE");
     this.selectContainer.clearSelection();
     this.isStatusSelected = [];
     this.isTestSelected = [];
@@ -67,12 +67,33 @@ export class SmTableComponent implements OnInit {
     this.deselectAll();
   }
   // this function responsible for showing the pop up sub-table
+  tabs = [];
   showPopUpTable(testName) {
     this.isSubTableVisible = true;
     this.curRow = this.allTableData[testName];
-    this.selectTab(testName, 0);
+    let cnt = 0;
+    this.tabs = [];
+
+    for (let i in this.selectedDocuments) {
+      for (let j in this.selectedDocuments[i]['Data']) {
+        if (this.selectedDocuments[i]['Data'][j]['Status'] !== 'NO STATUS') {
+          this.tabs.push({'testName': this.selectedDocuments[i]['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
+        }
+      }
+    }
+    let once = true;
+    for (let i in this.curRow) {
+      if (this.curRow[i]['Status'] !== 'NO STATUS' && once) {
+        this.selectedTab = {'i': 0, 'j': Number(i)};
+        once = false;
+      }
+      if (this.selectedDocuments.length === 0) {
+        this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+      }
+    }
+    this.tabCounter = 0;
   }
-  selectTab(testName: string, index: number) {
+  selectTab(testName: string, index) {
     this.selectedTab = index;
     this.curRow = this.allTableData[testName];
   }
@@ -95,12 +116,10 @@ export class SmTableComponent implements OnInit {
   }
   applyChange() {
     if (this.curInput === "") return;
-    console.log(this.curInput);
     this.filteredTable = this.allConstTable.filter(item => item['Tests'].indexOf(this.curInput) !== -1);
   }
 
   public updateSmallTable(order, indxCol) {
-    console.log(this.tableData);
     this.filteredTable.length = 0;
     // order = true means increasing, false means decreasing
     for (let key in this.tableData) {
