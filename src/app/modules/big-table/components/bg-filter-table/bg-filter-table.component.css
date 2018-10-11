@@ -1,6 +1,6 @@
 #sidebar-content {
   overflow: auto;
-  padding: 0 10px 0 0;
+  padding: 10px 10px 0 0;
 }
 .container {
   margin-bottom: 0;
@@ -51,7 +51,7 @@ details {
   height: 100%;
   overflow: auto;
 }
-#select-all {
+.select-all {
   cursor: pointer;
   font-size: small;
   color: #592680;

@@ -1,22 +1,27 @@
 <app-nav-bar
-  [hasBurgerButton]="false"
+  [hasBurgerButton]="true"
   (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
 
 <div style="text-align: center; width: 100px; position: fixed; left: 45%; top: 45%;" *ngIf="gettingData === true">
   <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
 </div>
 <div id="vertical-alignment">
-  <div id="sidebar">
-    <app-bg-table-params [hidden]="!isSideMenuVisible" (tableParam)="updateTable($event)"></app-bg-table-params>
-    <app-bg-filter-table [hidden]="!isSideMenuVisible" *ngIf="gettingData === false && tableData.length !== 0"
-                      [columnNames]="columnNames"
-                      [isColumnVisible]="columnVisibility"></app-bg-filter-table>
+  <div id="sidebar" [hidden]="!isSideMenuVisible" >
+    <app-bg-filter-table *ngIf="gettingData === false && tableData.length !== 0"
+                         [columnNames]="columnNames"
+                         [isColumnVisible]="columnVisibility"
+                         [columnsToFilterByRowMap]="columnsToFilterByRowMap"
+                         [columnsToFilterByRowVisibility]="columnsToFilterByRowVisibility"></app-bg-filter-table>
   </div>
-  <app-table [tableData]="tableData"
-             [columnNames]="columnNames"
-             [columnVisibility]="columnVisibility"
-             [environmentColumnNames]="environmentColumnNames"
-             [environmentTableData]="environmentTableData"
-             *ngIf="gettingData === false && tableData.length !== 0"></app-table>
+  <div id="main-content">
+    <app-bg-table-params (tableParam)="updateTable($event)"></app-bg-table-params>
+    <app-table [tableData]="tableData"
+               [columnNames]="columnNames"
+               [columnVisibility]="columnVisibility"
+               [environmentColumnNames]="environmentColumnNames"
+               [environmentTableData]="environmentTableData"
+               [columnsToFilterByRowVisibility]="columnsToFilterByRowVisibility"
+               *ngIf="gettingData === false && tableData.length !== 0"></app-table>
+  </div>
 </div>
 

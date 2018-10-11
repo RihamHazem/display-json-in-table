@@ -10,12 +10,15 @@ export class BgFilterTableComponent implements OnInit {
   @Input() columnNames: string[] = [];
   // holds the visibility status of the columns
   @Input() isColumnVisible: boolean[] = [];
+  @Input() columnsToFilterByRowMap = {};
+  @Input() columnsToFilterByRowVisibility = {};
+  objectKeys = Object.keys;
   windowHeight = '0';
   // holds the selecting button's name
   toggleSelectAll = "Select All";
 
   constructor() {
-    this.windowHeight = (window.innerHeight - 190).toString();
+    this.windowHeight = (window.innerHeight - 90).toString();
   }
 
   ngOnInit() {
@@ -23,6 +26,10 @@ export class BgFilterTableComponent implements OnInit {
   // tells the parent that the user has changed the status of column's visibility
   tellTheParentColumnChanges(index: number) {
     this.isColumnVisible[index] = !this.isColumnVisible[index];
+  }
+  // tells the parent that the user has changed the status of row's visibility
+  tellTheParentRowChanges(col, row) {
+    this.columnsToFilterByRowVisibility[col][row] = !this.columnsToFilterByRowVisibility[col][row];
   }
   // it toggles between selecting/deselecting all the filtering options
   selectAll() {

@@ -1,13 +1,13 @@
 #vertical-alignment {
   display: flex;
-  margin-top: 50px;
+  margin-top: 80px;
 }
 
-app-table {
+#main-content {
   overflow: auto;
-  flex: 5;
+  flex: 9;
 }
 
-app-bg-filter-table {
-  flex: 1;
+#sidebar {
+  flex: 2;
 }

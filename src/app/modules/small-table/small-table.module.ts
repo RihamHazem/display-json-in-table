@@ -7,7 +7,7 @@ import {CoreModule} from '../../core/core.module';
 import {SmFilterTableComponent} from './components/sm-filter-table/sm-filter-table.component';
 import {SmFilterTablePipe} from './shared/sm-filter-table.pipe';
 import { SmTableParamsComponent } from './components/sm-table-params/sm-table-params.component';
-import { DummyFilterPipe } from './shared/dummy-filter.pipe';
+import { SelectedDocFilterPipe } from './shared/selectedDoc-filter.pipe';
 import {ContextMenuModule} from 'ngx-contextmenu';
 import {DragToSelectModule} from 'ngx-drag-to-select';
 import {MatAutocompleteModule, MatFormFieldModule} from '@angular/material';
@@ -26,7 +26,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     CoreModule
   ],
   exports: [],
-  declarations: [SmHomePageComponent, SmTableComponent, SmFilterTableComponent, SmFilterTablePipe, SmTableParamsComponent, DummyFilterPipe],
+  declarations: [SmHomePageComponent, SmTableComponent, SmFilterTableComponent, SmFilterTablePipe, SmTableParamsComponent, SelectedDocFilterPipe],
   entryComponents: [SmHomePageComponent]
 })
 export class SmallTableModule { }

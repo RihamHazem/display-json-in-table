@@ -19,6 +19,8 @@ export class BgHomePageComponent implements OnInit {
   columnIndices: any = {};
   // saves columns visibility
   columnVisibility: boolean[];
+  columnsToFilterByRowMap = {"status": {}, "mgc_home_gpath": {}, "requested_vcos": {}};
+  columnsToFilterByRowVisibility = {"status": {}, "mgc_home_gpath": {}, "requested_vcos": {}};
   // showing/hiding side bar
   isSideMenuVisible = true;
 
@@ -57,6 +59,14 @@ export class BgHomePageComponent implements OnInit {
               this.columnNames.push(key);
               this.columnIndices[key] = cnt;
               cnt += 1;
+            }
+          }
+          if (this.columnsToFilterByRowMap.hasOwnProperty(key)) {
+            if(this.columnsToFilterByRowMap[key].hasOwnProperty(data[index][key])) {
+              this.columnsToFilterByRowMap[key][data[index][key]]++;
+            } else {
+              this.columnsToFilterByRowMap[key][data[index][key]] = 1;
+              this.columnsToFilterByRowVisibility[key][data[index][key]] = true;
             }
           }
           // extracting info of rows

@@ -1,5 +1,5 @@
 <div>
   <label for="box">Query</label><br>
   <input id="box" #box type="text"
-         placeholder="Enter Query" (keyup.enter)="tellParentNewParams($event, box.value)">
+         placeholder="Enter Query" (keyup.enter)="tellParentNewParams($event, box.value)" [value]="query">
 </div>

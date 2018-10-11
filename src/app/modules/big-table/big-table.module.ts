@@ -7,6 +7,7 @@ import { FilterTablePipe } from './shared/filter-table.pipe';
 import { BgHomePageComponent } from './components/bg-home-page/bg-home-page.component';
 import {CoreModule} from '../../core/core.module';
 import { BgTableParamsComponent } from './components/bg-table-params/bg-table-params.component';
+import { FilterRowPipe } from './shared/filter-row.pipe';
 
 @NgModule({
   imports: [
@@ -14,7 +15,7 @@ import { BgTableParamsComponent } from './components/bg-table-params/bg-table-pa
     BigTableRoutesModule,
     CoreModule
   ],
-  declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, BgHomePageComponent, BgTableParamsComponent],
+  declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, BgHomePageComponent, BgTableParamsComponent, FilterRowPipe],
   entryComponents: [BgHomePageComponent]
 })
 export class BigTableModule { }

@@ -1,12 +1,12 @@
 <div class="container"
      (contextmenu)="showContextMenu($event)"
       (click)="hideAllPopUps()">
-  <div class="basic-container" [ngStyle]="{'height': heightWindow+'px'}">
+  <div class="basic-container">
     <table>
       <tr>
         <th *ngFor="let col of columnNames | filterTable: columnVisibility"> {{col}} </th>
       </tr>
-      <tr *ngFor="let row of tableData">
+      <tr *ngFor="let row of tableData | filterRow: columnsToFilterByRowVisibility">
         <td *ngFor="let col of columnNames | filterTable: columnVisibility"> {{row[col]}} </td>
       </tr>
     </table>

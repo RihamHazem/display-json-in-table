@@ -7,7 +7,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class BgTableParamsComponent implements OnInit {
   @Output() tableParam = new EventEmitter<string>();
-
+  query = "pattern=find_run_submissions -q \"submit_time>='2018-10-01' and submitter='rabdelgh'\"";
   constructor() { }
 
   ngOnInit() {

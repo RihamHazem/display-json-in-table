@@ -14,7 +14,7 @@ export class BgTableComponent implements OnInit {
   @Input() environmentColumnNames: string[] = [];
   // holds the visibility status for all the columns
   @Input() columnVisibility: boolean[];
-  heightWindow = "0";
+  @Input() columnsToFilterByRowVisibility = {};
   // holds the visibility status for the context menu
   isContextMenuVisible = false;
   // holds the visibility status for the sub-table
@@ -24,7 +24,7 @@ export class BgTableComponent implements OnInit {
   pos_y = 0;
 
   constructor() {
-    this.heightWindow = (window.innerHeight - 110).toString();
+    // this.heightWindow = (window.innerHeight - 220).toString();
   }
 
   ngOnInit() {

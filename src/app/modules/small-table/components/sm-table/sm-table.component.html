@@ -24,12 +24,12 @@
               </form>
             </th>
           </tr>
-          <tr *ngFor="let row of filteredTable; let i = index"
-              [dtsSelectItem]="row" #item>
+          <tr *ngFor="let row of filteredTable; let i = index">
             <td [contextMenu]="testMenu"
                 [contextMenuSubject]="row['Tests']"
                 (contextmenu)="setTestSelected(i)"
-                [ngClass]="selectedDocuments.length === 0 && isTestSelected[i] === true? 'selected-cell' : ''">
+                [ngClass]="selectedDocuments.length === 0 && isTestSelected[i] === true? 'selected-cell' : ''"
+                [dtsSelectItem]="{'test': row, 'testName': row['Tests']}">
               {{row["Tests"]}}
             </td>
             <td class="{{item['Status']}}"
@@ -37,7 +37,8 @@
                 [contextMenu]="statusMenu"
                 [contextMenuSubject]="{'index': j, 'cur': item, 'test': row['Tests']}"
                 (contextmenu)="setStatusSelected(i, j)"
-                [ngClass]="selectedDocuments.length === 0 && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''">
+                [ngClass]="selectedDocuments.length === 0 && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''"
+                [dtsSelectItem]="{'status': row, 'testName': row['Tests'], 'id': j}">
               <span>{{item["Status"]}}</span>
               <br><br>
               <span *ngIf="item['fStatus'][0] === '---'">---</span>
@@ -53,53 +54,70 @@
 <!-- Context Menu for test name -->
 
 <context-menu #testMenu (close)="isTestSelected = []">
-  <ng-template *ngIf="selectedDocuments.length > 0"
-               contextMenuItem
+  <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event)"
                [subMenu]="subTestMenu"
                let-item>
     Cur Selected: {{item}}
   </ng-template>
-  <ng-template *ngIf="selectedDocuments.length === 0"
-               contextMenuItem
-               let-item>
-    Cur Selected: {{item}}
-  </ng-template>
+  <!--<ng-template *ngIf="(selectedDocuments|selectedDocFilter:-1).length === 0"-->
+               <!--contextMenuItem-->
+               <!--let-item>-->
+    <!--Cur Selected: {{item}}-->
+  <!--</ng-template>-->
   <context-menu #subTestMenu>
     <ng-template contextMenuItem
+                 *ngIf="isSelectedDocEmpty(myIndex) === true"
                  (execute)="showMessage('Hi, ' + $event.item)"
-                 *ngFor="let doc of selectedDocuments; let i = index">
-      Item {{i+1}}: {{doc['Tests']}}
+                 let-data>
+      Item 1: {{data}}
     </ng-template>
+    <span *ngIf="isSelectedDocEmpty(myIndex) === false">
+      <ng-template contextMenuItem
+                   (execute)="showMessage('Hi, ' + $event.item)"
+                   *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index">
+        Item {{i+1}}: {{doc['testName']}}
+      </ng-template>
+    </span>
   </context-menu>
-  <ng-template contextMenuItem let-item (execute)="showPopUpTable(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['Tests'])">Show More Info</ng-template>
+  <ng-template contextMenuItem let-item (execute)="showPopUpTableTest(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
 <!--Context menu for status-->
 <context-menu #statusMenu (close)="isStatusSelected = []">
-  <ng-template *ngIf="selectedDocuments.length > 0"
-               contextMenuItem
+  <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event.item)"
                [subMenu]="subStatusMenu"
                let-data>
     Cur Selected: {{data['cur']['Status']}}
   </ng-template>
-  <ng-template *ngIf="selectedDocuments.length === 0"
-               contextMenuItem
-               let-data>
-    Cur Selected: {{data['cur']['Status']}}
+  <ng-template contextMenuItem
+               (execute)="openTestExplorer()">
+    Open Test Explorer (New Window)
   </ng-template>
+  <!--<ng-template *ngIf="selectedDocuments.length === 0"-->
+               <!--contextMenuItem-->
+               <!--let-data>-->
+    <!--Cur Selected: {{data['cur']['Status']}}-->
+  <!--</ng-template>-->
   <context-menu #subStatusMenu>
     <ng-template contextMenuItem
+                 *ngIf="isSelectedDocEmpty(myIndex) === true"
                  (execute)="showMessage('Hi, ' + $event.item)"
-                 *ngFor="let doc of selectedDocuments; let i = index"
                  let-data>
-      Item {{i+1}}: {{doc['Data'][ data['index'] ]['Status']}}
+      Item 1: {{data['cur']['Status']}}
     </ng-template>
+    <span *ngIf="isSelectedDocEmpty(myIndex) === false">
+      <ng-template contextMenuItem
+                   (execute)="showMessage('Hi, ' + $event.item)"
+                   *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index"
+                   let-data>
+        Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['Status']}}
+      </ng-template>
+    </span>
   </context-menu>
   <ng-template contextMenuItem
-               let-data
-               (execute)="showPopUpTable(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['Tests'])">Show More Info</ng-template>
+               (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
 <!--It's just the dark window that appears behind the pop up table-->

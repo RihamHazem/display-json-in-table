@@ -1,16 +1,13 @@
 #vertical-alignment {
-  margin-top: 50px;
+  display: flex;
+  margin-top: 80px;
 }
-app-sm-table {
+
+#main-content {
   overflow: auto;
-  width: 76%;
+  flex: 9;
 }
-#vertical-alignment>div#sidebar {
-  position: fixed;
-  left: 0;
-  width: 24%;
-  top: 65px;
-}
-app-sm-table, app-bg-table-params {
-  float: right;
+
+#sidebar {
+  flex: 2;
 }

@@ -3,12 +3,23 @@
        [ngStyle]="{'max-height': windowHeight+'px'}">
     <details>
       <summary>Filter by Column</summary>
-      <span id="select-all" (click)="selectAll()">{{toggleSelectAll}}</span>
+      <span class="select-all" (click)="selectAll()">{{toggleSelectAll}}</span>
       <ul class="cell">
         <li *ngFor="let col of columnNames; let i = index">
           <p style="width: 69%; display: inline-block" >{{columnNames[i]}}</p>
           <input [id]="col" type="checkbox" [checked]="isColumnVisible[i]" (change)="tellTheParentColumnChanges(i)">
           <label [for]="col"> </label>
+        </li>
+      </ul>
+    </details>
+    <details *ngFor="let col of objectKeys(columnsToFilterByRowMap)">
+      <summary>Filter by {{col}}</summary>
+      <!--<span class="select-all" (click)="selectAll()">{{toggleSelectAll}}</span>-->
+      <ul class="cell">
+        <li *ngFor="let row of objectKeys(columnsToFilterByRowMap[col]); let i = index">
+          <p style="width: 69%; display: inline-block" >{{row}}<i style="color: darkgray; padding-left: 10px; font-size: small">({{columnsToFilterByRowMap[col][row]}})</i></p>
+          <input [id]="row" type="checkbox" [checked]="columnsToFilterByRowVisibility[col][row]" (change)="tellTheParentRowChanges(col, row)">
+          <label [for]="row"> </label>
         </li>
       </ul>
     </details>

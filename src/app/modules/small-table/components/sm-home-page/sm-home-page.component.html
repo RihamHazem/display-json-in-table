@@ -1,25 +1,28 @@
 <!--The home page contains three main components: NAV BAR, SIDE BAR and MAIN CONTENT which's the table-->
 
-<app-nav-bar [hasBurgerButton]="false"
+<app-nav-bar [hasBurgerButton]="true"
              (sideMenuIsVisible)="isSideMenuVisible = !isSideMenuVisible"></app-nav-bar>
 <div style="text-align: center; width: 100px; position: fixed; left: 45%; top: 45%;" *ngIf="gettingData === true">
   <img style="max-width: 100%" src="./assets/images/spinner.gif" alt="">
 </div>
 <div id="vertical-alignment">
-  <div id="sidebar">
+  <div id="sidebar" [hidden]="!isSideMenuVisible">
     <app-sm-filter-table [map_status]="map_status"
                          [map_fStatus]="map_fStatus"
                          [isStatusVisible]="statusVisibility"
                          [isfStatusVisible]="fStatusVisibility"
+
                          (filterMe)="onFiltering()"
-                         *ngIf="isSideMenuVisible && gettingData === false && objectKey(myTableData).length !== 0"></app-sm-filter-table>
+                         *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-filter-table>
   </div>
-  <app-sm-table-params *ngIf="isSideMenuVisible" (tableParam)="updateTable($event)"></app-sm-table-params>
-  <app-sm-table [tableData]="myTableData"
-                [columnNames]="columnNames"
-                [allTableData]="allTableData"
-                [allColumnData]="allColumnData"
-                [rowVisibility]="{'Status': statusVisibility, 'fStatus': fStatusVisibility}"
-                [map_test_name]="map_test_name"
-                *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-table>
+  <div id="main-content">
+    <app-sm-table-params (tableParam)="updateTable($event)"></app-sm-table-params>
+    <app-sm-table [tableData]="myTableData"
+                  [columnNames]="columnNames"
+                  [allTableData]="allTableData"
+                  [allColumnData]="allColumnData"
+                  [rowVisibility]="{'Status': statusVisibility, 'fStatus': fStatusVisibility}"
+                  [map_test_name]="map_test_name"
+                  *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-table>
+  </div>
 </div>

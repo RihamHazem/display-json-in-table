@@ -19,7 +19,6 @@ export class SmTableComponent implements OnInit {
   isSubTableVisible = false;
   isTestSelected = [];
   isStatusSelected = [];
-  selectedMultiple = false;
   selectedTab = {'i': 0, 'j': 0};
   selectedDocuments = [];
   sortingOrder = {};
@@ -27,8 +26,9 @@ export class SmTableComponent implements OnInit {
   curInput: string = "";
   allConstTable = [];
   tabCounter = 0;
-  @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
+  myIndex = -1;
 
+  @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
   constructor() {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
@@ -41,21 +41,45 @@ export class SmTableComponent implements OnInit {
     this.isTestSelected = [];
   }
   public setTestSelected(i) {
-    if (this.selectedMultiple) {
-      this.isTestSelected = [];
-      return;
-    }
+    this.myIndex = -1;
     this.isTestSelected[i] = true;
   }
-
   public setStatusSelected(i, j) {
-    if (this.selectedMultiple) {
-      this.isStatusSelected = [];
-      return;
-    }
+    this.myIndex = j;
     if (this.isStatusSelected[i] === undefined || this.isStatusSelected[i] === null)
       this.isStatusSelected[i] = [];
     this.isStatusSelected[i][j] = true;
+  }
+  isSelectedDocEmpty(isTest) {
+    if (isTest === -1) {
+      return this.selectedDocuments.filter((item) => item.hasOwnProperty('test')===true).length===0;
+    }
+    else {
+      return this.selectedDocuments.filter((item) => {
+        return item.hasOwnProperty('status')===true&&item['id']===isTest;
+      }).length===0;
+    }
+  }
+  newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
+  public openTestExplorer() {
+    let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
+    console.log(selectedStatus);
+    let args = "";
+    for (let i in selectedStatus) {
+      let idx = -1;
+      for (let j in this.allTableData[selectedStatus[i]['testName']]) {
+        if (this.allTableData[selectedStatus[i]['testName']][j] !== null &&
+          this.allTableData[selectedStatus[i]['testName']][j] !== undefined) {
+          idx = Number(j);
+          break;
+        }
+      }
+      if (idx === -1)
+        continue;
+      args += "dirs[]=" + this.allTableData[selectedStatus[i]['testName']][idx]['exec_gpath'].slice(3) + '&';
+    }
+    console.log(args);
+    window.open(this.newWindowBaseUrl + args, "_blank");
   }
   public showMessage(message) {
     console.log("Message: ", message);
@@ -68,16 +92,16 @@ export class SmTableComponent implements OnInit {
   }
   // this function responsible for showing the pop up sub-table
   tabs = [];
-  showPopUpTable(testName) {
+  showPopUpTableTest(testName) {
     this.isSubTableVisible = true;
     this.curRow = this.allTableData[testName];
     let cnt = 0;
     this.tabs = [];
-
-    for (let i in this.selectedDocuments) {
-      for (let j in this.selectedDocuments[i]['Data']) {
-        if (this.selectedDocuments[i]['Data'][j]['Status'] !== 'NO STATUS') {
-          this.tabs.push({'testName': this.selectedDocuments[i]['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
+    let selectedTests = this.selectedDocuments.filter(item=>item.hasOwnProperty('test'));
+    for (let i in selectedTests) {
+      for (let j in selectedTests[i]['test']['Data']) {
+        if (selectedTests[i]['test']['Data'][j]['Status'] !== 'NO STATUS') {
+          this.tabs.push({'testName': selectedTests[i]['test']['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
         }
       }
     }
@@ -92,6 +116,34 @@ export class SmTableComponent implements OnInit {
       }
     }
     this.tabCounter = 0;
+  }
+  showPopUpTableStatus(testName) {
+    this.isSubTableVisible = true;
+    this.curRow = this.allTableData[testName];
+    let cnt = 0;
+    this.tabs = [];
+    let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
+    for (let i in selectedStatus) {
+      for (let j in selectedStatus[i]['status']['Data']) {
+        if (selectedStatus[i]['status']['Data'][j]['Status'] !== 'NO STATUS') {
+          this.tabs.push({'testName': selectedStatus[i]['status']['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
+        }
+      }
+    }
+    let once = true;
+    for (let i in this.curRow) {
+      if (this.curRow[i]['Status'] !== 'NO STATUS' && once) {
+        this.selectedTab = {'i': 0, 'j': Number(i)};
+        once = false;
+      }
+      if (this.selectedDocuments.length === 0) {
+        this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+      }
+    }
+    this.tabCounter = 0;
+  }
+  filterDocs() {
+
   }
   selectTab(testName: string, index) {
     this.selectedTab = index;
