@@ -12,6 +12,8 @@ import {ContextMenuModule} from 'ngx-contextmenu';
 import {DragToSelectModule} from 'ngx-drag-to-select';
 import {MatAutocompleteModule, MatFormFieldModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NgbTabsetModule} from '@ng-bootstrap/ng-bootstrap';
+import { SubmissionsTableComponent } from './components/submissions-table/submissions-table.component';
 
 @NgModule({
   imports: [
@@ -23,10 +25,11 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     DragToSelectModule,
-    CoreModule
+    CoreModule,
+    NgbTabsetModule
   ],
   exports: [],
-  declarations: [SmHomePageComponent, SmTableComponent, SmFilterTableComponent, SmFilterTablePipe, SmTableParamsComponent, SelectedDocFilterPipe],
+  declarations: [SmHomePageComponent, SmTableComponent, SmFilterTableComponent, SmFilterTablePipe, SmTableParamsComponent, SelectedDocFilterPipe, SubmissionsTableComponent],
   entryComponents: [SmHomePageComponent]
 })
 export class SmallTableModule { }

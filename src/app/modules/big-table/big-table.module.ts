@@ -8,11 +8,15 @@ import { BgHomePageComponent } from './components/bg-home-page/bg-home-page.comp
 import {CoreModule} from '../../core/core.module';
 import { BgTableParamsComponent } from './components/bg-table-params/bg-table-params.component';
 import { FilterRowPipe } from './shared/filter-row.pipe';
+import {DragToSelectModule} from 'ngx-drag-to-select';
+import {ContextMenuModule} from 'ngx-contextmenu';
 
 @NgModule({
   imports: [
     CommonModule,
     BigTableRoutesModule,
+    DragToSelectModule,
+    ContextMenuModule,
     CoreModule
   ],
   declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, BgHomePageComponent, BgTableParamsComponent, FilterRowPipe],

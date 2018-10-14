@@ -5,9 +5,23 @@ table {
 }
 
 td, th {
-  padding: 20px 20px;
+  padding: 7px 10px;
   /*text-align: center;*/
   border-bottom: 1px solid #dddddd;
+  min-width: 200px;
+
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 tr {
   border-bottom: 1px solid #000000;
@@ -34,9 +48,10 @@ tr:last-child td {
   top: 10%;
   height: 80%;
   overflow: auto;
+  z-index: 1;
 }
 .small-container #controls {
-  background-color: #592680;
+  background-color: #19233E;
   color: #ffffff;
   padding: 10px 25px;
   display: flex;

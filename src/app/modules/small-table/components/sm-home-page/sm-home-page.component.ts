@@ -11,7 +11,7 @@ export class SmHomePageComponent implements OnInit {
   // it contains all rows for the shown columns ["Tests", "Status"]
   myTableData = {};
   objectKey = Object.keys;
-  gettingData = false;
+  gettingData = true;
   // it contains the columns that being displayed in the table
   columnNames: string[] = ["Tests"];
   // toggle sidebar visibility
@@ -22,6 +22,7 @@ export class SmHomePageComponent implements OnInit {
   fStatusVisibility = {};
   // it holds all rows for all columns
   allTableData = {};
+  submissionsData = {};
   // it holds all columns
   allColumnData: string[] = [];
   // it counts the occurrences of status field values in the given JSON
@@ -48,6 +49,11 @@ export class SmHomePageComponent implements OnInit {
       let testIndex: number = 0;
       for (let i in data) {
         let curData = data[i]['test_instances'];
+        this.submissionsData[ data[i]['id'] ] = {
+          'TOTAL': data[i]['test_instance_counts']['TOTAL'],
+          'PASSED': data[i]['test_instance_counts']['PASSED'],
+          'FAILED': data[i]['test_instance_counts']['FAILED']
+        };
         this.columnNames.push(data[i]['name']);
         for (let j in curData) {
           let test_name: string = curData[j]['test_name'];
@@ -89,6 +95,7 @@ export class SmHomePageComponent implements OnInit {
           once = false;
         }
       }
+      this.columnNames.push("Comment");
       for (let key in this.myTableData) {
         let curRow = this.myTableData[key];
         for (let index = 0; index < curRow.length; index++) {
@@ -117,6 +124,7 @@ export class SmHomePageComponent implements OnInit {
         }
       }
       this.gettingData = false;
+      console.log(this.submissionsData);
     });
   }
 

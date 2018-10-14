@@ -9,7 +9,7 @@
 }
 li {
   list-style: none;
-  margin: 10px 0 10px 10px;
+  margin: 0px 0px 0px 10px;
   font-size: medium;
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
@@ -32,18 +32,23 @@ input[type=checkbox] {
 input[type=checkbox] + label {
   background: url('../../../../../assets/images/un-checked.svg') left top no-repeat;
   background-size: 30px;
+  height: 30px;
   padding-left: 50px;
   padding-top: 5px;
   padding-bottom: 5px;
+  margin-bottom: 0;
+  display: inline;
 }
 
 input[type=checkbox]:checked + label {
   background: url('../../../../../assets/images/checked.svg') left top no-repeat;
   background-size: 30px;
-  min-height: 23px;
+  height: 30px;
   padding-left: 50px;
   padding-top: 5px;
   padding-bottom: 5px;
+  margin-bottom: 0;
+  display: inline;
 }
 details {
   font-size: large;

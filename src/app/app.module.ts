@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ContextMenuModule} from 'ngx-contextmenu';
 import {DragToSelectModule} from 'ngx-drag-to-select';
+import {NgbModalModule, NgbTabsetModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,8 @@ import {DragToSelectModule} from 'ngx-drag-to-select';
       useBootstrap4: true
     }),
     DragToSelectModule.forRoot(),
+    NgbModalModule,
+    NgbTabsetModule,
     CoreModule
   ],
   exports: [],

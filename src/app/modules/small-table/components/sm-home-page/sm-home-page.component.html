@@ -17,6 +17,8 @@
   </div>
   <div id="main-content">
     <app-sm-table-params (tableParam)="updateTable($event)"></app-sm-table-params>
+    <app-submissions-table [submissionData]="submissionsData"
+                           *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-submissions-table>
     <app-sm-table [tableData]="myTableData"
                   [columnNames]="columnNames"
                   [allTableData]="allTableData"

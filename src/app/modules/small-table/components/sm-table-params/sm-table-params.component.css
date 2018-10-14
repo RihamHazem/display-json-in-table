@@ -1,6 +1,6 @@
 div {
-  padding: 20px 15px;
-  width: 76%;
+  padding: 10px 15px;
+  width: 100%;
 }
 label {
   font-size: large;
@@ -12,6 +12,6 @@ input {
   background-color: #fafafa;
   border: 1px lightgray solid;
   outline: none;
-  margin-top: 10px;
-  width: 95%;
+  margin-top: 5px;
+  width: 100%;
 }

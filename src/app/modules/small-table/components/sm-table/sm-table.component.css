@@ -5,11 +5,11 @@ table {
 }
 
 td, th {
-  padding: 20px 20px;
+  padding: 5px 10px;
   /*text-align: center;*/
   border-bottom: 1px solid #dddddd;
-}
-td {
+  min-width: 200px;
+
   /* These are technically the same, but use both */
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -70,6 +70,12 @@ tr:last-child td {
   border-bottom: 1px solid #eeeeee;
 }
 
+h4 {
+  font-size: large;
+  font-weight: 500;
+  margin: 30px 0 20px 20px;
+}
+
 /******************************************/
 
 .small-container {
@@ -85,7 +91,7 @@ tr:last-child td {
   z-index: 1;
 }
 .small-container #controls {
-  background-color: #ffffff;
+  background-color: #FAFAFA;
   color: #19233E;
   padding: 10px 25px;
   display: flex;

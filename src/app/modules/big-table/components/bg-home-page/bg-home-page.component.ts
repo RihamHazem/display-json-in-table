@@ -9,7 +9,7 @@ import {GetJsonService} from '../../../../shared/get-json.service';
 export class BgHomePageComponent implements OnInit {
   // holds the rows of the json
   tableData: any[] = [];
-  gettingData = false;
+  gettingData = true;
   // holds info of one row only of the environment field
   environmentTableData: any = {};
 

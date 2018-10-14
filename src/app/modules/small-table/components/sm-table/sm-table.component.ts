@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {SelectContainerComponent} from 'ngx-drag-to-select';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-sm-table',
@@ -27,9 +28,11 @@ export class SmTableComponent implements OnInit {
   allConstTable = [];
   tabCounter = 0;
   myIndex = -1;
+  closeResult: string;
 
   @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
-  constructor() {
+  isCommentSelected: any[] = [];
+  constructor(private modalService: NgbModal) {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
   ngOnInit() {
@@ -44,6 +47,9 @@ export class SmTableComponent implements OnInit {
     this.myIndex = -1;
     this.isTestSelected[i] = true;
   }
+  public setCommentSelected(i) {
+    this.isCommentSelected[i] = true;
+  }
   public setStatusSelected(i, j) {
     this.myIndex = j;
     if (this.isStatusSelected[i] === undefined || this.isStatusSelected[i] === null)
@@ -52,18 +58,17 @@ export class SmTableComponent implements OnInit {
   }
   isSelectedDocEmpty(isTest) {
     if (isTest === -1) {
-      return this.selectedDocuments.filter((item) => item.hasOwnProperty('test')===true).length===0;
+      return this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true).length === 0;
     }
     else {
       return this.selectedDocuments.filter((item) => {
-        return item.hasOwnProperty('status')===true&&item['id']===isTest;
-      }).length===0;
+        return item.hasOwnProperty('status') === true && item['id'] === isTest;
+      }).length === 0;
     }
   }
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
   public openTestExplorer() {
     let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
-    console.log(selectedStatus);
     let args = "";
     for (let i in selectedStatus) {
       let idx = -1;
@@ -110,9 +115,9 @@ export class SmTableComponent implements OnInit {
       if (this.curRow[i]['Status'] !== 'NO STATUS' && once) {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
-      }
-      if (this.selectedDocuments.length === 0) {
-        this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+        if (selectedTests.length === 0) {
+          this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+        }
       }
     }
     this.tabCounter = 0;
@@ -123,32 +128,30 @@ export class SmTableComponent implements OnInit {
     let cnt = 0;
     this.tabs = [];
     let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
+    console.log(selectedStatus);
+    let ID = -1;
     for (let i in selectedStatus) {
       for (let j in selectedStatus[i]['status']['Data']) {
-        if (selectedStatus[i]['status']['Data'][j]['Status'] !== 'NO STATUS') {
+        if (selectedStatus[i]['status']['Data'][j]['Status'] !== 'NO STATUS' && selectedStatus[i]['id'] === Number(j)) {
+          if (ID === -1)
+            ID = selectedStatus[i]['id'];
           this.tabs.push({'testName': selectedStatus[i]['status']['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
         }
       }
     }
     let once = true;
     for (let i in this.curRow) {
-      if (this.curRow[i]['Status'] !== 'NO STATUS' && once) {
+      if (this.curRow[i]['Status'] !== 'NO STATUS' && (ID === -1 || ID === Number(i)) && once) {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
-      }
-      if (this.selectedDocuments.length === 0) {
-        this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+        if (selectedStatus.length === 0) {
+          this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+        }
       }
     }
     this.tabCounter = 0;
   }
-  filterDocs() {
 
-  }
-  selectTab(testName: string, index) {
-    this.selectedTab = index;
-    this.curRow = this.allTableData[testName];
-  }
   changeSortingOrder(colIndex: number) {
     if (this.sortingOrder[colIndex] === "▼") {
       this.sortingOrder[colIndex] = "▲";
@@ -210,5 +213,29 @@ export class SmTableComponent implements OnInit {
       newArr.reverse();
     }
     return newArr;
+  }
+  comment = {};
+  open(content, testName) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+      let selectedComments = this.selectedDocuments.filter(item=>item.hasOwnProperty('comment'));
+      if (selectedComments.length === 0) {
+        this.comment[testName] = result;
+      }
+      for (let selected in selectedComments) {
+        this.comment[ selectedComments[selected]['comment'] ] = result;
+      }
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
   }
 }

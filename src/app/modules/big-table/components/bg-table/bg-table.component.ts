@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-table',
@@ -15,38 +16,35 @@ export class BgTableComponent implements OnInit {
   // holds the visibility status for all the columns
   @Input() columnVisibility: boolean[];
   @Input() columnsToFilterByRowVisibility = {};
-  // holds the visibility status for the context menu
-  isContextMenuVisible = false;
   // holds the visibility status for the sub-table
   isSubTableVisible = false;
-  // holds info about the position of the context menu
-  pos_x = 0;
-  pos_y = 0;
+  selectedIDs = [];
 
-  constructor() {
-    // this.heightWindow = (window.innerHeight - 220).toString();
+  constructor(private _router: Router) {
   }
 
   ngOnInit() {
   }
-  // it's responsible for showing the right-click context menu
-  showContextMenu(event) {
-    event.preventDefault();
-    this.pos_x = event.clientX.toString();
-    this.pos_y = event.clientY.toString();
-    this.isContextMenuVisible = true;
-    this.isSubTableVisible = false;
-    console.log('right click', event);
-  }
   // it's responsible for hiding the pop up sub-table *that contains the environment info* and also the context menu
   hideAllPopUps() {
-    this.isContextMenuVisible = false;
     this.isSubTableVisible = false;
     console.log('left click');
   }
   // it's responsible for showing the pop up sub-table
   showPopUpTable() {
     this.isSubTableVisible = true;
-    this.isContextMenuVisible = false;
+  }
+
+  openSmallTable(curId) {
+    let args = "";
+    if (this.selectedIDs.length === 0) {
+      args += "mars_id[]=" + curId + "&";
+    } else {
+      for (let id in this.selectedIDs) {
+        args += "mars_id[]=" + this.selectedIDs[id] + "&";
+      }
+    }
+    args += "action=explore";
+    this._router.navigateByUrl('/small-table?' + args);
   }
 }

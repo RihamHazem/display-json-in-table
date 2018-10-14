@@ -1,3 +1,4 @@
+<h4>Test Cases</h4>
 <!--Container that contains the main table-->
 <dts-select-container #container="dts-select-container"
                       [(selectedItems)]="selectedDocuments"
@@ -7,10 +8,11 @@
         <table>
           <tr>
             <th *ngFor="let col of columnNames; let i=index">
-              <div style="margin-top: 10px; display: inline-block; cursor:pointer;" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'"
-                   (click)="changeSortingOrder(i)">
+              <div style="margin-top: 10px; display: inline-block" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'">
                 {{col}}
-                <span style="margin-left: 10px">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
+                <span *ngIf="col != 'Comment'"
+                      style="margin-left: 10px; cursor:pointer;"
+                      (click)="changeSortingOrder(i)">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
               </div>
               <img *ngIf="!searchMode && col === 'Tests'" (click)="enableSearchMode()"
                    src="./assets/images/search.png"
@@ -42,10 +44,15 @@
               <span>{{item["Status"]}}</span>
               <br><br>
               <span *ngIf="item['fStatus'][0] === '---'">---</span>
-              <ul *ngIf="item['fStatus'][0] !== '---'">
+              <ul style="margin-left: 15px" *ngIf="item['fStatus'][0] !== '---'">
                 <li *ngFor="let f_s of item['fStatus']">{{f_s}}</li>
               </ul>
             </td>
+            <td [contextMenu]="commentMenu"
+                (contextmenu)="setCommentSelected(i)"
+                [ngClass]="selectedDocuments.length === 0 && isCommentSelected[i] === true? 'selected-cell' : ''"
+                [contextMenuSubject]="row['Tests']"
+                [dtsSelectItem]="{'comment': row['Tests']}">{{ comment[row['Tests']] === undefined || comment[row['Tests']] === null? comment[row['Tests']]="No Comment":comment[row['Tests']] }}</td>
           </tr>
         </table>
     </div>
@@ -60,11 +67,6 @@
                let-item>
     Cur Selected: {{item}}
   </ng-template>
-  <!--<ng-template *ngIf="(selectedDocuments|selectedDocFilter:-1).length === 0"-->
-               <!--contextMenuItem-->
-               <!--let-item>-->
-    <!--Cur Selected: {{item}}-->
-  <!--</ng-template>-->
   <context-menu #subTestMenu>
     <ng-template contextMenuItem
                  *ngIf="isSelectedDocEmpty(myIndex) === true"
@@ -95,11 +97,6 @@
                (execute)="openTestExplorer()">
     Open Test Explorer (New Window)
   </ng-template>
-  <!--<ng-template *ngIf="selectedDocuments.length === 0"-->
-               <!--contextMenuItem-->
-               <!--let-data>-->
-    <!--Cur Selected: {{data['cur']['Status']}}-->
-  <!--</ng-template>-->
   <context-menu #subStatusMenu>
     <ng-template contextMenuItem
                  *ngIf="isSelectedDocEmpty(myIndex) === true"
@@ -120,32 +117,57 @@
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
+<context-menu #commentMenu (close)="isCommentSelected = []">
+  <ng-template contextMenuItem (execute)="open(content, $event.item)">
+    Add New Comment
+  </ng-template>
+</context-menu>
 <!--It's just the dark window that appears behind the pop up table-->
 <div id="whole-window"
      *ngIf="isSubTableVisible"
      (click)="hideAllPopUps()"></div>
-
-<!--The table in which all information of the row appears-->
-<div class="small-container" *ngIf="isSubTableVisible">
-  <div class="nav-table">
-    <div id="controls">
-      <h2>More Information</h2>
-      <span (click)="hideAllPopUps()">×</span>
-    </div>
-    <div class="pagination">
-        <div class="item"
-             *ngFor="let cur_tab of tabs"
-             (click)="selectTab(cur_tab['testName'], {'i': cur_tab.i, 'j': cur_tab.j})"
-             [ngClass]="selectedTab.i === cur_tab.i && selectedTab.j === cur_tab.j? 'active-tab':''">
-          {{cur_tab.val}}
-        </div>
-    </div>
+<!--------------------------------------------------------------------------------------------------->
+<div class="small-container" *ngIf="isSubTableVisible">  <!--<div class="nav-table">-->
+  <div id="controls">
+    <h2>More Information</h2>
+    <span (click)="hideAllPopUps()">×</span>
   </div>
-  <table style="margin-top: 90px">
-    <tr *ngFor="let col of allColumnData">
-      <th> {{col}} </th>
-      <td>
-        {{curRow[selectedTab.j][col] === undefined || curRow[selectedTab.j][col] === null? "---" : curRow[selectedTab.j][col]}}</td>
-    </tr>
-  </table>
+  <div  style="margin-top: 70px">
+    <ngb-tabset>
+      <ngb-tab *ngFor="let cur_tab of tabs" title="{{cur_tab.val}}">
+        <ng-template ngbTabContent>
+          <table style="background-color:#fff;">
+            <tr *ngFor="let col of allColumnData">
+              <th> {{col}} </th>
+              <td>
+                {{allTableData[cur_tab['testName']][cur_tab.j][col]}}
+              </td>
+            </tr>
+          </table>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
 </div>
+<!-- Modal -->
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Adding New Comment</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="comment-content">Type Your Comment</label>
+        <div class="input-group">
+          <textarea id="comment-content" #txt_val class="form-control" placeholder="type your comment here.."></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close(txt_val.value)">Save</button>
+  </div>
+</ng-template>
