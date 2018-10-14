@@ -33,7 +33,7 @@ export class BgHomePageComponent implements OnInit {
   updateTable(newParams: string) {
     if (newParams === "" || newParams === null || newParams === undefined) return;
     this.gettingData = true;
-    console.log(newParams);
+    this.emptyAllData();
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let cnt = 0;
       // for all submissions
@@ -95,7 +95,21 @@ export class BgHomePageComponent implements OnInit {
       this.columnVisibility[this.columnIndices['name']] = true;
       this.columnVisibility[this.columnIndices['status']] = true;
       this.gettingData = false;
+    }, error1 => {
+      console.log("ERROR", error1);
     });
+  }
+
+  private emptyAllData() {
+    this.tableData = [];
+    this.environmentTableData = {};
+    this.environmentColumnNames = [];
+    this.columnIndices = {};
+    this.columnVisibility = [];
+    this.columnsToFilterByRowMap = {"status": {}, "mgc_home_gpath": {}, "requested_vcos": {}};
+    this.columnsToFilterByRowVisibility = {"status": {}, "mgc_home_gpath": {}, "requested_vcos": {}};
+    this.columnNames = [];
+    this.isSideMenuVisible = true;
   }
 
 }

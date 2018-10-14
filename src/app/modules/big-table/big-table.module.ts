@@ -10,10 +10,12 @@ import { BgTableParamsComponent } from './components/bg-table-params/bg-table-pa
 import { FilterRowPipe } from './shared/filter-row.pipe';
 import {DragToSelectModule} from 'ngx-drag-to-select';
 import {ContextMenuModule} from 'ngx-contextmenu';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     BigTableRoutesModule,
     DragToSelectModule,
     ContextMenuModule,

@@ -25,6 +25,7 @@ export class SmTableParamsComponent implements OnInit, AfterViewInit {
   tellParentNewParams(event) {
     if (event.keyCode == 13) { // user pressed enter
       event.preventDefault();
+      console.log(this.query);
       this.tableParam.emit(this.query);
     }
   }

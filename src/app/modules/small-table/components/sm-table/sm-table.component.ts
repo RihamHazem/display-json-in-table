@@ -67,9 +67,12 @@ export class SmTableComponent implements OnInit {
     }
   }
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
-  public openTestExplorer() {
+  public openTestExplorer(testName) {
     let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
     let args = "";
+    if (selectedStatus.length === 0) {
+      args += "dirs[]=" + this.allTableData[testName][0]['exec_gpath'].slice(3) + '&';
+    }
     for (let i in selectedStatus) {
       let idx = -1;
       for (let j in this.allTableData[selectedStatus[i]['testName']]) {

@@ -3,5 +3,5 @@
   <input id="box" type="text"
          placeholder="Enter Query"
          (keyup.enter)="tellParentNewParams($event)"
-         [value]="query">
+         [(ngModel)]="query">
 </div>

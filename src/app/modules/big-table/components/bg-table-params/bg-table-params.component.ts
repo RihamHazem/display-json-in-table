@@ -18,11 +18,12 @@ export class BgTableParamsComponent implements OnInit, AfterViewInit {
   }
 
 
-  tellParentNewParams(event, box) {
+  tellParentNewParams(event) {
+    console.log(event.keyCode == 13);
     if (event.keyCode == 13) { // user pressed enter
       event.preventDefault();
-      console.log(box);
-      this.tableParam.emit(box);
+      console.log(this.query);
+      this.tableParam.emit(this.query);
     }
   }
 

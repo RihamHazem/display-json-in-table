@@ -3,9 +3,11 @@
   <div class="basic-container">
     <table>
       <tr>
+        <th > Submission Id </th>
         <th *ngFor="let col of columns"> {{col}} </th>
       </tr>
       <tr *ngFor="let row of objectKeys(submissionData)">
+        <td> {{row}} </td>
         <td *ngFor="let col of columns"> {{submissionData[row][col]}} </td>
       </tr>
     </table>

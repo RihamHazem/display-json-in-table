@@ -94,7 +94,7 @@
     Cur Selected: {{data['cur']['Status']}}
   </ng-template>
   <ng-template contextMenuItem
-               (execute)="openTestExplorer()">
+               (execute)="openTestExplorer($event.item['test'])">
     Open Test Explorer (New Window)
   </ng-template>
   <context-menu #subStatusMenu>
