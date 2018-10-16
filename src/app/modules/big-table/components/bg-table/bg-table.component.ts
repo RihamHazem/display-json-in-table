@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
+import {SelectContainerComponent} from 'ngx-drag-to-select';
 
 @Component({
   selector: 'app-table',
@@ -19,7 +20,7 @@ export class BgTableComponent implements OnInit {
   // holds the visibility status for the sub-table
   isSubTableVisible = false;
   selectedIDs = [];
-
+  @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
   constructor(private _router: Router) {
   }
 
@@ -28,7 +29,6 @@ export class BgTableComponent implements OnInit {
   // it's responsible for hiding the pop up sub-table *that contains the environment info* and also the context menu
   hideAllPopUps() {
     this.isSubTableVisible = false;
-    console.log('left click');
   }
   // it's responsible for showing the pop up sub-table
   showPopUpTable() {
@@ -45,6 +45,9 @@ export class BgTableComponent implements OnInit {
       }
     }
     args += "action=explore";
-    this._router.navigateByUrl('/small-table?' + args);
+    window.open('/small-table?' + args, '_blank');
+  }
+  selectRow(id) {
+    this.selectContainer.selectItems(item => item === id);
   }
 }

@@ -124,7 +124,6 @@ export class SmHomePageComponent implements OnInit {
         }
       }
       this.gettingData = false;
-      console.log(this.submissionsData);
     });
   }
 

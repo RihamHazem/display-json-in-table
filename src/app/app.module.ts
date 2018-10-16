@@ -21,7 +21,7 @@ import {NgbModalModule, NgbTabsetModule} from '@ng-bootstrap/ng-bootstrap';
     HttpClientModule,
     AppRoutingModule,
     ContextMenuModule.forRoot({
-      useBootstrap4: true
+      useBootstrap4: false
     }),
     DragToSelectModule.forRoot(),
     NgbModalModule,

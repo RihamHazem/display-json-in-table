@@ -11,7 +11,8 @@
         <tr *ngFor="let row of tableData | filterRow: columnsToFilterByRowVisibility"
             [dtsSelectItem]="row['id']"
             [contextMenu]="tableMenu"
-            [contextMenuSubject]="row['id']">
+            [contextMenuSubject]="row['id']"
+            (contextmenu)="selectRow(row['id'])">
           <td *ngFor="let col of columnNames | filterTable: columnVisibility"> {{row[col]}} </td>
         </tr>
       </table>

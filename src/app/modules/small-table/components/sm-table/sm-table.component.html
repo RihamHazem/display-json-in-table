@@ -29,17 +29,14 @@
           <tr *ngFor="let row of filteredTable; let i = index">
             <td [contextMenu]="testMenu"
                 [contextMenuSubject]="row['Tests']"
-                (contextmenu)="setTestSelected(i)"
-                [ngClass]="selectedDocuments.length === 0 && isTestSelected[i] === true? 'selected-cell' : ''"
+                (contextmenu)="setTestSelected(row)"
                 [dtsSelectItem]="{'test': row, 'testName': row['Tests']}">
               {{row["Tests"]}}
             </td>
-            <td class="{{item['Status']}}"
-                *ngFor="let item of row['Data']; let j=index"
+            <td *ngFor="let item of row['Data']; let j=index"
                 [contextMenu]="statusMenu"
                 [contextMenuSubject]="{'index': j, 'cur': item, 'test': row['Tests']}"
-                (contextmenu)="setStatusSelected(i, j)"
-                [ngClass]="selectedDocuments.length === 0 && isStatusSelected[i] !== undefined && isStatusSelected[i][j] === true? 'selected-cell' : ''"
+                (contextmenu)="setStatusSelected(row, j)"
                 [dtsSelectItem]="{'status': row, 'testName': row['Tests'], 'id': j}">
               <span>{{item["Status"]}}</span>
               <br><br>
@@ -49,10 +46,11 @@
               </ul>
             </td>
             <td [contextMenu]="commentMenu"
-                (contextmenu)="setCommentSelected(i)"
-                [ngClass]="selectedDocuments.length === 0 && isCommentSelected[i] === true? 'selected-cell' : ''"
+                (contextmenu)="setCommentSelected(row['Tests'])"
                 [contextMenuSubject]="row['Tests']"
-                [dtsSelectItem]="{'comment': row['Tests']}">{{ comment[row['Tests']] === undefined || comment[row['Tests']] === null? comment[row['Tests']]="No Comment":comment[row['Tests']] }}</td>
+                [dtsSelectItem]="{'comment': row['Tests']}">
+              {{ comment[row['Tests']] === undefined || comment[row['Tests']] === null? comment[row['Tests']]="No Comment" : comment[row['Tests']] }}
+            </td>
           </tr>
         </table>
     </div>
@@ -60,7 +58,7 @@
 </dts-select-container>
 <!-- Context Menu for test name -->
 
-<context-menu #testMenu (close)="isTestSelected = []">
+<context-menu #testMenu (close)="deselectAll()">
   <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event)"
                [subMenu]="subTestMenu"
@@ -69,24 +67,16 @@
   </ng-template>
   <context-menu #subTestMenu>
     <ng-template contextMenuItem
-                 *ngIf="isSelectedDocEmpty(myIndex) === true"
-                 (execute)="showMessage('Hi, ' + $event.item)"
-                 let-data>
-      Item 1: {{data}}
-    </ng-template>
-    <span *ngIf="isSelectedDocEmpty(myIndex) === false">
-      <ng-template contextMenuItem
                    (execute)="showMessage('Hi, ' + $event.item)"
                    *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index">
-        Item {{i+1}}: {{doc['testName']}}
-      </ng-template>
-    </span>
+      Item {{i+1}}: {{doc['testName']}}
+    </ng-template>
   </context-menu>
   <ng-template contextMenuItem let-item (execute)="showPopUpTableTest(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
 <!--Context menu for status-->
-<context-menu #statusMenu (close)="isStatusSelected = []">
+<context-menu #statusMenu (close)="deselectAll()">
   <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event.item)"
                [subMenu]="subStatusMenu"
@@ -99,25 +89,17 @@
   </ng-template>
   <context-menu #subStatusMenu>
     <ng-template contextMenuItem
-                 *ngIf="isSelectedDocEmpty(myIndex) === true"
-                 (execute)="showMessage('Hi, ' + $event.item)"
-                 let-data>
-      Item 1: {{data['cur']['Status']}}
-    </ng-template>
-    <span *ngIf="isSelectedDocEmpty(myIndex) === false">
-      <ng-template contextMenuItem
                    (execute)="showMessage('Hi, ' + $event.item)"
                    *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index"
                    let-data>
         Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['Status']}}
-      </ng-template>
-    </span>
+    </ng-template>
   </context-menu>
   <ng-template contextMenuItem
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
-<context-menu #commentMenu (close)="isCommentSelected = []">
+<context-menu #commentMenu (close)="deselectAll()">
   <ng-template contextMenuItem (execute)="open(content, $event.item)">
     Add New Comment
   </ng-template>

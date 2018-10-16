@@ -18,8 +18,6 @@ export class SmTableComponent implements OnInit {
   filteredTable = [];
   curRow: any[] = [];
   isSubTableVisible = false;
-  isTestSelected = [];
-  isStatusSelected = [];
   selectedTab = {'i': 0, 'j': 0};
   selectedDocuments = [];
   sortingOrder = {};
@@ -31,7 +29,7 @@ export class SmTableComponent implements OnInit {
   closeResult: string;
 
   @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
-  isCommentSelected: any[] = [];
+
   constructor(private modalService: NgbModal) {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
@@ -40,21 +38,24 @@ export class SmTableComponent implements OnInit {
   }
   deselectAll() {
     this.selectContainer.clearSelection();
-    this.isStatusSelected = [];
-    this.isTestSelected = [];
   }
-  public setTestSelected(i) {
+  public setTestSelected(row) {
     this.myIndex = -1;
-    this.isTestSelected[i] = true;
+    this.selectContainer.selectItems((item) => {
+      return item.hasOwnProperty('test') === true && item['test'] === row;
+    });
   }
-  public setCommentSelected(i) {
-    this.isCommentSelected[i] = true;
+  public setCommentSelected(test) {
+    this.selectContainer.selectItems((item) => {
+      return item.hasOwnProperty('comment') === true && item['comment'] === test;
+    });
   }
-  public setStatusSelected(i, j) {
-    this.myIndex = j;
-    if (this.isStatusSelected[i] === undefined || this.isStatusSelected[i] === null)
-      this.isStatusSelected[i] = [];
-    this.isStatusSelected[i][j] = true;
+  public setStatusSelected(row, id) {
+    this.myIndex = id;
+    this.selectContainer.selectItems((item) => {
+      console.log(item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id);
+      return item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id;
+    });
   }
   isSelectedDocEmpty(isTest) {
     if (isTest === -1) {
