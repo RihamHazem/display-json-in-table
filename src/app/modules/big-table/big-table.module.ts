@@ -21,7 +21,8 @@ import {FormsModule} from '@angular/forms';
     ContextMenuModule,
     CoreModule
   ],
-  declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, BgHomePageComponent, BgTableParamsComponent, FilterRowPipe],
+  declarations: [BgTableComponent, BgFilterTableComponent, FilterTablePipe, 
+                 BgHomePageComponent, BgTableParamsComponent, FilterRowPipe],
   entryComponents: [BgHomePageComponent]
 })
 export class BigTableModule { }
