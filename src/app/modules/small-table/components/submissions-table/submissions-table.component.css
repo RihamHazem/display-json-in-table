@@ -30,6 +30,11 @@ tr:last-child td {
   border: 0;
 }
 
+.my-container {
+  padding: 10px 20px 10px 20px;
+  overflow: auto;
+}
+
 .basic-container {
   /*width: 95%;*/
   margin: auto;
@@ -43,4 +48,46 @@ h4 {
   font-size: large;
   font-weight: 500;
   margin: 20px 0 20px 20px;
+}
+
+.small-container {
+  background-color: #fafafa;
+  color: rgba(0,0,0,.87);
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+  position: fixed;
+  left: 25%;
+  width: 50%;
+  top: 40px;
+  height: 580px;
+  overflow: auto;
+  z-index: 1;
+}
+.small-container #controls {
+  background-color: #FAFAFA;
+  color: #19233E;
+  padding: 10px 25px 0 25px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  left: 25%;
+  width: 50%;
+}
+.small-container #controls h2 {
+  flex: 50;
+  padding: 0;
+  margin: 0;
+}
+.small-container #controls span {
+  font-size: x-large;
+  cursor: pointer;
+  flex: 1;
+}
+.tab-title {
+  color: #ffffff;
+  margin: 10px;
+  text-align: center;
+}
+canvas {
+  margin: 40px auto;
+  display: inline-block;
 }

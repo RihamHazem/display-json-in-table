@@ -1,15 +1,44 @@
 <h4>Submissions</h4>
-<div class="container">
-  <div class="basic-container">
-    <table>
-      <tr>
-        <th > Submission Id </th>
-        <th *ngFor="let col of columns"> {{col}} </th>
-      </tr>
-      <tr *ngFor="let row of objectKeys(submissionData)">
-        <td> {{row}} </td>
-        <td *ngFor="let col of columns"> {{submissionData[row][col]}} </td>
-      </tr>
-    </table>
+<div class="my-container">
+  <dts-select-container #selectContainer="dts-select-container"
+                        [(selectedItems)]="selectedDocuments"
+                        [selectWithShortcut]="true">
+    <div class="basic-container">
+      <table>
+        <tr>
+          <th > Submission Name </th>
+          <th *ngFor="let col of columns"> {{col}} </th>
+        </tr>
+        <tr *ngFor="let row of objectKeys(submissionData)"
+            [dtsSelectItem]="row"
+            [contextMenu]="submissionMenu"
+            [contextMenuSubject]="row"
+            (contextmenu)="setSubSelected(row)">
+          <td> {{row}} </td>
+          <td *ngFor="let col of columns"> {{submissionData[row][col]}} </td>
+        </tr>
+      </table>
+    </div>
+  </dts-select-container>
+</div>
+
+<context-menu #submissionMenu>
+  <ng-template contextMenuItem (execute)="openPieCharts()">
+    Open Pie Charts For all Submissions
+  </ng-template>
+  <ng-template contextMenuItem (execute)="printSelectedSubmissions()">
+    Print Selected Submissions
+  </ng-template>
+</context-menu>
+<!--Tabs for PieChart-->
+<div class="small-container" [hidden]="!isPieOpen">
+  <div id="controls">
+    <h2>More Information</h2>
+    <span (click)="closePieCharts()">×</span>
+  </div>
+  <div  style="margin-top: 70px; background-color: #19233E">
+    <span *ngFor="let cur_tab of selectedDocuments">
+      <span id="{{cur_tab}}"></span>
+    </span>
   </div>
 </div>

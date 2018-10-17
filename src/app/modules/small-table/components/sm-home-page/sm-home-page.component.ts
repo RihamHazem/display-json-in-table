@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { GetJsonService } from '../../../../shared/get-json.service';
 import {SmTableComponent} from '../sm-table/sm-table.component';
+import {SubmissionsTableComponent} from '../submissions-table/submissions-table.component';
 
 @Component({
   selector: 'app-sm-home-page',
@@ -32,7 +33,8 @@ export class SmHomePageComponent implements OnInit {
   // it maps the test name to its index in the given JSON
   map_test_name = {};
 
-  @ViewChild(SmTableComponent) child;
+  @ViewChild(SmTableComponent) smTableChild;
+  @ViewChild(SubmissionsTableComponent) submissionTableChild;
 
   constructor( private _getJsonService: GetJsonService ) { }
 
@@ -49,7 +51,7 @@ export class SmHomePageComponent implements OnInit {
       let testIndex: number = 0;
       for (let i in data) {
         let curData = data[i]['test_instances'];
-        this.submissionsData[ data[i]['id'] ] = {
+        this.submissionsData[ data[i]['name'] ] = {
           'TOTAL': data[i]['test_instance_counts']['TOTAL'],
           'PASSED': data[i]['test_instance_counts']['PASSED'],
           'FAILED': data[i]['test_instance_counts']['FAILED']
@@ -162,6 +164,6 @@ export class SmHomePageComponent implements OnInit {
   }
   onFiltering() {
     console.log("Updating Child..");
-    this.child.updateSmallTable(true, 0);
+    this.smTableChild.updateSmallTable(true, 0);
   }
 }

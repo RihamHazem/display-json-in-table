@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {SelectContainerComponent} from 'ngx-drag-to-select';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
@@ -26,30 +26,41 @@ export class SmTableComponent implements OnInit {
   allConstTable = [];
   tabCounter = 0;
   myIndex = -1;
-  closeResult: string;
+  newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
 
   @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
+  @HostListener('window:resize', ['$event'])
+  public onResize() {
+    console.log('Updating select');
+    this.heightWindow = (window.innerHeight - 110).toString();
+    this.selectContainer.update();
+  }
 
   constructor(private modalService: NgbModal) {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
+
   ngOnInit() {
     this.updateSmallTable(true, 0);
   }
+
   deselectAll() {
     this.selectContainer.clearSelection();
   }
+
   public setTestSelected(row) {
     this.myIndex = -1;
     this.selectContainer.selectItems((item) => {
       return item.hasOwnProperty('test') === true && item['test'] === row;
     });
   }
+
   public setCommentSelected(test) {
     this.selectContainer.selectItems((item) => {
       return item.hasOwnProperty('comment') === true && item['comment'] === test;
     });
   }
+
   public setStatusSelected(row, id) {
     this.myIndex = id;
     this.selectContainer.selectItems((item) => {
@@ -57,6 +68,7 @@ export class SmTableComponent implements OnInit {
       return item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id;
     });
   }
+
   isSelectedDocEmpty(isTest) {
     if (isTest === -1) {
       return this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true).length === 0;
@@ -67,9 +79,9 @@ export class SmTableComponent implements OnInit {
       }).length === 0;
     }
   }
-  newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
+
   public openTestExplorer(testName) {
-    let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
+    let selectedStatus = this.selectedDocuments.filter(item => item.hasOwnProperty('status'));
     let args = "";
     if (selectedStatus.length === 0) {
       args += "dirs[]=" + this.allTableData[testName][0]['exec_gpath'].slice(3) + '&';
@@ -87,30 +99,33 @@ export class SmTableComponent implements OnInit {
         continue;
       args += "dirs[]=" + this.allTableData[selectedStatus[i]['testName']][idx]['exec_gpath'].slice(3) + '&';
     }
-    console.log(args);
     window.open(this.newWindowBaseUrl + args, "_blank");
   }
+
   public showMessage(message) {
     console.log("Message: ", message);
     this.deselectAll();
   }
+
   // this function is responsible for hiding the pop up sub-table *that contains all info of the row* and also the context menu
   hideAllPopUps() {
     this.isSubTableVisible = false;
     this.deselectAll();
   }
+
   // this function responsible for showing the pop up sub-table
   tabs = [];
+
   showPopUpTableTest(testName) {
     this.isSubTableVisible = true;
     this.curRow = this.allTableData[testName];
     let cnt = 0;
     this.tabs = [];
-    let selectedTests = this.selectedDocuments.filter(item=>item.hasOwnProperty('test'));
+    let selectedTests = this.selectedDocuments.filter(item => item.hasOwnProperty('test'));
     for (let i in selectedTests) {
       for (let j in selectedTests[i]['test']['Data']) {
         if (selectedTests[i]['test']['Data'][j]['Status'] !== 'NO STATUS') {
-          this.tabs.push({'testName': selectedTests[i]['test']['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
+          this.tabs.push({'testName': selectedTests[i]['test']['Tests'], 'val': "Tab " + (++cnt), 'i': Number(i), 'j': Number(j)});
         }
       }
     }
@@ -120,18 +135,19 @@ export class SmTableComponent implements OnInit {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
         if (selectedTests.length === 0) {
-          this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+          this.tabs.push({'testName': testName, 'val': "Tab " + (++cnt), 'i': 0, 'j': Number(i)});
         }
       }
     }
     this.tabCounter = 0;
   }
+
   showPopUpTableStatus(testName) {
     this.isSubTableVisible = true;
     this.curRow = this.allTableData[testName];
     let cnt = 0;
     this.tabs = [];
-    let selectedStatus = this.selectedDocuments.filter(item=>item.hasOwnProperty('status'));
+    let selectedStatus = this.selectedDocuments.filter(item => item.hasOwnProperty('status'));
     console.log(selectedStatus);
     let ID = -1;
     for (let i in selectedStatus) {
@@ -139,7 +155,7 @@ export class SmTableComponent implements OnInit {
         if (selectedStatus[i]['status']['Data'][j]['Status'] !== 'NO STATUS' && selectedStatus[i]['id'] === Number(j)) {
           if (ID === -1)
             ID = selectedStatus[i]['id'];
-          this.tabs.push({'testName': selectedStatus[i]['status']['Tests'], 'val': "Tab "+(++cnt), 'i': Number(i), 'j': Number(j)});
+          this.tabs.push({'testName': selectedStatus[i]['status']['Tests'], 'val': "Tab " + (++cnt), 'i': Number(i), 'j': Number(j)});
         }
       }
     }
@@ -149,7 +165,7 @@ export class SmTableComponent implements OnInit {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
         if (selectedStatus.length === 0) {
-          this.tabs.push({'testName': testName, 'val': "Tab "+(++cnt), 'i': 0, 'j': Number(i)});
+          this.tabs.push({'testName': testName, 'val': "Tab " + (++cnt), 'i': 0, 'j': Number(i)});
         }
       }
     }
@@ -165,14 +181,17 @@ export class SmTableComponent implements OnInit {
       this.updateSmallTable(true, colIndex);
     }
   }
+
   enableSearchMode() {
     this.searchMode = true;
   }
+
   disableSearchMode() {
     this.searchMode = false;
     this.filteredTable = this.allConstTable;
     this.curInput = "";
   }
+
   applyChange() {
     if (this.curInput === "") return;
     this.filteredTable = this.allConstTable.filter(item => item['Tests'].indexOf(this.curInput) !== -1);
@@ -186,9 +205,9 @@ export class SmTableComponent implements OnInit {
       for (let index in this.tableData[key]) {
         let subTrue = false;
         for (let fs in this.tableData[key][index]["fStatus"]) {
-          subTrue = subTrue || (this.rowVisibility["fStatus"][ this.tableData[key][index]["fStatus"][fs] ] === true);
+          subTrue = subTrue || (this.rowVisibility["fStatus"][this.tableData[key][index]["fStatus"][fs]] === true);
         }
-        allTrue = allTrue || (this.rowVisibility["Status"][ this.tableData[key][index]["Status"] ] === true && subTrue);
+        allTrue = allTrue || (this.rowVisibility["Status"][this.tableData[key][index]["Status"]] === true && subTrue);
       }
       if (allTrue)
         this.filteredTable.push({"Tests": key, "Data": this.tableData[key]});
@@ -209,37 +228,31 @@ export class SmTableComponent implements OnInit {
     }
     return newArr;
   }
+
   private statusSort(order: boolean, newArr: any[], statusIndex: number) {
     newArr.sort(function (a: string, b: string) {
-      return a['Data'][statusIndex]['Status'] < b['Data'][statusIndex]['Status']? -1 : 1;
+      return a['Data'][statusIndex]['Status'] < b['Data'][statusIndex]['Status'] ? -1 : 1;
     });
     if (!order) {
       newArr.reverse();
     }
     return newArr;
   }
+
   comment = {};
-  open(content, testName) {
+
+  addNewComment(content, testName) {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-      let selectedComments = this.selectedDocuments.filter(item=>item.hasOwnProperty('comment'));
+      let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
       if (selectedComments.length === 0) {
         this.comment[testName] = result;
       }
       for (let selected in selectedComments) {
-        this.comment[ selectedComments[selected]['comment'] ] = result;
+        this.comment[selectedComments[selected]['comment']] = result;
       }
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      this.deselectAll();
+    }, () => {
+      console.log(`Dismissed`);
     });
-  }
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'by pressing ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'by clicking on a backdrop';
-    } else {
-      return  `with: ${reason}`;
-    }
   }
 }

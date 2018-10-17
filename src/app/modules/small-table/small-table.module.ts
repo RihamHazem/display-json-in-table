@@ -12,7 +12,7 @@ import {ContextMenuModule} from 'ngx-contextmenu';
 import {DragToSelectModule} from 'ngx-drag-to-select';
 import {MatAutocompleteModule, MatFormFieldModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgbTabsetModule} from '@ng-bootstrap/ng-bootstrap';
+import {NgbTabsetModule, NgbCarouselModule} from '@ng-bootstrap/ng-bootstrap';
 import { SubmissionsTableComponent } from './components/submissions-table/submissions-table.component';
 
 @NgModule({
@@ -26,7 +26,8 @@ import { SubmissionsTableComponent } from './components/submissions-table/submis
     ReactiveFormsModule,
     DragToSelectModule,
     CoreModule,
-    NgbTabsetModule
+    NgbTabsetModule,
+    NgbCarouselModule
   ],
   exports: [],
   declarations: [SmHomePageComponent, SmTableComponent, SmFilterTableComponent, SmFilterTablePipe, SmTableParamsComponent, SelectedDocFilterPipe, SubmissionsTableComponent],

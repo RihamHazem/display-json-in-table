@@ -45,7 +45,7 @@ export class BgTableComponent implements OnInit {
       }
     }
     args += "action=explore";
-    window.open('/user/rhazem/website/production/JsonParsing/small-table?' + args, '_blank');
+    window.open('/small-table?' + args, '_blank');
   }
   selectRow(id) {
     this.selectContainer.selectItems(item => item === id);

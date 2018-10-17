@@ -1,9 +1,9 @@
 <h4>Test Cases</h4>
 <!--Container that contains the main table-->
-<dts-select-container #container="dts-select-container"
-                      [(selectedItems)]="selectedDocuments"
-                      [selectWithShortcut]="true">
-  <div class="container">
+<div class="my-container">
+  <dts-select-container #selectContainer="dts-select-container"
+                        [(selectedItems)]="selectedDocuments"
+                        [selectWithShortcut]="true">
     <div class="basic-container">
         <table>
           <tr>
@@ -54,8 +54,8 @@
           </tr>
         </table>
     </div>
-  </div>
-</dts-select-container>
+  </dts-select-container>
+</div>
 <!-- Context Menu for test name -->
 
 <context-menu #testMenu (close)="deselectAll()">
@@ -99,8 +99,8 @@
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
-<context-menu #commentMenu (close)="deselectAll()">
-  <ng-template contextMenuItem (execute)="open(content, $event.item)">
+<context-menu #commentMenu>
+  <ng-template contextMenuItem (execute)="addNewComment(content, $event.item)">
     Add New Comment
   </ng-template>
 </context-menu>
@@ -109,14 +109,15 @@
      *ngIf="isSubTableVisible"
      (click)="hideAllPopUps()"></div>
 <!--------------------------------------------------------------------------------------------------->
-<div class="small-container" *ngIf="isSubTableVisible">  <!--<div class="nav-table">-->
+<div class="small-container" *ngIf="isSubTableVisible">
   <div id="controls">
     <h2>More Information</h2>
     <span (click)="hideAllPopUps()">×</span>
   </div>
   <div  style="margin-top: 70px">
     <ngb-tabset>
-      <ngb-tab *ngFor="let cur_tab of tabs" title="{{cur_tab.val}}">
+      <ngb-tab *ngFor="let cur_tab of tabs">
+        <ng-template ngbTabTitle ><span title="{{cur_tab['testName']}}">{{cur_tab.val}}</span></ng-template>
         <ng-template ngbTabContent>
           <table style="background-color:#fff;">
             <tr *ngFor="let col of allColumnData">
@@ -131,7 +132,7 @@
     </ngb-tabset>
   </div>
 </div>
-<!-- Modal -->
+<!-- Comment Modal -->
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Adding New Comment</h4>
