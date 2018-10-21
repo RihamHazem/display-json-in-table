@@ -55,22 +55,24 @@ h4 {
   color: rgba(0,0,0,.87);
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
   position: fixed;
-  left: 25%;
-  width: 50%;
-  top: 40px;
-  height: 580px;
+  left: 10%;
+  width: 80%;
+  top: 100px;
+  height: 480px;
   overflow: auto;
   z-index: 1;
 }
 .small-container #controls {
   background-color: #FAFAFA;
+  border-bottom: 5px #19233E solid;
   color: #19233E;
-  padding: 10px 25px 0 25px;
+  padding: 10px 25px 15px 25px;
   display: flex;
   align-items: center;
   position: fixed;
-  left: 25%;
-  width: 50%;
+  left: 10%;
+  width: 80%;
+  z-index: 1;
 }
 .small-container #controls h2 {
   flex: 50;
@@ -90,4 +92,14 @@ h4 {
 canvas {
   margin: 40px auto;
   display: inline-block;
+}
+
+#whole-window {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }

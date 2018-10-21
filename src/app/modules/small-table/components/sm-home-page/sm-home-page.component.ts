@@ -166,4 +166,7 @@ export class SmHomePageComponent implements OnInit {
     console.log("Updating Child..");
     this.smTableChild.updateSmallTable(true, 0);
   }
+  scrollDown1PX() {
+    window.scrollTo(window.scrollX+1, window.scrollY+1);
+  }
 }

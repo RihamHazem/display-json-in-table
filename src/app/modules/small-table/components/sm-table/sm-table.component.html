@@ -4,7 +4,7 @@
   <dts-select-container #selectContainer="dts-select-container"
                         [(selectedItems)]="selectedDocuments"
                         [selectWithShortcut]="true">
-    <div class="basic-container">
+    <div class="basic-container"  (scroll)="selectContainer.update()">
         <table>
           <tr>
             <th *ngFor="let col of columnNames; let i=index">
@@ -66,11 +66,13 @@
     Cur Selected: {{item}}
   </ng-template>
   <context-menu #subTestMenu>
-    <ng-template contextMenuItem
-                   (execute)="showMessage('Hi, ' + $event.item)"
-                   *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index">
-      Item {{i+1}}: {{doc['testName']}}
-    </ng-template>
+    <span *ngFor="let doc of selectedDocuments; let i = index">
+      <ng-template contextMenuItem
+                   *ngIf="doc.hasOwnProperty('test')===true"
+                   (execute)="showMessage('Hi, ' + $event.item)">
+        Item {{i+1}}: {{doc['testName']}}
+      </ng-template>
+    </span>
   </context-menu>
   <ng-template contextMenuItem let-item (execute)="showPopUpTableTest(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
@@ -88,12 +90,14 @@
     Open Test Explorer (New Window)
   </ng-template>
   <context-menu #subStatusMenu>
-    <ng-template contextMenuItem
+    <span *ngFor="let doc of selectedDocuments; let i = index">
+      <ng-template contextMenuItem
                    (execute)="showMessage('Hi, ' + $event.item)"
-                   *ngFor="let doc of selectedDocuments|selectedDocFilter:myIndex; let i = index"
+                   *ngIf="doc.hasOwnProperty('status')===true"
                    let-data>
-        Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['Status']}}
-    </ng-template>
+          Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['Status']}}
+      </ng-template>
+    </span>
   </context-menu>
   <ng-template contextMenuItem
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
@@ -135,7 +139,7 @@
 <!-- Comment Modal -->
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Adding New Comment</h4>
+    <h5 class="modal-title" id="modal-basic-title">Adding New Comment</h5>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>

@@ -13,16 +13,10 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
   columns = ["TOTAL", "PASSED", "FAILED"];
   objectKeys = Object.keys;
   selectedDocuments = [];
-  tabs = ["Tab 1", "Tab 2", "Tab 3"];
   isPieOpen = false;
 
   @ViewChild('selectContainer') selectContainer: SelectContainerComponent;
   elem: any;
-
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.selectContainer.update();
-  }
   constructor() { }
 
   ngOnInit() {
@@ -43,12 +37,10 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
     }
   }
   updateContainer() {
-    console.log(this.selectContainer);
     this.selectContainer.update();
   }
   chartsUpdate(index) {
     this.chartCanvas[index] = document.createElement("canvas");
-    this.chartCanvas[index].id = 'myChart'+index;
     this.chartCanvas[index].width = 300;
     this.chartCanvas[index].height = 200;
     let ctx = this.chartCanvas[index].getContext('2d');
@@ -72,10 +64,8 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
       }
     });
     this.chartCanvas[index].appendChild(document.createTextNode(this.myCharts[index]));
-    console.log(this.chartCanvas);
   }
   openPieCharts() {
-    console.log(this.selectedDocuments);
     for (let selectedDocumentsKey in this.selectedDocuments) {
       this.elem = document.getElementById(this.selectedDocuments[selectedDocumentsKey]);
       this.elem.appendChild(this.chartCanvas[this.selectedDocuments[selectedDocumentsKey]]);

@@ -111,5 +111,8 @@ export class BgHomePageComponent implements OnInit {
     this.columnNames = [];
     this.isSideMenuVisible = true;
   }
+  scrollDown1PX() {
+    window.scrollTo(window.scrollX+1, window.scrollY+1);
+  }
 
 }

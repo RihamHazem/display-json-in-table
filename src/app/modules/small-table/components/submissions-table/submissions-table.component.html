@@ -30,15 +30,22 @@
     Print Selected Submissions
   </ng-template>
 </context-menu>
+<!--It's just the dark window that appears behind the pop up table-->
+<div id="whole-window"
+     *ngIf="isPieOpen"
+     (click)="closePieCharts()"></div>
 <!--Tabs for PieChart-->
 <div class="small-container" [hidden]="!isPieOpen">
   <div id="controls">
-    <h2>More Information</h2>
+    <h2>Pie Charts</h2>
     <span (click)="closePieCharts()">×</span>
   </div>
-  <div  style="margin-top: 70px; background-color: #19233E">
-    <span *ngFor="let cur_tab of selectedDocuments">
-      <span id="{{cur_tab}}"></span>
-    </span>
+  <div  style="margin-top: 90px; background-color: #19233E">
+    <div class="col-sm-4 mb-3" *ngFor="let cur_tab of selectedDocuments" style="float: left;">
+      <div class="card">
+        <div class="card-header">{{cur_tab}}</div>
+        <div class="card-body" id="{{cur_tab}}"></div>
+      </div>
+    </div>
   </div>
 </div>

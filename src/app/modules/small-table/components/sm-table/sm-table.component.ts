@@ -1,6 +1,6 @@
-import {Component, HostListener, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {SelectContainerComponent} from 'ngx-drag-to-select';
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-sm-table',
@@ -28,13 +28,7 @@ export class SmTableComponent implements OnInit {
   myIndex = -1;
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
 
-  @ViewChild(SelectContainerComponent) selectContainer: SelectContainerComponent;
-  @HostListener('window:resize', ['$event'])
-  public onResize() {
-    console.log('Updating select');
-    this.heightWindow = (window.innerHeight - 110).toString();
-    this.selectContainer.update();
-  }
+  @ViewChild('selectContainer') selectContainer: SelectContainerComponent;
 
   constructor(private modalService: NgbModal) {
     this.heightWindow = (window.innerHeight - 110).toString();
@@ -64,20 +58,8 @@ export class SmTableComponent implements OnInit {
   public setStatusSelected(row, id) {
     this.myIndex = id;
     this.selectContainer.selectItems((item) => {
-      console.log(item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id);
       return item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id;
     });
-  }
-
-  isSelectedDocEmpty(isTest) {
-    if (isTest === -1) {
-      return this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true).length === 0;
-    }
-    else {
-      return this.selectedDocuments.filter((item) => {
-        return item.hasOwnProperty('status') === true && item['id'] === isTest;
-      }).length === 0;
-    }
   }
 
   public openTestExplorer(testName) {
@@ -148,7 +130,6 @@ export class SmTableComponent implements OnInit {
     let cnt = 0;
     this.tabs = [];
     let selectedStatus = this.selectedDocuments.filter(item => item.hasOwnProperty('status'));
-    console.log(selectedStatus);
     let ID = -1;
     for (let i in selectedStatus) {
       for (let j in selectedStatus[i]['status']['Data']) {
@@ -217,7 +198,7 @@ export class SmTableComponent implements OnInit {
     } else if (indxCol >= 1) {
       this.filteredTable = this.statusSort(order, this.filteredTable, indxCol - 1);
     }
-    this.allConstTable = this.filteredTable
+    this.allConstTable = this.filteredTable;
     return this.filteredTable;
   }
 
