@@ -8,13 +8,13 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./sm-table.component.css']
 })
 export class SmTableComponent implements OnInit {
-  heightWindow = "0";
   @Input() tableData = {};
   @Input() columnNames: string[] = [];
   @Input() allTableData = {};
   @Input() allColumnData: any[] = [];
   @Input() rowVisibility = {};
   @Input() map_test_name = {};
+  heightWindow = "0";
   filteredTable = [];
   curRow: any[] = [];
   isSubTableVisible = false;
@@ -26,6 +26,7 @@ export class SmTableComponent implements OnInit {
   allConstTable = [];
   tabCounter = 0;
   myIndex = -1;
+  comment = {};
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
 
   @ViewChild('selectContainer') selectContainer: SelectContainerComponent;
@@ -54,7 +55,6 @@ export class SmTableComponent implements OnInit {
       return item.hasOwnProperty('comment') === true && item['comment'] === test;
     });
   }
-
   public setStatusSelected(row, id) {
     this.myIndex = id;
     this.selectContainer.selectItems((item) => {
@@ -62,7 +62,7 @@ export class SmTableComponent implements OnInit {
     });
   }
 
-  public openTestExplorer(testName) {
+  public openTestExplorerWindow(testName) {
     let selectedStatus = this.selectedDocuments.filter(item => item.hasOwnProperty('status'));
     let args = "";
     if (selectedStatus.length === 0) {
@@ -220,8 +220,6 @@ export class SmTableComponent implements OnInit {
     return newArr;
   }
 
-  comment = {};
-
   addNewComment(content, testName) {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
       let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
@@ -235,5 +233,51 @@ export class SmTableComponent implements OnInit {
     }, () => {
       console.log(`Dismissed`);
     });
+  }
+//  -------------------------------------------------------------------------
+//  Test Context Menu
+  public applyColor() {
+    // body
+  }
+  public showHistory() {
+    // body
+  }
+  public copyTestNames() {
+    // body
+  }
+  public hideTest() {
+    // body
+  }
+//  -------------------------------------------------------------------------
+//  Status Context Menu
+  public openTestExplorer() {
+    // body
+  }
+  public gridJobStatus() {
+
+  }
+  public viewQLog() {
+
+  }
+  public monitorQLog() {
+
+  }
+  public killSelectedJobs() {
+
+  }
+  public runCommandOpenTerminal() {
+
+  }
+  public runCommandOpenTerminalQuick() {
+
+  }
+  public copyFailReasonsToTags() {
+
+  }
+  public openClickBuild() {
+
+  }
+  public openVNC() {
+
   }
 }

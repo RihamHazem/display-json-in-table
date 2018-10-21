@@ -74,20 +74,33 @@
       </ng-template>
     </span>
   </context-menu>
+  <ng-template contextMenuItem
+               (execute)="applyColor()">
+    Apply Color (to all selected cells)
+  </ng-template>
+  <ng-template contextMenuItem
+               (execute)="showHistory()">
+    Show History (selected cells)
+  </ng-template>
+  <ng-template contextMenuItem
+               (execute)="copyTestNames()">
+    Copy Test Names (selected cells)
+  </ng-template>
+  <ng-template contextMenuItem
+               (execute)="hideTest()">
+    Hide Test
+  </ng-template>
   <ng-template contextMenuItem let-item (execute)="showPopUpTableTest(selectedDocuments.length === 0? $event.item : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
 <!--Context menu for status-->
 <context-menu #statusMenu (close)="deselectAll()">
+  <!-- Item #1 with its sub-context-menu -->
   <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event.item)"
                [subMenu]="subStatusMenu"
                let-data>
     Cur Selected: {{data['cur']['Status']}}
-  </ng-template>
-  <ng-template contextMenuItem
-               (execute)="openTestExplorer($event.item['test'])">
-    Open Test Explorer (New Window)
   </ng-template>
   <context-menu #subStatusMenu>
     <span *ngFor="let doc of selectedDocuments; let i = index">
@@ -99,6 +112,62 @@
       </ng-template>
     </span>
   </context-menu>
+  <!-- Item #2 -->
+  <ng-template contextMenuItem
+               (execute)="openTestExplorer()">
+    Open Test Explorer
+  </ng-template>
+  <!-- Item #3 -->
+  <ng-template contextMenuItem
+               (execute)="openTestExplorerWindow($event.item['test'])">
+    Open Test Explorer (New Window)
+  </ng-template>
+  <!-- Item #4 -->
+  <ng-template contextMenuItem
+               (execute)="gridJobStatus()">
+    Grid Job Status
+  </ng-template>
+  <!-- Item #5 -->
+  <ng-template contextMenuItem
+               (execute)="viewQLog()">
+    View Qlog
+  </ng-template>
+  <!-- Item #6 -->
+  <ng-template contextMenuItem
+               (execute)="monitorQLog()">
+    Monitor Qlog
+  </ng-template>
+  <!-- Item #7 -->
+  <ng-template contextMenuItem
+               (execute)="killSelectedJobs()">
+    Kill Selected Jobs
+  </ng-template>
+  <!-- Item #8 -->
+  <ng-template contextMenuItem
+               (execute)="runCommandOpenTerminal()">
+    Run Command/Open Terminal
+  </ng-template>
+  <!-- Item #9 -->
+  <ng-template contextMenuItem
+               (execute)="runCommandOpenTerminalQuick()">
+    Run Command/Open Terminal (QUICK)
+  </ng-template>
+  <!-- Item #10 -->
+  <ng-template contextMenuItem
+               (execute)="copyFailReasonsToTags()">
+    Copy Fail Reasons to Tags
+  </ng-template>
+  <!-- Item #11 -->
+  <ng-template contextMenuItem
+               (execute)="openClickBuild()">
+    Open Click Build
+  </ng-template>
+  <!-- Item #12 -->
+  <ng-template contextMenuItem
+               (execute)="openVNC()">
+    Open VNC
+  </ng-template>
+  <!-- Item #13 -->
   <ng-template contextMenuItem
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>

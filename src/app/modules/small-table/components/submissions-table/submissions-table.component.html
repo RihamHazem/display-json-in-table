@@ -30,6 +30,22 @@
     Print Selected Submissions
   </ng-template>
 </context-menu>
+<div  style="margin-top: 20px; margin-left: 20px">
+  <details>
+    <summary class="btn btn-dark">Pie Chart for all Submissions</summary>
+    <div class="row">
+      <div class="col-sm-4 mb-3"
+           *ngFor="let tab of objectKeys(submissionData)"
+           style="margin-top: 20px">
+        <div class="card">
+          <div class="card-header">{{tab}}</div>
+          <div class="card-body" id="{{tab}}"></div>
+        </div>
+      </div>
+    </div>
+  </details>
+</div>
+<br>
 <!--It's just the dark window that appears behind the pop up table-->
 <div id="whole-window"
      *ngIf="isPieOpen"
@@ -40,11 +56,11 @@
     <h2>Pie Charts</h2>
     <span (click)="closePieCharts()">×</span>
   </div>
-  <div  style="margin-top: 90px; background-color: #19233E">
-    <div class="col-sm-4 mb-3" *ngFor="let cur_tab of selectedDocuments" style="float: left;">
+  <div class="row" style="margin-top: 90px">
+    <div class="col-sm-4 mb-3" *ngFor="let cur_tab of selectedDocuments">
       <div class="card">
         <div class="card-header">{{cur_tab}}</div>
-        <div class="card-body" id="{{cur_tab}}"></div>
+        <div class="card-body" id="{{cur_tab}}-"></div>
       </div>
     </div>
   </div>

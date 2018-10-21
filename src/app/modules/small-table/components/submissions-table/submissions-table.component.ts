@@ -23,9 +23,13 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
   }
   myCharts = {};
   chartCanvas = {};
+  myChartsDocs = {};
+  chartCanvasDocs = {};
   ngAfterViewInit() {
     for (let index in this.submissionData) {
       this.chartsUpdate(index);
+      this.elem = document.getElementById(index);
+      this.elem.appendChild(this.chartCanvas[index]);
     }
   }
   public setSubSelected(row) {
@@ -36,15 +40,35 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
       console.log(this.selectedDocuments[selectedDocumentsKey]);
     }
   }
-  updateContainer() {
-    this.selectContainer.update();
-  }
   chartsUpdate(index) {
     this.chartCanvas[index] = document.createElement("canvas");
+    this.chartCanvasDocs[index] = document.createElement("canvas");
     this.chartCanvas[index].width = 300;
+    this.chartCanvasDocs[index].width = 300;
     this.chartCanvas[index].height = 200;
-    let ctx = this.chartCanvas[index].getContext('2d');
-    this.myCharts[index] = new Chart(ctx, {
+    this.chartCanvasDocs[index].height = 200;
+    let ctx1 = this.chartCanvas[index].getContext('2d');
+    let ctx2 = this.chartCanvasDocs[index].getContext('2d');
+    this.myCharts[index] = new Chart(ctx1, {
+      type: 'pie',
+      data: {
+        labels: this.columns,
+        datasets: [{
+          label: '# of Votes',
+          data: [this.submissionData[index]["TOTAL"], this.submissionData[index]["PASSED"], this.submissionData[index]["FAILED"]],
+          backgroundColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: false
+      }
+    });
+    this.myChartsDocs[index] = new Chart(ctx2, {
       type: 'pie',
       data: {
         labels: this.columns,
@@ -64,11 +88,12 @@ export class SubmissionsTableComponent implements OnInit, AfterViewInit {
       }
     });
     this.chartCanvas[index].appendChild(document.createTextNode(this.myCharts[index]));
+    this.chartCanvasDocs[index].appendChild(document.createTextNode(this.myChartsDocs[index]));
   }
   openPieCharts() {
     for (let selectedDocumentsKey in this.selectedDocuments) {
-      this.elem = document.getElementById(this.selectedDocuments[selectedDocumentsKey]);
-      this.elem.appendChild(this.chartCanvas[this.selectedDocuments[selectedDocumentsKey]]);
+      this.elem = document.getElementById(this.selectedDocuments[selectedDocumentsKey]+'-');
+      this.elem.appendChild(this.chartCanvasDocs[this.selectedDocuments[selectedDocumentsKey]]);
     }
     this.isPieOpen = true;
   }
