@@ -22,8 +22,8 @@ export class SmHomePageComponent implements OnInit {
   // it holds all columns
   allColumnData: string[] = [];
   ////////////////////////////////////////////////
-  columnsToFilterMap = {"exec_state": {}, "fstatus": {}};
-  columnsToFilterVisibility = {"exec_state": {}, "fstatus": {}};
+  columnsToFilterMap = {"exec_state": {}, "fstatus": {}, "DEI": {}};
+  columnsToFilterVisibility = {"exec_state": {}, "fstatus": {}, "DEI": {}};
 
   @ViewChild(SmTableComponent) smTableChild;
 
@@ -94,8 +94,14 @@ export class SmHomePageComponent implements OnInit {
       for (let key in this.myTableData) {
         let curRow = this.myTableData[key];
         for (let index = 0; index < curRow.length; index++) {
+          if (!this.columnsToFilterMap['DEI'].hasOwnProperty("---")) {
+            this.columnsToFilterMap['DEI']["---"] = 1;
+            this.columnsToFilterVisibility['DEI']["---"] = true;
+          } else {
+            this.columnsToFilterMap['DEI']["---"]++;
+          }
           if (curRow[index] === undefined || curRow[index] === null) {
-            if (!this.columnsToFilterMap['exec_state'].hasOwnProperty("---")) {
+            if (!this.columnsToFilterMap['fstatus'].hasOwnProperty("---")) {
               this.columnsToFilterMap['fstatus']["---"] = 0;
             }
             if (this.columnsToFilterMap['exec_state'].hasOwnProperty("NO STATUS")) {

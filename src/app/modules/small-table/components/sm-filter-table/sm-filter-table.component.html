@@ -6,11 +6,11 @@
       <span class="select-all" (click)="selectAll(col_name)">{{ toggleSelectAll[col_name]===undefined||toggleSelectAll[col_name]===null? toggleSelectAll[col_name]="Deselect All": toggleSelectAll[col_name] }}</span>
       <ul class="cell">
         <li *ngFor="let col of objectKeys(columnFilterMap[col_name])">
-          <label [for]="col"
+          <label [for]="col_name+col"
                  style="width: 69%; display: inline-block" >{{col}}<i style="color: darkgray; padding-left: 10px; font-size: small">({{columnFilterMap[col_name][col]}})</i>
           </label>
-          <input [id]="col" type="checkbox" [checked]="columnFilterVisibility[col_name][col]" (change)="tellTheParentColumnChanges(col, col_name)">
-          <label [for]="col"> </label>
+          <input [id]="col_name+col" type="checkbox" [checked]="columnFilterVisibility[col_name][col]" (change)="tellTheParentColumnChanges(col, col_name)">
+          <label [for]="col_name+col"> </label>
         </li>
       </ul>
     </details>
