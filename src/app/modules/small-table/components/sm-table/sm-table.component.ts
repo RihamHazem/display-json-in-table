@@ -249,6 +249,15 @@ export class SmTableComponent implements OnInit {
   }
 //  -------------------------------------------------------------------------
 //  Status Context Menu
+  public selectColorTagGreen() {
+    // body
+  }
+  public selectColorTagYellow() {
+    // body
+  }
+  public selectColorTagRed() {
+    // body
+  }
   public openTestExplorer() {
     // body
   }

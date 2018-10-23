@@ -117,6 +117,25 @@
   </context-menu>
   <!-- Item #2 -->
   <ng-template contextMenuItem
+               [subMenu]="subColorMenu">
+    Select Color Tag
+  </ng-template>
+  <context-menu #subColorMenu>
+    <ng-template contextMenuItem
+                 (execute)="selectColorTagGreen()">
+          Green
+    </ng-template>
+    <ng-template contextMenuItem
+                 (execute)="selectColorTagYellow()">
+          Yellow
+    </ng-template>
+    <ng-template contextMenuItem
+                 (execute)="selectColorTagRed()">
+          Red
+    </ng-template>
+  </context-menu>
+  <!-- Item #2 -->
+  <ng-template contextMenuItem
                (execute)="openTestExplorer()">
     Open Test Explorer
   </ng-template>
