@@ -11,3 +11,8 @@
 #sidebar {
   flex: 2;
 }
+app-bg-filter-table {
+  position: fixed;
+  left: 0;
+  width: 18%;
+}

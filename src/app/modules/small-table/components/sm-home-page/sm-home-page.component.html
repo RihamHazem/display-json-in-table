@@ -7,11 +7,8 @@
 </div>
 <div id="vertical-alignment">
   <div id="sidebar" [hidden]="!isSideMenuVisible">
-    <app-sm-filter-table [map_status]="map_status"
-                         [map_fStatus]="map_fStatus"
-                         [isStatusVisible]="statusVisibility"
-                         [isfStatusVisible]="fStatusVisibility"
-
+    <app-sm-filter-table style="position: fixed; left: 0; width: 19%;" [columnFilterMap]="columnsToFilterMap"
+                         [columnFilterVisibility]="columnsToFilterVisibility"
                          (filterMe)="onFiltering()"
                          *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-filter-table>
   </div>
@@ -23,8 +20,7 @@
                   [columnNames]="columnNames"
                   [allTableData]="allTableData"
                   [allColumnData]="allColumnData"
-                  [rowVisibility]="{'Status': statusVisibility, 'fStatus': fStatusVisibility}"
-                  [map_test_name]="map_test_name"
+                  [rowVisibility]="columnsToFilterVisibility"
                   *ngIf="gettingData === false && objectKey(myTableData).length !== 0"></app-sm-table>
   </div>
 </div>

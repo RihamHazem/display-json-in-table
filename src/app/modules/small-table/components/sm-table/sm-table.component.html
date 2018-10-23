@@ -10,7 +10,7 @@
             <th *ngFor="let col of columnNames; let i=index">
               <div style="margin-top: 10px; display: inline-block" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'">
                 {{col}}
-                <span *ngIf="col != 'Comment'"
+                <span *ngIf="col != 'Comment' && col != 'DEI' && col != 'Tags' && col != 'Severity'"
                       style="margin-left: 10px; cursor:pointer;"
                       (click)="changeSortingOrder(i)">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
               </div>
@@ -38,11 +38,11 @@
                 [contextMenuSubject]="{'index': j, 'cur': item, 'test': row['Tests']}"
                 (contextmenu)="setStatusSelected(row, j)"
                 [dtsSelectItem]="{'status': row, 'testName': row['Tests'], 'id': j}">
-              <span>{{item["Status"]}}</span>
+              <span>{{item["exec_state"]}}</span>
               <br><br>
-              <span *ngIf="item['fStatus'][0] === '---'">---</span>
-              <ul style="margin-left: 15px" *ngIf="item['fStatus'][0] !== '---'">
-                <li *ngFor="let f_s of item['fStatus']">{{f_s}}</li>
+              <span *ngIf="item['fstatus'][0] === '---'">---</span>
+              <ul style="margin-left: 15px" *ngIf="item['fstatus'][0] !== '---'">
+                <li *ngFor="let f_s of item['fstatus']">{{f_s}}</li>
               </ul>
             </td>
             <td [contextMenu]="commentMenu"
@@ -51,6 +51,9 @@
                 [dtsSelectItem]="{'comment': row['Tests']}">
               {{ comment[row['Tests']] === undefined || comment[row['Tests']] === null? comment[row['Tests']]="No Comment" : comment[row['Tests']] }}
             </td>
+            <td id="DEI">---</td>
+            <td id="Tags">---</td>
+            <td id="Severity">---</td>
           </tr>
         </table>
     </div>
@@ -100,7 +103,7 @@
                (execute)="showMessage('Hi, ' + $event.item)"
                [subMenu]="subStatusMenu"
                let-data>
-    Cur Selected: {{data['cur']['Status']}}
+    Cur Selected: {{data['cur']['exec_state']}}
   </ng-template>
   <context-menu #subStatusMenu>
     <span *ngFor="let doc of selectedDocuments; let i = index">
@@ -108,7 +111,7 @@
                    (execute)="showMessage('Hi, ' + $event.item)"
                    *ngIf="doc.hasOwnProperty('status')===true"
                    let-data>
-          Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['Status']}}
+          Item {{i+1}}: {{doc['status']['Data'][ data['index'] ]['exec_state']}}
       </ng-template>
     </span>
   </context-menu>

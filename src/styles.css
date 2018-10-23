@@ -22,7 +22,7 @@ context-menu-content .ngx-contextmenu .dropdown-menu {
 context-menu-content .ngx-contextmenu li {
   display: block;
   border-top: solid 1px #dedede;
-  padding: 5px 0;
+  padding: 2px 0;
 }
 context-menu-content .ngx-contextmenu li:first-child {
   border-top:none;
@@ -30,7 +30,7 @@ context-menu-content .ngx-contextmenu li:first-child {
 context-menu-content .ngx-contextmenu a {
   color: #19233E;
   display: block;
-  padding: 0.5em 1em;
+  padding: 0.1em 0.5em;
   text-decoration: none;
 }
 context-menu-content .ngx-contextmenu a:hover {

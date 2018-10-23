@@ -13,7 +13,6 @@ export class SmTableComponent implements OnInit {
   @Input() allTableData = {};
   @Input() allColumnData: any[] = [];
   @Input() rowVisibility = {};
-  @Input() map_test_name = {};
   heightWindow = "0";
   filteredTable = [];
   curRow: any[] = [];
@@ -106,14 +105,14 @@ export class SmTableComponent implements OnInit {
     let selectedTests = this.selectedDocuments.filter(item => item.hasOwnProperty('test'));
     for (let i in selectedTests) {
       for (let j in selectedTests[i]['test']['Data']) {
-        if (selectedTests[i]['test']['Data'][j]['Status'] !== 'NO STATUS') {
+        if (selectedTests[i]['test']['Data'][j]['exec_state'] !== 'NO STATUS') {
           this.tabs.push({'testName': selectedTests[i]['test']['Tests'], 'val': "Tab " + (++cnt), 'i': Number(i), 'j': Number(j)});
         }
       }
     }
     let once = true;
     for (let i in this.curRow) {
-      if (this.curRow[i]['Status'] !== 'NO STATUS' && once) {
+      if (this.curRow[i]['exec_state'] !== 'NO STATUS' && once) {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
         if (selectedTests.length === 0) {
@@ -133,7 +132,7 @@ export class SmTableComponent implements OnInit {
     let ID = -1;
     for (let i in selectedStatus) {
       for (let j in selectedStatus[i]['status']['Data']) {
-        if (selectedStatus[i]['status']['Data'][j]['Status'] !== 'NO STATUS' && selectedStatus[i]['id'] === Number(j)) {
+        if (selectedStatus[i]['status']['Data'][j]['exec_state'] !== 'NO STATUS' && selectedStatus[i]['id'] === Number(j)) {
           if (ID === -1)
             ID = selectedStatus[i]['id'];
           this.tabs.push({'testName': selectedStatus[i]['status']['Tests'], 'val': "Tab " + (++cnt), 'i': Number(i), 'j': Number(j)});
@@ -142,7 +141,7 @@ export class SmTableComponent implements OnInit {
     }
     let once = true;
     for (let i in this.curRow) {
-      if (this.curRow[i]['Status'] !== 'NO STATUS' && (ID === -1 || ID === Number(i)) && once) {
+      if (this.curRow[i]['exec_state'] !== 'NO STATUS' && (ID === -1 || ID === Number(i)) && once) {
         this.selectedTab = {'i': 0, 'j': Number(i)};
         once = false;
         if (selectedStatus.length === 0) {
@@ -185,10 +184,10 @@ export class SmTableComponent implements OnInit {
       let allTrue = false;
       for (let index in this.tableData[key]) {
         let subTrue = false;
-        for (let fs in this.tableData[key][index]["fStatus"]) {
-          subTrue = subTrue || (this.rowVisibility["fStatus"][this.tableData[key][index]["fStatus"][fs]] === true);
+        for (let fs in this.tableData[key][index]["fstatus"]) {
+          subTrue = subTrue || (this.rowVisibility["fstatus"][this.tableData[key][index]["fstatus"][fs]] === true);
         }
-        allTrue = allTrue || (this.rowVisibility["Status"][this.tableData[key][index]["Status"]] === true && subTrue);
+        allTrue = allTrue || (this.rowVisibility["exec_state"][this.tableData[key][index]["exec_state"]] === true && subTrue);
       }
       if (allTrue)
         this.filteredTable.push({"Tests": key, "Data": this.tableData[key]});
@@ -212,7 +211,7 @@ export class SmTableComponent implements OnInit {
 
   private statusSort(order: boolean, newArr: any[], statusIndex: number) {
     newArr.sort(function (a: string, b: string) {
-      return a['Data'][statusIndex]['Status'] < b['Data'][statusIndex]['Status'] ? -1 : 1;
+      return a['Data'][statusIndex]['exec_state'] < b['Data'][statusIndex]['exec_state'] ? -1 : 1;
     });
     if (!order) {
       newArr.reverse();

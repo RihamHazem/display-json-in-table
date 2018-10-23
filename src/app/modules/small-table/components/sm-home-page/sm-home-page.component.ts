@@ -1,7 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { GetJsonService } from '../../../../shared/get-json.service';
 import {SmTableComponent} from '../sm-table/sm-table.component';
-import {SubmissionsTableComponent} from '../submissions-table/submissions-table.component';
 
 @Component({
   selector: 'app-sm-home-page',
@@ -17,24 +16,16 @@ export class SmHomePageComponent implements OnInit {
   columnNames: string[] = ["Tests"];
   // toggle sidebar visibility
   isSideMenuVisible = true;
-  // it holds the visibility of Status Field
-  statusVisibility = {};
-  // it holds the visibility of fStatus field
-  fStatusVisibility = {};
   // it holds all rows for all columns
   allTableData = {};
   submissionsData = {};
   // it holds all columns
   allColumnData: string[] = [];
-  // it counts the occurrences of status field values in the given JSON
-  map_status = {};
-  // it counts the occurrences of f_status field
-  map_fStatus = {};
-  // it maps the test name to its index in the given JSON
-  map_test_name = {};
+  ////////////////////////////////////////////////
+  columnsToFilterMap = {"exec_state": {}, "fstatus": {}};
+  columnsToFilterVisibility = {"exec_state": {}, "fstatus": {}};
 
   @ViewChild(SmTableComponent) smTableChild;
-  @ViewChild(SubmissionsTableComponent) submissionTableChild;
 
   constructor( private _getJsonService: GetJsonService ) { }
 
@@ -48,7 +39,6 @@ export class SmHomePageComponent implements OnInit {
     this.emptyAllData();
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let once: boolean = true;
-      let testIndex: number = 0;
       for (let i in data) {
         let curData = data[i]['test_instances'];
         this.submissionsData[ data[i]['name'] ] = {
@@ -58,27 +48,18 @@ export class SmHomePageComponent implements OnInit {
         };
         this.columnNames.push(data[i]['name']);
         for (let j in curData) {
-          let test_name: string = curData[j]['test_name'];
+          let curTestCase = curData[j];
+          let test_name: string = curTestCase['test_name'];
           if (!this.myTableData.hasOwnProperty(test_name)) {
             this.myTableData[test_name] = new Array(data.length);
-            this.map_test_name[test_name] = testIndex++;
           }
-          let exec_status = curData[j]['exec_state'];
-          let f_status = curData[j]['fstatus'];
-          f_status = this.getUniqueSubSentences(curData[j]['fstatus']);
+          let exec_status = curTestCase['exec_state'];
+          let f_status = curTestCase['fstatus'];
+          f_status = this.getUniqueSubSentences(f_status);
           this.myTableData[test_name][i] = {
-            'Status': exec_status,
-            'fStatus': f_status
+            'exec_state': exec_status,
+            'fstatus': f_status
           };
-          if (this.map_status.hasOwnProperty(exec_status)) {
-            // it counts the status value so that it would be used later for filtering the row's of the table
-            this.map_status[exec_status]++;
-          } else {
-            // it sets the status value to 1.
-            this.map_status[exec_status] = 1;
-            // marks the rows that have all values of status as visible
-            this.statusVisibility[exec_status] = true;
-          }
 
           // then it's pushed to allTableData Object
           if (!this.allTableData.hasOwnProperty(test_name)) {
@@ -86,11 +67,20 @@ export class SmHomePageComponent implements OnInit {
           }
 
           let temp = {};
-          for (let key in curData[j]) {
-            temp[key] = curData[j][key];
+          for (let key in curTestCase) {
+            var preparedData = curTestCase[key];
+            temp[key] = preparedData;
             if (once) {
               // saves all the columns
               this.allColumnData.push(key);
+            }
+            if (key !== 'fstatus' && this.columnsToFilterMap.hasOwnProperty(key)) {
+              if(this.columnsToFilterMap[key].hasOwnProperty(preparedData)) {
+                this.columnsToFilterMap[key][preparedData]++;
+              } else {
+                this.columnsToFilterMap[key][preparedData] = 1;
+                this.columnsToFilterVisibility[key][preparedData] = true;
+              }
             }
           }
           this.allTableData[test_name][i] = temp;
@@ -98,45 +88,45 @@ export class SmHomePageComponent implements OnInit {
         }
       }
       this.columnNames.push("Comment");
+      this.columnNames.push("DEI");
+      this.columnNames.push("Tags");
+      this.columnNames.push("Severity");
       for (let key in this.myTableData) {
         let curRow = this.myTableData[key];
         for (let index = 0; index < curRow.length; index++) {
           if (curRow[index] === undefined || curRow[index] === null) {
-            if (!this.map_fStatus.hasOwnProperty("---")) {
-              this.map_fStatus["---"] = 0;
+            if (!this.columnsToFilterMap['exec_state'].hasOwnProperty("---")) {
+              this.columnsToFilterMap['fstatus']["---"] = 0;
             }
-            if (this.map_status.hasOwnProperty("NO STATUS")) {
-              this.map_status["NO STATUS"]++;
-              this.map_fStatus["---"]++;
+            if (this.columnsToFilterMap['exec_state'].hasOwnProperty("NO STATUS")) {
+              this.columnsToFilterMap['exec_state']["NO STATUS"]++;
+              this.columnsToFilterMap['fstatus']["---"]++;
               curRow[index] = {
-                "Status": "NO STATUS",
-                "fStatus": ["---"]
+                "exec_state": "NO STATUS",
+                "fstatus": ["---"]
               };
             } else {
-              this.map_status["NO STATUS"] = 1;
-              this.map_fStatus["---"]++;
+              this.columnsToFilterMap['exec_state']["NO STATUS"] = 1;
+              this.columnsToFilterMap['fstatus']["---"]++;
               // marks the rows that have all values of status as visible
-              this.statusVisibility["NO STATUS"] = true;
+              this.columnsToFilterVisibility['exec_state']["NO STATUS"] = true;
               curRow[index] = {
-                "Status": "NO STATUS",
-                "fStatus": ["---"]
+                "exec_state": "NO STATUS",
+                "fstatus": ["---"]
               };
             }
           }
         }
       }
       this.gettingData = false;
+      console.log(this.columnsToFilterMap);
+      console.log(this.columnsToFilterVisibility);
     });
   }
 
   private emptyAllData() {
     this.myTableData = {};
     this.allTableData = {};
-    this.statusVisibility = {};
-    this.fStatusVisibility = {};
-    this.map_status = {};
-    this.map_fStatus = {};
-    this.map_test_name = {};
     this.allColumnData = [];
     this.columnNames = ["Tests"];
     this.isSideMenuVisible = true;
@@ -151,11 +141,11 @@ export class SmHomePageComponent implements OnInit {
     for (let i in splitter) {
       if (!mp.hasOwnProperty(splitter[i])) {
         ans.push(splitter[i]);
-        if (this.map_fStatus.hasOwnProperty(splitter[i])) {
-          this.map_fStatus[splitter[i]]++;
+        if (this.columnsToFilterMap['fstatus'].hasOwnProperty(splitter[i])) {
+          this.columnsToFilterMap['fstatus'][splitter[i]]++;
         } else {
-          this.map_fStatus[splitter[i]] = 1;
-          this.fStatusVisibility[splitter[i]] = true;
+          this.columnsToFilterMap['fstatus'][splitter[i]] = 1;
+          this.columnsToFilterVisibility['fstatus'][splitter[i]] = true;
         }
       }
       mp[splitter[i]] = 1;

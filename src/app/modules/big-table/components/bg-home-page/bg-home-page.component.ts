@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {GetJsonService} from '../../../../shared/get-json.service';
+import { Component, OnInit } from '@angular/core';
+import { GetJsonService } from '../../../../shared/get-json.service';
 
 @Component({
   selector: 'app-bg-home-page',
