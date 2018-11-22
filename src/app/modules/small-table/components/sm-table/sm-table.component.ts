@@ -234,8 +234,10 @@ export class SmTableComponent implements OnInit {
       if (selectedComments.length === 0) {
         selectedComments.push(testName);
       }
+      let selected_ids = [];
       for (let selected in selectedComments) {
         testName = selectedComments[selected]['comment'];
+        selected_ids.push(this.allTableData[testName][0]['id']);
         if (!this.comments.hasOwnProperty(testName)) {
           this.comments[testName] = [];
         }
@@ -247,7 +249,7 @@ export class SmTableComponent implements OnInit {
           'type': 'GENERAL',
           'content': result['result']
         },
-        "attached_test_instance_ids": selectedComments
+        "attached_test_instance_ids": selected_ids
       });
       this.deselectAll();
 
