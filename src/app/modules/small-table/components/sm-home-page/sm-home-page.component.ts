@@ -14,6 +14,7 @@ export class SmHomePageComponent implements OnInit {
   gettingData = true;
   // it contains the columns that being displayed in the table
   columnNames: string[] = ["Tests"];
+  comments = {};
   // toggle sidebar visibility
   isSideMenuVisible = true;
   // it holds all rows for all columns
@@ -22,8 +23,8 @@ export class SmHomePageComponent implements OnInit {
   // it holds all columns
   allColumnData: string[] = [];
   ////////////////////////////////////////////////
-  columnsToFilterMap = {"exec_state": {}, "fstatus": {}, "DEI": {}};
-  columnsToFilterVisibility = {"exec_state": {}, "fstatus": {}, "DEI": {}};
+  columnsToFilterMap = {"exec_state": {}, "fstatus": {}, "Test Owner": {}, "DEI": {}};
+  columnsToFilterVisibility = {"exec_state": {}, "fstatus": {}, "Test Owner": {}, "DEI": {}};
 
   @ViewChild(SmTableComponent) smTableChild;
 
@@ -37,10 +38,12 @@ export class SmHomePageComponent implements OnInit {
     if (newParams === "" || newParams === null || newParams === undefined) return;
     this.gettingData = true;
     this.emptyAllData();
+    let once: boolean = true;
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let once: boolean = true;
       for (let i in data) {
         let curData = data[i]['test_instances'];
+
         this.submissionsData[ data[i]['name'] ] = {
           'TOTAL': data[i]['test_instance_counts']['TOTAL'],
           'PASSED': data[i]['test_instance_counts']['PASSED'],
@@ -55,6 +58,11 @@ export class SmHomePageComponent implements OnInit {
           }
           let exec_status = curTestCase['exec_state'];
           let f_status = curTestCase['fstatus'];
+          let test_comments = curTestCase['notes'];
+          if (!this.comments.hasOwnProperty(test_name)) {
+            this.comments[test_name] = test_comments;
+            console.log(test_comments);
+          }
           f_status = this.getUniqueSubSentences(f_status);
           this.myTableData[test_name][i] = {
             'exec_state': exec_status,
@@ -88,12 +96,18 @@ export class SmHomePageComponent implements OnInit {
         }
       }
       this.columnNames.push("Comment");
+      this.columnNames.push("Test Owner");
       this.columnNames.push("DEI");
       this.columnNames.push("Tags");
-      this.columnNames.push("Severity");
       for (let key in this.myTableData) {
         let curRow = this.myTableData[key];
         for (let index = 0; index < curRow.length; index++) {
+          if (!this.columnsToFilterMap['Test Owner'].hasOwnProperty("---")) {
+            this.columnsToFilterMap['Test Owner']["---"] = 1;
+            this.columnsToFilterVisibility['Test Owner']["---"] = true;
+          } else {
+            this.columnsToFilterMap['Test Owner']["---"]++;
+          }
           if (!this.columnsToFilterMap['DEI'].hasOwnProperty("---")) {
             this.columnsToFilterMap['DEI']["---"] = 1;
             this.columnsToFilterVisibility['DEI']["---"] = true;
@@ -124,9 +138,8 @@ export class SmHomePageComponent implements OnInit {
           }
         }
       }
+      console.log(this.comments);
       this.gettingData = false;
-      console.log(this.columnsToFilterMap);
-      console.log(this.columnsToFilterVisibility);
     });
   }
 

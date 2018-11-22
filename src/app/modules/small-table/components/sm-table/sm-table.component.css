@@ -53,6 +53,12 @@ tr:last-child td {
   outline: none;
   margin-top: 5px;
 }
+#username {
+  border-radius: 5px;
+  border: 1px lightgray solid;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+}
 #auto-complete-body {
   position: absolute;
   top: 80px;

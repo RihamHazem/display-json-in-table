@@ -1,6 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {SelectContainerComponent} from 'ngx-drag-to-select';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {GetJsonService} from '../../../../shared/get-json.service';
 
 @Component({
   selector: 'app-sm-table',
@@ -13,6 +14,7 @@ export class SmTableComponent implements OnInit {
   @Input() allTableData = {};
   @Input() allColumnData: any[] = [];
   @Input() rowVisibility = {};
+  @Input() comments = {};
   heightWindow = "0";
   filteredTable = [];
   curRow: any[] = [];
@@ -25,12 +27,12 @@ export class SmTableComponent implements OnInit {
   allConstTable = [];
   tabCounter = 0;
   myIndex = -1;
-  comment = {};
+  JSONstringify = JSON.stringify;
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
 
   @ViewChild('selectContainer') selectContainer: SelectContainerComponent;
 
-  constructor(private modalService: NgbModal) {
+  constructor(private modalService: NgbModal, private _getJsonService: GetJsonService) {
     this.heightWindow = (window.innerHeight - 110).toString();
   }
 
@@ -219,19 +221,50 @@ export class SmTableComponent implements OnInit {
     return newArr;
   }
 
+  sendComment(params) {
+    this._getJsonService.createNote(params).subscribe(data => {
+      console.log(data);
+    });
+  }
+
   addNewComment(content, testName) {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      if (result === undefined || result === null || result['result'] === '' || result['username'] === '') return;
       let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
       if (selectedComments.length === 0) {
-        this.comment[testName] = result;
+        selectedComments.push(testName);
       }
       for (let selected in selectedComments) {
-        this.comment[selectedComments[selected]['comment']] = result;
+        testName = selectedComments[selected]['comment'];
+        if (!this.comments.hasOwnProperty(testName)) {
+          this.comments[testName] = [];
+        }
+        this.comments[ testName ].push(result);
       }
+      this.sendComment({
+        "note": {
+          'creator': result['username'],
+          'type': 'GENERAL',
+          'content': result['result']
+        },
+        "attached_test_instance_ids": selectedComments
+      });
       this.deselectAll();
+
+      this.showError = false;
     }, () => {
       console.log(`Dismissed`);
+      this.showError = false;
     });
+  }
+  showError = false;
+  commentSubmission(modal, txt_val, user_val) {
+    if (txt_val === '' || user_val === '') {
+      this.showError = true;
+      return;
+    }
+    modal.close({'result': txt_val, 'username': user_val});
+    this.showError = false;
   }
 //  -------------------------------------------------------------------------
 //  Test Context Menu

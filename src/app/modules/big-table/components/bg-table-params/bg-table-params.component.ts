@@ -7,7 +7,7 @@ import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/c
 })
 export class BgTableParamsComponent implements OnInit, AfterViewInit {
   @Output() tableParam = new EventEmitter<string>();
-  query = "pattern=find_run_submissions -q \"submit_time>='2018-10-10' and submitter='rabdelgh'\"";
+  query = "pattern=find_run_submissions -q \"submit_time>='2018-11-20' and submitter='rabdelgh'\"";
   constructor() { }
 
   ngOnInit() {

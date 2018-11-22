@@ -10,7 +10,7 @@
             <th *ngFor="let col of columnNames; let i=index">
               <div style="margin-top: 10px; display: inline-block" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'">
                 {{col}}
-                <span *ngIf="col != 'Comment' && col != 'DEI' && col != 'Tags' && col != 'Severity'"
+                <span *ngIf="col != 'Comment' && col != 'DEI' && col != 'Tags' && col != 'Test Owner'"
                       style="margin-left: 10px; cursor:pointer;"
                       (click)="changeSortingOrder(i)">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
               </div>
@@ -49,7 +49,7 @@
                 (contextmenu)="setCommentSelected(row['Tests'])"
                 [contextMenuSubject]="row['Tests']"
                 [dtsSelectItem]="{'comment': row['Tests']}">
-              {{ comment[row['Tests']] === undefined || comment[row['Tests']] === null? comment[row['Tests']]="No Comment" : comment[row['Tests']] }}
+              {{ comments[row['Tests']].length === 0? "No Comment" : comments[row['Tests']].length + " Comments" }}
             </td>
             <td id="DEI">---</td>
             <td id="Tags">---</td>
@@ -195,6 +195,9 @@
 </context-menu>
 
 <context-menu #commentMenu>
+  <ng-template contextMenuItem>
+    Show Comments
+  </ng-template>
   <ng-template contextMenuItem (execute)="addNewComment(content, $event.item)">
     Add New Comment
   </ng-template>
@@ -218,7 +221,7 @@
             <tr *ngFor="let col of allColumnData">
               <th> {{col}} </th>
               <td>
-                {{allTableData[cur_tab['testName']][cur_tab.j][col]}}
+                {{JSONstringify(allTableData[cur_tab['testName']][cur_tab.j][col])}}
               </td>
             </tr>
           </table>
@@ -236,16 +239,21 @@
     </button>
   </div>
   <div class="modal-body">
-    <form>
+    <form action="#">
       <div class="form-group">
+        <div class="alert alert-danger" *ngIf="showError">Please fill all fields</div>
+        <label for="username">Username</label>
+        <div class="input-group">
+          <input type="text" placeholder="type username.." #user_val id="username" required>
+        </div>
         <label for="comment-content">Type Your Comment</label>
         <div class="input-group">
-          <textarea id="comment-content" #txt_val class="form-control" placeholder="type your comment here.."></textarea>
+          <textarea id="comment-content" #txt_val class="form-control" placeholder="type your comment here.." required></textarea>
         </div>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-dark" (click)="commentSubmission(modal, txt_val.value, user_val.value)">Save</button>
+      </div>
     </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="modal.close(txt_val.value)">Save</button>
   </div>
 </ng-template>
