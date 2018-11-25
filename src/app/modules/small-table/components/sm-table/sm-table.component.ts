@@ -28,6 +28,7 @@ export class SmTableComponent implements OnInit {
   tabCounter = 0;
   myIndex = -1;
   JSONstringify = JSON.stringify;
+  objectKeys = Object.keys;
   newWindowBaseUrl = 'http://regweb/regression_web/php/browse_php/browse_multi.php?';
 
   @ViewChild('selectContainer') selectContainer: SelectContainerComponent;
@@ -93,6 +94,7 @@ export class SmTableComponent implements OnInit {
   // this function is responsible for hiding the pop up sub-table *that contains all info of the row* and also the context menu
   hideAllPopUps() {
     this.isSubTableVisible = false;
+    this.isShowCommentsMode = false;
     this.deselectAll();
   }
 
@@ -221,51 +223,89 @@ export class SmTableComponent implements OnInit {
     return newArr;
   }
 
-  sendComment(params) {
+  showError = false;
+  loading = false;
+  errorResult = "Please fill all fields";
+  shownComments = [];
+  isShowCommentsMode = false;
+  showComment() {
+    this.isShowCommentsMode = true;
+    this.shownComments = [];
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
+    for (let selected in selectedComments) {
+      this.shownComments.push(this.comments[selectedComments[selected]['comment']]);
+    }
+  }
+  attachComment(attach_comment) {
+    this.shownComments = [];
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
+    for (let selected in selectedComments) {
+      let curTestCase = this.comments[selectedComments[selected]['comment']];
+      for (let comm in curTestCase) {
+        this.shownComments.push(curTestCase[comm]);
+      }
+    }
+    this.attachCommentList(attach_comment);
+  }
+  attachCommentSubmission(modal) {
+
+  }
+  sendComment(params, modal) {
     this._getJsonService.createNote(params).subscribe(data => {
       console.log(data);
+      // if the request is successful then close the modal
+      if (data.hasOwnProperty("result") && data["result"] === "OK") {
+        modal.close();
+      } else {
+        this.showError = true;
+        this.errorResult = "Please, Make sure that the entered data is correct!";
+      }
+      this.loading = false;
     });
   }
 
-  addNewComment(content, testName) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
-      if (result === undefined || result === null || result['result'] === '' || result['username'] === '') return;
-      let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
-      if (selectedComments.length === 0) {
-        selectedComments.push(testName);
-      }
-      let selected_ids = [];
-      for (let selected in selectedComments) {
-        testName = selectedComments[selected]['comment'];
-        selected_ids.push(this.allTableData[testName][0]['id']);
-        if (!this.comments.hasOwnProperty(testName)) {
-          this.comments[testName] = [];
-        }
-        this.comments[ testName ].push(result);
-      }
-      this.sendComment({
-        "note": {
-          'creator': result['username'],
-          'type': 'GENERAL',
-          'content': result['result']
-        },
-        "attached_test_instance_ids": selected_ids
-      });
+  addNewComment(content) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       this.deselectAll();
-
       this.showError = false;
     }, () => {
       console.log(`Dismissed`);
       this.showError = false;
     });
   }
-  showError = false;
+  attachCommentList(attach_comment) {
+    this.modalService.open(attach_comment, {ariaLabelledBy: 'modalComm-basic-title'}).result.then(() => {
+      this.deselectAll();
+    }, () => {
+      console.log(`Dismissed`);
+    });
+  }
   commentSubmission(modal, txt_val, user_val) {
     if (txt_val === '' || user_val === '') {
+      this.errorResult = "Please fill all fields";
       this.showError = true;
       return;
     }
-    modal.close({'result': txt_val, 'username': user_val});
+    // *show loader to indicate that there's some processing*
+    this.loading = true;
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
+    let selected_ids = [];
+    for (let selected in selectedComments) {
+      let testName = selectedComments[selected]['comment'];
+      selected_ids.push(this.allTableData[ testName ][0]['id']);
+      if (!this.comments.hasOwnProperty(testName)) {
+        this.comments[ testName ] = [];
+      }
+      this.comments[ testName ].push({'result': txt_val, 'username': user_val});
+    }
+    this.sendComment({
+      "note": {
+        'creator': user_val,
+        'type': 'GENERAL',
+        'content': txt_val
+      },
+      "attached_test_instance_ids": selected_ids
+    }, modal);
     this.showError = false;
   }
 //  -------------------------------------------------------------------------

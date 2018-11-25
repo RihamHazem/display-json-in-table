@@ -61,7 +61,6 @@ export class SmHomePageComponent implements OnInit {
           let test_comments = curTestCase['notes'];
           if (!this.comments.hasOwnProperty(test_name)) {
             this.comments[test_name] = test_comments;
-            console.log(test_comments);
           }
           f_status = this.getUniqueSubSentences(f_status);
           this.myTableData[test_name][i] = {
@@ -138,7 +137,6 @@ export class SmHomePageComponent implements OnInit {
           }
         }
       }
-      console.log(this.comments);
       this.gettingData = false;
     });
   }

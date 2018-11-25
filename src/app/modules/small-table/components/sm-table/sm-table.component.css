@@ -29,7 +29,7 @@ td, th {
 tr {
   border-bottom: 1px solid #000000;
 }
-tr:last-child td {
+tr:last-child td, #comment-table tr:last-child th {
   border: 0;
 }
 
@@ -56,7 +56,7 @@ tr:last-child td {
 #username {
   border-radius: 5px;
   border: 1px lightgray solid;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   padding: 5px 10px;
 }
 #auto-complete-body {
@@ -85,7 +85,7 @@ h4 {
 /******************************************/
 
 .small-container {
-  background-color: #fafafa;
+  background-color: #ffffff;
   color: rgba(0,0,0,.87);
   box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
   position: fixed;
@@ -96,7 +96,7 @@ h4 {
   overflow: auto;
   z-index: 1;
 }
-.small-container #controls {
+.small-container .controls {
   background-color: #FAFAFA;
   color: #19233E;
   padding: 10px 25px;
@@ -106,10 +106,10 @@ h4 {
   left: 10%;
   width: 80%;
 }
-.small-container #controls h2 {
+.small-container .controls h2 {
   flex: 50;
 }
-.small-container #controls span {
+.small-container .controls span {
   font-size: x-large;
   cursor: pointer;
   flex: 1;

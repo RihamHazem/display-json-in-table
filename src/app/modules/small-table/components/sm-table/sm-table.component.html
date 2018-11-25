@@ -195,11 +195,14 @@
 </context-menu>
 
 <context-menu #commentMenu>
-  <ng-template contextMenuItem>
+  <ng-template contextMenuItem (execute)="addNewComment(content)">
+    Add New Comment
+  </ng-template>
+  <ng-template contextMenuItem (execute)="showComment()">
     Show Comments
   </ng-template>
-  <ng-template contextMenuItem (execute)="addNewComment(content, $event.item)">
-    Add New Comment
+  <ng-template contextMenuItem (execute)="attachComment(attach_comment)">
+    Attach Comment(s) to Test Case(s)
   </ng-template>
 </context-menu>
 <!--It's just the dark window that appears behind the pop up table-->
@@ -208,7 +211,7 @@
      (click)="hideAllPopUps()"></div>
 <!--------------------------------------------------------------------------------------------------->
 <div class="small-container" *ngIf="isSubTableVisible">
-  <div id="controls">
+  <div class="controls">
     <h2>More Information</h2>
     <span (click)="hideAllPopUps()">×</span>
   </div>
@@ -233,7 +236,12 @@
 <!-- Comment Modal -->
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h5 class="modal-title" id="modal-basic-title">Adding New Comment</h5>
+    <h5 class="modal-title" id="modal-basic-title">
+      Adding New Comment
+      <span *ngIf="loading">
+        <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
+      </span>
+    </h5>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -241,7 +249,7 @@
   <div class="modal-body">
     <form action="#">
       <div class="form-group">
-        <div class="alert alert-danger" *ngIf="showError">Please fill all fields</div>
+        <div class="alert alert-danger" *ngIf="showError">{{errorResult}}</div>
         <label for="username">Username</label>
         <div class="input-group">
           <input type="text" placeholder="type username.." #user_val id="username" required>
@@ -255,5 +263,56 @@
         <button class="btn btn-outline-dark" (click)="commentSubmission(modal, txt_val.value, user_val.value)">Save</button>
       </div>
     </form>
+  </div>
+</ng-template>
+<!--Comment Small Table-->
+<div id="comment-table" class="small-container" *ngIf="isShowCommentsMode">
+  <div class="controls">
+    <h2>Comment Info</h2>
+    <span (click)="hideAllPopUps()">×</span>
+  </div>
+  <div  style="margin-top: 70px">
+    <ngb-tabset>
+      <ngb-tab *ngFor="let cur_tab of objectKeys(shownComments)">
+        <ng-template ngbTabTitle ><span title="">Test Case #{{cur_tab}}</span></ng-template>
+        <ng-template ngbTabContent>
+          <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
+          <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
+            <div class="card-header">Comment #{{cur_comment}}
+              <button style="margin-top: -7px" class="pull-right btn btn-info">Update Comment</button>
+            </div>
+            <div class="card-body">
+              <table style="background-color:#fff;">
+                <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_comment])">
+                  <th class="card-title"> {{col}} </th>
+                  <td> {{shownComments[cur_tab][cur_comment][col]}} </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</div>
+
+<!--Select Comments to Attach-->
+
+<ng-template #attach_comment let-modalComm>
+  <div class="modal-header" >
+    <h5 class="modal-title" id="modalComm-basic-title">
+      Choose Comments to Attach
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modalComm.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="checkbox" *ngFor="let selected of shownComments">
+      <label><input type="checkbox" value="" style="margin-right: 10px">{{selected['content']}}</label>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-dark" (click)="attachCommentSubmission(modalComm)">Submit Comments</button>
   </div>
 </ng-template>
