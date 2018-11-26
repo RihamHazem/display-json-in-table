@@ -228,15 +228,31 @@ export class SmTableComponent implements OnInit {
   errorResult = "Please fill all fields";
   shownComments = [];
   isShowCommentsMode = false;
+  isAttachTestCasesMode = false;
+  showInputs = {};
+  updateComment = {};
+  showUpdateErrors = {};
+  checkedComments = {};
+  attachError = false;
+  submittedAttach = false;
+  isLoadingAttach = false;
   showComment() {
     this.isShowCommentsMode = true;
     this.shownComments = [];
     let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
     for (let selected in selectedComments) {
       this.shownComments.push(this.comments[selectedComments[selected]['comment']]);
+      for (let selected_comm in this.comments[selectedComments[selected]['comment']]) {
+        if (this.showInputs.hasOwnProperty(selected) === false) this.showInputs[selected] = {};
+        if (this.updateComment.hasOwnProperty(selected) === false) this.updateComment[selected] = {};
+        if (this.showUpdateErrors.hasOwnProperty(selected) === false) this.showUpdateErrors[selected] = {};
+        this.updateComment[selected][selected_comm] = "Update Comment";
+        this.showInputs[selected][selected_comm] = false;
+        this.showUpdateErrors[selected][selected_comm] = false;
+      }
     }
   }
-  attachComment(attach_comment) {
+  attachCommentWindow(attach_comment) {
     this.shownComments = [];
     let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
     for (let selected in selectedComments) {
@@ -248,18 +264,89 @@ export class SmTableComponent implements OnInit {
     this.attachCommentList(attach_comment);
   }
   attachCommentSubmission(modal) {
-
+    this.isAttachTestCasesMode = true;
+    modal.close();
   }
-  sendComment(params, modal) {
+  sendAttachedTestCases() {
+    this.isAttachTestCasesMode = false;
+    this.isLoadingAttach = true;
+    let selectedTestCases = this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true);
+    let test_case_ids = [];
+    let note_ids = [];
+    for (let selected in selectedTestCases) {
+      let testName = selectedTestCases[selected]['test']['Tests'];
+      test_case_ids.push(this.allTableData[ testName ][0]['id']);
+    }
+    for (let selected in this.shownComments) {
+      if (this.checkedComments[selected] === true) {
+        note_ids.push(this.shownComments[selected]['id']);
+      }
+    }
+    let params = {
+      "note_ids": note_ids,
+      "test_instance_ids": test_case_ids,
+      "actor": "oragi" /// needs to be dynamic
+    };
+    console.log(params);
+    this._getJsonService.attachNotes(params).subscribe((data) => {
+      console.log(data);
+      this.isLoadingAttach = false;
+      if (data.hasOwnProperty("result") && data["result"] === "OK") {
+        // success
+        console.log("Comments Attached =D");
+        this.submittedAttach = true;
+        this.attachError = false;
+      } else {
+        // error
+        this.attachError = true;
+      }
+    }, error1 => {
+      // error
+      this.attachError = true;
+      this.isLoadingAttach = false;
+    });
+  }
+  sendComment(txt_val, user_val, selectedComments, modal) {
+    let selected_ids = [];
+    for (let selected in selectedComments) {
+      let testName = selectedComments[selected]['comment'];
+      selected_ids.push(this.allTableData[ testName ][0]['id']);
+    }
+    let params = {
+      "note": {
+        'creator': user_val,
+        'type': 'GENERAL',
+        'content': txt_val
+      },
+      "attached_test_instance_ids": selected_ids
+    };
     this._getJsonService.createNote(params).subscribe(data => {
       console.log(data);
       // if the request is successful then close the modal
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
+
+        for (let selected in selectedComments) {
+          let testName = selectedComments[selected]['comment'];
+          if (!this.comments.hasOwnProperty(testName)) {
+            this.comments[testName] = [];
+          }
+          this.comments[testName].push({
+            'content': txt_val,
+            'id': data['content'],
+            'type': 'GENERAL',
+            'creator': user_val
+          });
+        }
         modal.close();
       } else {
         this.showError = true;
         this.errorResult = "Please, Make sure that the entered data is correct!";
       }
+      this.loading = false;
+    }, error1 => {
+      this.showError = true;
+      this.errorResult = "Please, Make sure that the entered data is correct!";
+
       this.loading = false;
     });
   }
@@ -274,6 +361,9 @@ export class SmTableComponent implements OnInit {
     });
   }
   attachCommentList(attach_comment) {
+    for (let selected in this.shownComments) {
+      this.checkedComments[selected] = false;
+    }
     this.modalService.open(attach_comment, {ariaLabelledBy: 'modalComm-basic-title'}).result.then(() => {
       this.deselectAll();
     }, () => {
@@ -289,24 +379,40 @@ export class SmTableComponent implements OnInit {
     // *show loader to indicate that there's some processing*
     this.loading = true;
     let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
-    let selected_ids = [];
-    for (let selected in selectedComments) {
-      let testName = selectedComments[selected]['comment'];
-      selected_ids.push(this.allTableData[ testName ][0]['id']);
-      if (!this.comments.hasOwnProperty(testName)) {
-        this.comments[ testName ] = [];
-      }
-      this.comments[ testName ].push({'result': txt_val, 'username': user_val});
-    }
-    this.sendComment({
-      "note": {
-        'creator': user_val,
-        'type': 'GENERAL',
-        'content': txt_val
-      },
-      "attached_test_instance_ids": selected_ids
-    }, modal);
+    this.sendComment(txt_val, user_val, selectedComments, modal);
     this.showError = false;
+  }
+  updateCommentMode(cur_tab, cur_comment) {
+    if (this.showInputs[cur_tab][cur_comment] === false) { // begin editing mode
+      this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+      this.showInputs[cur_tab][cur_comment] = true;
+    } else { // submit edits
+      this.updateComment[cur_tab][cur_comment] = "loading..";
+      console.log(this.shownComments[cur_tab][cur_comment]['content']);
+      this.updateCommentContent({
+        "note_id": this.shownComments[cur_tab][cur_comment]['id'],
+        "content": this.shownComments[cur_tab][cur_comment]['content'],
+        "actor": this.shownComments[cur_tab][cur_comment]['creator']
+      }, cur_tab, cur_comment);
+    }
+  }
+  updateCommentContent(params, cur_tab, cur_comment) {
+    this._getJsonService.updateNote(params).subscribe(data => {
+      if (data.hasOwnProperty("result") && data["result"] === "OK") {
+        // success
+        console.log("Comment Updated =D");
+        this.updateComment[cur_tab][cur_comment] = "Update Comment";
+        this.showInputs[cur_tab][cur_comment] = false;
+        this.showUpdateErrors[cur_tab][cur_comment] = false;
+      } else {
+        this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+        this.showUpdateErrors[cur_tab][cur_comment] = true;
+      }
+    }, (error1) => {
+      console.log(error1);
+      this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+      this.showUpdateErrors[cur_tab][cur_comment] = true;
+    });
   }
 //  -------------------------------------------------------------------------
 //  Test Context Menu

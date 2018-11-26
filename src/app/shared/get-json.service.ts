@@ -19,4 +19,10 @@ export class GetJsonService {
   createNote(params) {
     return this.http.post<any>(this.apiUrl + 'note/create', params, this.options);
   }
+  updateNote(params) {
+    return this.http.post<any>(this.apiUrl + 'note/update', params, this.options);
+  }
+  attachNotes(params) {
+    return this.http.post<any>(this.apiUrl + 'note/attach', params, this.options);
+  }
 }

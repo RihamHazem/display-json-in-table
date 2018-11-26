@@ -1,4 +1,18 @@
 <h4>Test Cases</h4>
+
+<div class="alert alert-success alert-dismissible fade show custom-alert" role="alert" *ngIf="!attachError && submittedAttach">Selected Comment(s) Attached Successfully to Selected Test Case(s)
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="attachError = false;">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="alert alert-danger alert-dismissible fade show custom-alert" role="alert" *ngIf="attachError">Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="attachError = false;">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
 <!--Container that contains the main table-->
 <div class="my-container">
   <dts-select-container #selectContainer="dts-select-container"
@@ -12,7 +26,7 @@
                 {{col}}
                 <span *ngIf="col != 'Comment' && col != 'DEI' && col != 'Tags' && col != 'Test Owner'"
                       style="margin-left: 10px; cursor:pointer;"
-                      (click)="changeSortingOrder(i)">{{sortingOrder[i] === undefined || sortingOrder[i] === null? sortingOrder[i]="▼" : sortingOrder[i]}}</span>
+                      (click)="changeSortingOrder(i)">{{sortingOrder[i] === undefined || sortingOrder[i] === null? "▼" : sortingOrder[i]}}</span>
               </div>
               <img *ngIf="!searchMode && col === 'Tests'" (click)="enableSearchMode()"
                    src="./assets/images/search.png"
@@ -201,13 +215,13 @@
   <ng-template contextMenuItem (execute)="showComment()">
     Show Comments
   </ng-template>
-  <ng-template contextMenuItem (execute)="attachComment(attach_comment)">
+  <ng-template contextMenuItem (execute)="attachCommentWindow(attach_comment)">
     Attach Comment(s) to Test Case(s)
   </ng-template>
 </context-menu>
 <!--It's just the dark window that appears behind the pop up table-->
 <div id="whole-window"
-     *ngIf="isSubTableVisible"
+     *ngIf="isSubTableVisible || isShowCommentsMode"
      (click)="hideAllPopUps()"></div>
 <!--------------------------------------------------------------------------------------------------->
 <div class="small-container" *ngIf="isSubTableVisible">
@@ -279,13 +293,19 @@
           <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
           <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
             <div class="card-header">Comment #{{cur_comment}}
-              <button style="margin-top: -7px" class="pull-right btn btn-info">Update Comment</button>
+              <button style="margin-top: -7px" class="pull-right btn btn-info" (click)="updateCommentMode(cur_tab, cur_comment)">{{updateComment[cur_tab][cur_comment]}}</button>
             </div>
             <div class="card-body">
               <table style="background-color:#fff;">
                 <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_comment])">
                   <th class="card-title"> {{col}} </th>
-                  <td> {{shownComments[cur_tab][cur_comment][col]}} </td>
+                  <td>
+                    <div class="alert alert-danger" *ngIf="showUpdateErrors[cur_tab][cur_comment] === true && col === 'content'">There's an error in updating comment content. Please, try to submit again!</div>
+                    <span *ngIf="showInputs[cur_tab][cur_comment] === false || col !== 'content'">{{shownComments[cur_tab][cur_comment][col]}}</span>
+                    <input type="text" [(ngModel)]="shownComments[cur_tab][cur_comment][col]" name="{{cur_tab}}_{{cur_comment}}" class="content-comment"
+                           *ngIf="showInputs[cur_tab][cur_comment] === true && col === 'content'">
+                  </td>
+
                 </tr>
               </table>
             </div>
@@ -308,11 +328,21 @@
     </button>
   </div>
   <div class="modal-body">
-    <div class="checkbox" *ngFor="let selected of shownComments">
-      <label><input type="checkbox" value="" style="margin-right: 10px">{{selected['content']}}</label>
+    <div class="checkbox" *ngFor="let selected of objectKeys(shownComments)">
+      <label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{shownComments[selected]['content']}}" style="margin-right: 10px">{{shownComments[selected]['content']}}</label>
     </div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-outline-dark" (click)="attachCommentSubmission(modalComm)">Submit Comments</button>
   </div>
 </ng-template>
+<div *ngIf="isAttachTestCasesMode">
+  <button class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases()">Attach to Selected Test Cases</button>
+  <button class="btn btn-dark fixed-bottom-left" (click)="isAttachTestCasesMode = false; deselectAll()">Cancel Operation</button>
+</div>
+<div *ngIf="isLoadingAttach">
+  <span class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases()">
+    Loading <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
+  </span>
+</div>
+
