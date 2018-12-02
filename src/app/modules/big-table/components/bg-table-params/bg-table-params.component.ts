@@ -6,12 +6,13 @@ import {AfterViewInit, Component, EventEmitter, OnInit, Output} from '@angular/c
   styleUrls: ['./bg-table-params.component.css']
 })
 export class BgTableParamsComponent implements OnInit, AfterViewInit {
-  query = "pattern find_run_submissions -q \"submit_time> '2018-11-20' and submitter 'rabdelgh'\"";
+  query = "pattern=find_run_submissions -q \"submit_time> '2018-11-20' and submitter='rabdelgh'\"";
   @Output() tableParam = new EventEmitter<string>();
   constructor() {
     let href_arr = window.location.href.split('?');
     if (href_arr.length > 1) {
       this.query = decodeURIComponent(href_arr[1]);
+      console.log(this.query);
     }
   }
 

@@ -405,6 +405,7 @@ export class SmTableComponent implements OnInit {
         this.showInputs[cur_tab][cur_comment] = false;
         this.showUpdateErrors[cur_tab][cur_comment] = false;
       } else {
+        console.log(data);
         this.updateComment[cur_tab][cur_comment] = "Submit Changes";
         this.showUpdateErrors[cur_tab][cur_comment] = true;
       }
