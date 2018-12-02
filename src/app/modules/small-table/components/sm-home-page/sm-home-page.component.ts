@@ -14,7 +14,7 @@ export class SmHomePageComponent implements OnInit {
   gettingData = true;
   // it contains the columns that being displayed in the table
   columnNames: string[] = ["Tests"];
-  comments = {};
+  test_case_comments = {};
   // toggle sidebar visibility
   isSideMenuVisible = true;
   // it holds all rows for all columns
@@ -58,8 +58,8 @@ export class SmHomePageComponent implements OnInit {
           let exec_status = curTestCase['exec_state'];
           let f_status = curTestCase['fstatus'];
           let test_comments = curTestCase['notes'];
-          if (!this.comments.hasOwnProperty(test_name)) {
-            this.comments[test_name] = test_comments;
+          if (!this.test_case_comments.hasOwnProperty(test_name)) {
+            this.test_case_comments[test_name] = test_comments;
           }
           f_status = this.getUniqueSubSentences(f_status);
           this.myTableData[test_name][i] = {

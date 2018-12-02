@@ -279,7 +279,7 @@
     </form>
   </div>
 </ng-template>
-<!--Comment Small Table-->
+<!--Comment Small Table; shows test_case_comments for test case(s)-->
 <div id="comment-table" class="small-container" *ngIf="isShowCommentsMode">
   <div class="controls">
     <h2>Comment Info</h2>
@@ -293,7 +293,15 @@
           <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
           <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
             <div class="card-header">Comment #{{cur_comment}}
-              <button style="margin-top: -7px" class="pull-right btn btn-info" (click)="updateCommentMode(cur_tab, cur_comment)">{{updateComment[cur_tab][cur_comment]}}</button>
+              <button style="margin-top: -7px; padding: 5px;" class="pull-right btn btn-info" (click)="updateCommentMode(cur_tab, cur_comment)">
+                <!--{{updateComment[cur_tab][cur_comment]}}-->
+                <span *ngIf="updateComment[cur_tab][cur_comment] === 'submit'">Submit Changes</span>
+                <img *ngIf="updateComment[cur_tab][cur_comment] === 'update'" src="./assets/images/edit.svg" alt="" style="width: 25px">
+                <i *ngIf="updateComment[cur_tab][cur_comment] === 'loading'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
+              </button>
+              <button *ngIf="updateComment[cur_tab][cur_comment] === 'update'" style="margin-right: 10px; margin-top: -7px; padding: 5px" class="pull-right btn btn-danger">
+                <img src="./assets/images/delete.svg" alt="" style="width: 25px">
+              </button>
             </div>
             <div class="card-body">
               <table style="background-color:#fff;">

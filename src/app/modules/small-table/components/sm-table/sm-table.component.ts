@@ -248,7 +248,7 @@ export class SmTableComponent implements OnInit {
         if (this.showInputs.hasOwnProperty(selected) === false) this.showInputs[selected] = {};
         if (this.updateComment.hasOwnProperty(selected) === false) this.updateComment[selected] = {};
         if (this.showUpdateErrors.hasOwnProperty(selected) === false) this.showUpdateErrors[selected] = {};
-        this.updateComment[selected][selected_comm] = "Update Comment";
+        this.updateComment[selected][selected_comm] = "update";
         this.showInputs[selected][selected_comm] = false;
         this.showUpdateErrors[selected][selected_comm] = false;
       }
@@ -256,10 +256,10 @@ export class SmTableComponent implements OnInit {
   }
   attachCommentWindow(attach_comment) {
     this.attachComments = [];
-    let commentMap = {}; // filter comments to get rid of duplicates
-    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true); // list contains test cases that has all comments
+    let commentMap = {}; // filter test_case_comments to get rid of duplicates
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true); // list contains test cases that has all test_case_comments
     for (let selected in selectedComments) {
-      let curTestCase = this.comments[ selectedComments[selected]['comment'] ]; // getting comments of the current test case
+      let curTestCase = this.comments[ selectedComments[selected]['comment'] ]; // getting test_case_comments of the current test case
       for (let comm in curTestCase) {
         if (commentMap.hasOwnProperty(curTestCase[comm]['id']) === false) {
           commentMap[ curTestCase[comm]['id'] ] = true;
@@ -270,7 +270,7 @@ export class SmTableComponent implements OnInit {
     this.attachCommentList(attach_comment);
   }
   attachCommentSubmission(modal) {
-    // in this step I've already chosen the comments and It's time to choose test cases
+    // in this step I've already chosen the test_case_comments and It's time to choose test cases
     this.isAttachTestCasesMode = true;
     modal.close();
   }
@@ -303,7 +303,7 @@ export class SmTableComponent implements OnInit {
         console.log("Comments Attached =D");
         this.submittedAttach = true;
         this.attachError = false;
-        // attach these comments to selected test cases on the UI
+        // attach these test_case_comments to selected test cases on the UI
         for (let test_case in selectedTestCases) {
           let testName = selectedTestCases[test_case]['test']['Tests'];
           checkedCommentsData.forEach(item => this.comments[testName].push(item));
@@ -339,7 +339,7 @@ export class SmTableComponent implements OnInit {
       console.log(data);
       // if the request is successful then close the modal
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
-        // add comments to the table
+        // add test_case_comments to the table
         for (let selected in selectedComments) {
           let testName = selectedComments[selected]['comment'];
           if (!this.comments.hasOwnProperty(testName)) {
@@ -378,7 +378,7 @@ export class SmTableComponent implements OnInit {
     });
   }
   attachCommentList(attach_comment) {
-    for (let selected in this.attachComments) { // empty checked comments
+    for (let selected in this.attachComments) { // empty checked test_case_comments
       this.checkedComments[selected] = false;
     }
     this.modalService.open(attach_comment, {ariaLabelledBy: 'modalComm-basic-title'}).result.then(() => {
@@ -403,10 +403,10 @@ export class SmTableComponent implements OnInit {
   updateCommentMode(cur_tab, cur_comment) {
     // shows the inputs to edit the comment content
     if (this.showInputs[cur_tab][cur_comment] === false) { // begin editing mode
-      this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+      this.updateComment[cur_tab][cur_comment] = "submit";
       this.showInputs[cur_tab][cur_comment] = true;
     } else { // submit edits
-      this.updateComment[cur_tab][cur_comment] = "loading..";
+      this.updateComment[cur_tab][cur_comment] = "loading";
       console.log(this.shownComments[cur_tab][cur_comment]['content']);
       this.updateCommentContent({
         "note_id": this.shownComments[cur_tab][cur_comment]['id'],
@@ -421,19 +421,22 @@ export class SmTableComponent implements OnInit {
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
         console.log("Comment Updated =D");
-        this.updateComment[cur_tab][cur_comment] = "Update Comment";
+        this.updateComment[cur_tab][cur_comment] = "update";
         this.showInputs[cur_tab][cur_comment] = false;
         this.showUpdateErrors[cur_tab][cur_comment] = false;
       } else {
         console.log(data);
-        this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+        this.updateComment[cur_tab][cur_comment] = "submit";
         this.showUpdateErrors[cur_tab][cur_comment] = true;
       }
     }, (error1) => {
       console.log(error1);
-      this.updateComment[cur_tab][cur_comment] = "Submit Changes";
+      this.updateComment[cur_tab][cur_comment] = "submit";
       this.showUpdateErrors[cur_tab][cur_comment] = true;
     });
+  }
+  deleteComment() {
+
   }
 //  -------------------------------------------------------------------------
 //  Test Context Menu
