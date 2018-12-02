@@ -38,7 +38,6 @@ export class SmHomePageComponent implements OnInit {
     if (newParams === "" || newParams === null || newParams === undefined) return;
     this.gettingData = true;
     this.emptyAllData();
-    let once: boolean = true;
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let once: boolean = true;
       for (let i in data) {
@@ -137,6 +136,7 @@ export class SmHomePageComponent implements OnInit {
           }
         }
       }
+      this.columnsToFilterVisibility['exec_state']["PASSED"] = false;
       this.gettingData = false;
     });
   }

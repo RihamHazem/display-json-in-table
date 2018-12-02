@@ -328,8 +328,8 @@
     </button>
   </div>
   <div class="modal-body">
-    <div class="checkbox" *ngFor="let selected of objectKeys(shownComments)">
-      <label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{shownComments[selected]['content']}}" style="margin-right: 10px">{{shownComments[selected]['content']}}</label>
+    <div class="checkbox" *ngFor="let selected of objectKeys(attachComments)">
+      <label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{attachComments[selected]['content']}}" style="margin-right: 10px">{{attachComments[selected]['content']}}</label>
     </div>
   </div>
   <div class="modal-footer">

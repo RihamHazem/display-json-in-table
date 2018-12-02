@@ -173,5 +173,8 @@ h4 {
 }
 
 .custom-alert {
-  width: 98%;
+  position: fixed;
+  top: 80px;
+  left: 19%;
+  width: 80%;
 }

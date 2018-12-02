@@ -182,6 +182,7 @@ export class SmTableComponent implements OnInit {
   }
 
   public updateSmallTable(order, indxCol) {
+    console.log("Updating small table");
     this.filteredTable.length = 0;
     // order = true means increasing, false means decreasing
     for (let key in this.tableData) {
@@ -227,6 +228,7 @@ export class SmTableComponent implements OnInit {
   loading = false;
   errorResult = "Please fill all fields";
   shownComments = [];
+  attachComments = [];
   isShowCommentsMode = false;
   isAttachTestCasesMode = false;
   showInputs = {};
@@ -253,17 +255,22 @@ export class SmTableComponent implements OnInit {
     }
   }
   attachCommentWindow(attach_comment) {
-    this.shownComments = [];
-    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
+    this.attachComments = [];
+    let commentMap = {}; // filter comments to get rid of duplicates
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true); // list contains test cases that has all comments
     for (let selected in selectedComments) {
-      let curTestCase = this.comments[selectedComments[selected]['comment']];
+      let curTestCase = this.comments[ selectedComments[selected]['comment'] ]; // getting comments of the current test case
       for (let comm in curTestCase) {
-        this.shownComments.push(curTestCase[comm]);
+        if (commentMap.hasOwnProperty(curTestCase[comm]['id']) === false) {
+          commentMap[ curTestCase[comm]['id'] ] = true;
+          this.attachComments.push( curTestCase[comm] );
+        }
       }
     }
     this.attachCommentList(attach_comment);
   }
   attachCommentSubmission(modal) {
+    // in this step I've already chosen the comments and It's time to choose test cases
     this.isAttachTestCasesMode = true;
     modal.close();
   }
@@ -277,9 +284,11 @@ export class SmTableComponent implements OnInit {
       let testName = selectedTestCases[selected]['test']['Tests'];
       test_case_ids.push(this.allTableData[ testName ][0]['id']);
     }
-    for (let selected in this.shownComments) {
+    let checkedCommentsData = [];
+    for (let selected in this.attachComments) {
       if (this.checkedComments[selected] === true) {
-        note_ids.push(this.shownComments[selected]['id']);
+        note_ids.push(this.attachComments[selected]['id']);
+        checkedCommentsData.push(this.attachComments[selected]);
       }
     }
     let params = {
@@ -287,27 +296,33 @@ export class SmTableComponent implements OnInit {
       "test_instance_ids": test_case_ids,
       "actor": "oragi" /// needs to be dynamic
     };
-    console.log(params);
     this._getJsonService.attachNotes(params).subscribe((data) => {
-      console.log(data);
       this.isLoadingAttach = false;
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
         console.log("Comments Attached =D");
         this.submittedAttach = true;
         this.attachError = false;
+        // attach these comments to selected test cases on the UI
+        for (let test_case in selectedTestCases) {
+          let testName = selectedTestCases[test_case]['test']['Tests'];
+          checkedCommentsData.forEach(item => this.comments[testName].push(item));
+        }
       } else {
         // error
+        console.log("ERROR", data);
         this.attachError = true;
+        this.isLoadingAttach = false;
       }
     }, error1 => {
       // error
+      console.log("ERROR", error1);
       this.attachError = true;
       this.isLoadingAttach = false;
     });
   }
   sendComment(txt_val, user_val, selectedComments, modal) {
-    let selected_ids = [];
+    let selected_ids = []; // selected test cases ids
     for (let selected in selectedComments) {
       let testName = selectedComments[selected]['comment'];
       selected_ids.push(this.allTableData[ testName ][0]['id']);
@@ -324,7 +339,7 @@ export class SmTableComponent implements OnInit {
       console.log(data);
       // if the request is successful then close the modal
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
-
+        // add comments to the table
         for (let selected in selectedComments) {
           let testName = selectedComments[selected]['comment'];
           if (!this.comments.hasOwnProperty(testName)) {
@@ -339,11 +354,13 @@ export class SmTableComponent implements OnInit {
         }
         modal.close();
       } else {
+        console.log("ERROR", data);
         this.showError = true;
         this.errorResult = "Please, Make sure that the entered data is correct!";
       }
       this.loading = false;
     }, error1 => {
+      console.log("ERROR", error1);
       this.showError = true;
       this.errorResult = "Please, Make sure that the entered data is correct!";
 
@@ -361,7 +378,7 @@ export class SmTableComponent implements OnInit {
     });
   }
   attachCommentList(attach_comment) {
-    for (let selected in this.shownComments) {
+    for (let selected in this.attachComments) { // empty checked comments
       this.checkedComments[selected] = false;
     }
     this.modalService.open(attach_comment, {ariaLabelledBy: 'modalComm-basic-title'}).result.then(() => {
@@ -371,6 +388,7 @@ export class SmTableComponent implements OnInit {
     });
   }
   commentSubmission(modal, txt_val, user_val) {
+    // submit new comment
     if (txt_val === '' || user_val === '') {
       this.errorResult = "Please fill all fields";
       this.showError = true;
@@ -383,6 +401,7 @@ export class SmTableComponent implements OnInit {
     this.showError = false;
   }
   updateCommentMode(cur_tab, cur_comment) {
+    // shows the inputs to edit the comment content
     if (this.showInputs[cur_tab][cur_comment] === false) { // begin editing mode
       this.updateComment[cur_tab][cur_comment] = "Submit Changes";
       this.showInputs[cur_tab][cur_comment] = true;
@@ -397,6 +416,7 @@ export class SmTableComponent implements OnInit {
     }
   }
   updateCommentContent(params, cur_tab, cur_comment) {
+    // sending updates to the service
     this._getJsonService.updateNote(params).subscribe(data => {
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
