@@ -63,7 +63,7 @@
                 (contextmenu)="setCommentSelected(row['Tests'])"
                 [contextMenuSubject]="row['Tests']"
                 [dtsSelectItem]="{'comment': row['Tests']}">
-              {{ comments[row['Tests']].length === 0? "No Comment" : comments[row['Tests']].length + " Comments" }}
+              {{ test_case_comments[row['Tests']].length === 0? "No Comment" : test_case_comments[row['Tests']].length + " Comments" }}
             </td>
             <td id="DEI">---</td>
             <td id="Tags">---</td>
@@ -293,22 +293,31 @@
           <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
           <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
             <div class="card-header">Comment #{{cur_comment}}
-              <button style="margin-top: -7px; padding: 5px;" class="pull-right btn btn-info" (click)="updateCommentMode(cur_tab, cur_comment)">
-                <!--{{updateComment[cur_tab][cur_comment]}}-->
-                <span *ngIf="updateComment[cur_tab][cur_comment] === 'submit'">Submit Changes</span>
-                <img *ngIf="updateComment[cur_tab][cur_comment] === 'update'" src="./assets/images/edit.svg" alt="" style="width: 25px">
-                <i *ngIf="updateComment[cur_tab][cur_comment] === 'loading'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
+              <button style="margin-top: -7px; padding: 5px;"
+                      class="pull-right btn btn-info"
+                      *ngIf="commentOperation[cur_tab][cur_comment] !== 'loadingDelete'"
+                      (click)="updateCommentMode(cur_tab, cur_comment)">
+                <!--{{commentOperation[cur_tab][cur_comment]}}-->
+                <span *ngIf="commentOperation[cur_tab][cur_comment] === 'submit'">Submit Changes</span>
+                <img *ngIf="commentOperation[cur_tab][cur_comment] === 'normal'" src="./assets/images/edit.svg" alt="" style="width: 25px">
+                <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingUpdate'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
               </button>
-              <button *ngIf="updateComment[cur_tab][cur_comment] === 'update'" style="margin-right: 10px; margin-top: -7px; padding: 5px" class="pull-right btn btn-danger">
-                <img src="./assets/images/delete.svg" alt="" style="width: 25px">
+              <button *ngIf="commentOperation[cur_tab][cur_comment] !== 'submit' && commentOperation[cur_tab][cur_comment] !== 'loadingUpdate'"
+                      style="margin-right: 10px; margin-top: -7px; padding: 5px"
+                      class="pull-right btn btn-danger"
+                      (click)="deleteComment(cur_tab, cur_comment)">
+                <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingDelete'"
+                   class="fa fa-spinner fa-pulse fa-fw"
+                   style="font-size: 1.6em"></i>
+                <img *ngIf="commentOperation[cur_tab][cur_comment] !== 'loadingDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
               </button>
             </div>
             <div class="card-body">
+              <div class="alert alert-danger" *ngIf="showCommentErrors[cur_tab][cur_comment] === true">{{errorCommentMsg}}</div>
               <table style="background-color:#fff;">
                 <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_comment])">
                   <th class="card-title"> {{col}} </th>
                   <td>
-                    <div class="alert alert-danger" *ngIf="showUpdateErrors[cur_tab][cur_comment] === true && col === 'content'">There's an error in updating comment content. Please, try to submit again!</div>
                     <span *ngIf="showInputs[cur_tab][cur_comment] === false || col !== 'content'">{{shownComments[cur_tab][cur_comment][col]}}</span>
                     <input type="text" [(ngModel)]="shownComments[cur_tab][cur_comment][col]" name="{{cur_tab}}_{{cur_comment}}" class="content-comment"
                            *ngIf="showInputs[cur_tab][cur_comment] === true && col === 'content'">

@@ -25,4 +25,7 @@ export class GetJsonService {
   attachNotes(params) {
     return this.http.post<any>(this.apiUrl + 'note/attach', params, this.options);
   }
+  detachNotes(params) {
+    return this.http.post<any>(this.apiUrl + 'note/detach', params, this.options);
+  }
 }

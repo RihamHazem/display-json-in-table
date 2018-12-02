@@ -15,6 +15,7 @@ export class SmHomePageComponent implements OnInit {
   // it contains the columns that being displayed in the table
   columnNames: string[] = ["Tests"];
   test_case_comments = {};
+  comment_test_cases = {};
   // toggle sidebar visibility
   isSideMenuVisible = true;
   // it holds all rows for all columns
@@ -41,6 +42,7 @@ export class SmHomePageComponent implements OnInit {
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let once: boolean = true;
       for (let i in data) {
+        // iterates over each submission
         let curData = data[i]['test_instances'];
 
         this.submissionsData[ data[i]['name'] ] = {
@@ -52,15 +54,24 @@ export class SmHomePageComponent implements OnInit {
         for (let j in curData) {
           let curTestCase = curData[j];
           let test_name: string = curTestCase['test_name'];
+          let test_comments = curTestCase['notes'];
+
           if (!this.myTableData.hasOwnProperty(test_name)) {
+            // if this test cases wasn't seen before
             this.myTableData[test_name] = new Array(data.length);
+            // add test case test_case_comments
+            this.test_case_comments[test_name] = test_comments;
+            // for each comment attach cur test case
+            test_comments.forEach( item => {
+              if (this.comment_test_cases.hasOwnProperty(item['id']) === false) {
+                this.comment_test_cases[item['id']] = [];
+              }
+              this.comment_test_cases[item['id']].push(test_name);
+            });
           }
           let exec_status = curTestCase['exec_state'];
           let f_status = curTestCase['fstatus'];
-          let test_comments = curTestCase['notes'];
-          if (!this.test_case_comments.hasOwnProperty(test_name)) {
-            this.test_case_comments[test_name] = test_comments;
-          }
+
           f_status = this.getUniqueSubSentences(f_status);
           this.myTableData[test_name][i] = {
             'exec_state': exec_status,
