@@ -446,7 +446,7 @@ export class SmTableComponent implements OnInit {
     // sending detach one comment from one test case to the service
     this.commentOperation[cur_tab][cur_comment] = "loadingDelete";
     let comment_id = this.shownComments[cur_tab][cur_comment]['id'];
-    let test_id = this.shownTestCases[cur_tab];
+    let test_id = this.allTableData[this.shownTestCases[cur_tab]][0]['id'];
     let params = {
       "actor": "oragi", // TODO: needs to be dynamic
       "note_ids": [comment_id],
