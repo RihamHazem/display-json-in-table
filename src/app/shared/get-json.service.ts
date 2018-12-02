@@ -7,7 +7,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 export class GetJsonService {
   // the path of the big table JSON
   private marsUrl = 'http://regweb/regression_web/mars.php';
-  private apiUrl = 'http://orw-oragi-r6:3000/';
+  private apiUrl = 'http://orw-oragi-r6:8000/';
   private options = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
 
   constructor(private http: HttpClient) { }
