@@ -1,10 +1,9 @@
 <dts-select-container #container="dts-select-container"
-                      [(selectedItems)]="selectedIDs"
-                      [selectWithShortcut]="true">
+                      [(selectedItems)]="selectedIDs">
   <div class="my-container"
       (click)="hideAllPopUps()">
     <div class="basic-container">
-      <table>
+      <table class="table table-striped">
         <tr>
           <th *ngFor="let col of columnNames | filterTable: columnVisibility"> {{col}} </th>
         </tr>

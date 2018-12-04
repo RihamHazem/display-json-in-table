@@ -230,7 +230,6 @@ export class SmTableComponent implements OnInit {
   errorResult = "Please fill all fields";
   shownComments = [];
   shownTestCases = []; // shown test cases in the comments window
-  attachComments = [];
   isShowCommentsMode = false;
   isAttachTestCasesMode = false;
   showInputs = {};
@@ -238,9 +237,13 @@ export class SmTableComponent implements OnInit {
   showCommentErrors = {};
   errorCommentMsg = "";
   checkedComments = {};
+  attachComments = [];
   attachError = false;
+  attachErrorMsg = "Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
+  attach_user = "";
   submittedAttach = false;
   isLoadingAttach = false;
+  del_option = 1;
   showComment() {
     this.isShowCommentsMode = true;
     this.shownComments = [];
@@ -259,7 +262,8 @@ export class SmTableComponent implements OnInit {
       }
     }
   }
-  attachCommentWindow(attach_comment) {
+
+  attachCommentModal(attach_comment) {
     this.attachComments = [];
     let commentMap = {}; // filter test_case_comments to get rid of duplicates
     let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true); // list contains test cases that has all test_case_comments
@@ -274,11 +278,22 @@ export class SmTableComponent implements OnInit {
     }
     this.attachCommentList(attach_comment);
   }
-  attachCommentSubmission(modal) {
+
+  attachCommentSubmission(modal, att_user: string) {
     // in this step I've already chosen the test_case_comments and It's time to choose test cases
+    console.log(att_user);
+    console.log(this.checkedComments);
+    if (att_user === '' || Object.values(this.checkedComments).indexOf(false) !== -1) {
+      this.attachError = true;
+      this.attachErrorMsg = "Please fill all fields";
+      return;
+    }
+    this.attachError = false;
+    this.attach_user = att_user;
     this.isAttachTestCasesMode = true;
     modal.close();
   }
+
   sendAttachedTestCases() {
     this.isAttachTestCasesMode = false;
     this.isLoadingAttach = true;
@@ -299,7 +314,7 @@ export class SmTableComponent implements OnInit {
     let params = {
       "note_ids": note_ids,
       "test_instance_ids": test_case_ids,
-      "actor": "oragi" /// needs to be dynamic
+      "actor": this.attach_user
     };
     this._getJsonService.attachNotes(params).subscribe((data) => {
       this.isLoadingAttach = false;
@@ -317,12 +332,14 @@ export class SmTableComponent implements OnInit {
         // error
         console.log("ERROR", data);
         this.attachError = true;
+        this.attachErrorMsg = "Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
         this.isLoadingAttach = false;
       }
     }, error1 => {
       // error
       console.log("ERROR", error1);
       this.attachError = true;
+      this.attachErrorMsg = "Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
       this.isLoadingAttach = false;
     });
   }
@@ -345,6 +362,7 @@ export class SmTableComponent implements OnInit {
       // if the request is successful then close the modal
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // add test_case_comments to the table
+        this.comment_test_cases[data['content']] = [];
         for (let selected in selectedComments) {
           let testName = selectedComments[selected]['comment'];
           if (!this.test_case_comments.hasOwnProperty(testName)) {
@@ -356,6 +374,7 @@ export class SmTableComponent implements OnInit {
             'type': 'GENERAL',
             'creator': user_val
           });
+          this.comment_test_cases[data['content']].push(testName);
         }
         modal.close();
       } else {
@@ -442,21 +461,43 @@ export class SmTableComponent implements OnInit {
       this.errorCommentMsg = "There's an error in updating comment content. Please, check your internet connection!";
     });
   }
-  deleteComment(cur_tab, cur_comment) {
+  openDeleteCommentModal(delete_comment_modal, cur_tab, cur_comment) {
+    this.modalService.open(delete_comment_modal, {ariaLabelledBy: 'modalDelComm-basic-title'}).result.then((del_user_val) => {
+      this.deselectAll();
+      this.deleteComment(cur_tab, cur_comment, del_user_val, this.del_option === 2);
+      this.showError = false;
+    }, () => {
+      console.log(`Dismissed`);
+      this.showError = false;
+    });
+  }
+  deleteComment(cur_tab, cur_comment, del_user_val, allow_detach_all) {
     // sending detach one comment from one test case to the service
     this.commentOperation[cur_tab][cur_comment] = "loadingDelete";
     let comment_id = this.shownComments[cur_tab][cur_comment]['id'];
     let test_id = this.allTableData[this.shownTestCases[cur_tab]][0]['id'];
     let params = {
-      "actor": "oragi", // TODO: needs to be dynamic
+      "actor": del_user_val,
       "note_ids": [comment_id],
-      "test_instance_ids": [test_id]
+      "test_instance_ids": allow_detach_all? [] : [test_id],
+      "allow_detach_all": allow_detach_all
     };
     this._getJsonService.detachNotes(params).subscribe(data => {
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
         console.log("Comment detached =D");
-        this.shownComments[cur_tab].splice(Number(cur_comment), 1);
+        if (allow_detach_all) {
+          // detach from all test cases
+          let test_names = this.comment_test_cases[comment_id];
+          test_names.forEach( (test_name) => {
+            let comment_pos = this.test_case_comments[test_name].findIndex(v => v.id === comment_id);
+            this.test_case_comments[test_name].splice(comment_pos, 1);
+          });
+        } else {
+          // detach from current test case only
+          this.shownComments[cur_tab].splice(Number(cur_comment), 1);
+        }
+        this.showCommentErrors[cur_tab][cur_comment] = false;
         this.commentOperation[cur_tab][cur_comment] = "normal";
       } else {
         console.log(data);

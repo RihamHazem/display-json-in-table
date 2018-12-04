@@ -23,13 +23,7 @@ td, th {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
-.selected-cell {
-  background-color: rgba(0, 0, 255, 0.2);
-}
-tr {
-  border-bottom: 1px solid #000000;
-}
-tr:last-child td, #comment-table tr:last-child th {
+tr, td, th {
   border: 0;
 }
 
@@ -53,7 +47,7 @@ tr:last-child td, #comment-table tr:last-child th {
   outline: none;
   margin-top: 5px;
 }
-#username {
+.username-input {
   border-radius: 5px;
   border: 1px lightgray solid;
   margin-bottom: 15px;
@@ -175,6 +169,33 @@ h4 {
 .custom-alert {
   position: fixed;
   top: 80px;
-  left: 19%;
-  width: 80%;
+  right: 1%;
+  width: 30%;
+  z-index: 1051;
+}
+/* Attach Modal */
+
+.attach-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.attach-margin {
+  margin: 0 10px;
+}
+
+/* Delete Modal */
+.del-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.del-radio-button {
+  margin: 5px;
+}
+
+.del-selected-value {
+  margin: 15px 0;
 }

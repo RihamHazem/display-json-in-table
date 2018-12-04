@@ -1,0 +1,22 @@
+[
+  {
+    "col_name": "status",
+    "index": 0
+  },
+  {
+    "col_name": "name",
+    "index": 1
+  },
+  {
+    "col_name": "TOTAL",
+    "index": 2
+  },
+  {
+    "col_name": "PASSED",
+    "index": 3
+  },
+  {
+    "col_name": "KILLED",
+    "index": 4
+  }
+]

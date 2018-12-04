@@ -7,6 +7,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 export class GetJsonService {
   // the path of the big table JSON
   private marsUrl = 'http://regweb/regression_web/mars.php';
+  private customSettingsUrl = './assets/custom-settings.json';
   private apiUrl = 'http://orw-oragi-r6:8000/';
   private options = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
 
@@ -15,7 +16,11 @@ export class GetJsonService {
   getJsonTable (params: string) {
     return this.http.get<any[]>(this.marsUrl + '?' + encodeURI(params));
   }
-
+  // custom settings service
+  getCustomSettings () {
+    return this.http.get<any[]>(this.customSettingsUrl);
+  }
+  // Comment Operations
   createNote(params) {
     return this.http.post<any>(this.apiUrl + 'note/create', params, this.options);
   }

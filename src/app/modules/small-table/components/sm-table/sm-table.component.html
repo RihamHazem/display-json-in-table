@@ -6,7 +6,7 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
-<div class="alert alert-danger alert-dismissible fade show custom-alert" role="alert" *ngIf="attachError">Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!
+<div class="alert alert-danger alert-dismissible fade show custom-alert" role="alert" *ngIf="attachError">{{attachErrorMsg}}
 
   <button type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="attachError = false;">
     <span aria-hidden="true">&times;</span>
@@ -19,7 +19,7 @@
                         [(selectedItems)]="selectedDocuments"
                         [selectWithShortcut]="true">
     <div class="basic-container"  (scroll)="selectContainer.update()">
-        <table>
+        <table class="table table-striped">
           <tr>
             <th *ngFor="let col of columnNames; let i=index">
               <div style="margin-top: 10px; display: inline-block" *ngIf="(!searchMode && col === 'Tests') || col !== 'Tests'">
@@ -215,7 +215,7 @@
   <ng-template contextMenuItem (execute)="showComment()">
     Show Comments
   </ng-template>
-  <ng-template contextMenuItem (execute)="attachCommentWindow(attach_comment)">
+  <ng-template contextMenuItem (execute)="attachCommentModal(attach_comment)">
     Attach Comment(s) to Test Case(s)
   </ng-template>
 </context-menu>
@@ -247,7 +247,7 @@
     </ngb-tabset>
   </div>
 </div>
-<!-- Comment Modal -->
+<!-- Creating Comment Modal -->
 <ng-template #content let-modal>
   <div class="modal-header">
     <h5 class="modal-title" id="modal-basic-title">
@@ -266,7 +266,7 @@
         <div class="alert alert-danger" *ngIf="showError">{{errorResult}}</div>
         <label for="username">Username</label>
         <div class="input-group">
-          <input type="text" placeholder="type username.." #user_val id="username" required>
+          <input type="text" placeholder="type username.." #user_val id="username" class="username-input" required>
         </div>
         <label for="comment-content">Type Your Comment</label>
         <div class="input-group">
@@ -293,19 +293,20 @@
           <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
           <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
             <div class="card-header">Comment #{{cur_comment}}
+              <!--Update Button-->
               <button style="margin-top: -7px; padding: 5px;"
                       class="pull-right btn btn-info"
                       *ngIf="commentOperation[cur_tab][cur_comment] !== 'loadingDelete'"
                       (click)="updateCommentMode(cur_tab, cur_comment)">
-                <!--{{commentOperation[cur_tab][cur_comment]}}-->
                 <span *ngIf="commentOperation[cur_tab][cur_comment] === 'submit'">Submit Changes</span>
                 <img *ngIf="commentOperation[cur_tab][cur_comment] === 'normal'" src="./assets/images/edit.svg" alt="" style="width: 25px">
                 <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingUpdate'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
               </button>
+              <!--Delete Button-->
               <button *ngIf="commentOperation[cur_tab][cur_comment] !== 'submit' && commentOperation[cur_tab][cur_comment] !== 'loadingUpdate'"
                       style="margin-right: 10px; margin-top: -7px; padding: 5px"
                       class="pull-right btn btn-danger"
-                      (click)="deleteComment(cur_tab, cur_comment)">
+                      (click)="openDeleteCommentModal(delete_comment_modal, cur_tab, cur_comment)">
                 <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingDelete'"
                    class="fa fa-spinner fa-pulse fa-fw"
                    style="font-size: 1.6em"></i>
@@ -333,7 +334,7 @@
   </div>
 </div>
 
-<!--Select Comments to Attach-->
+<!--Select Comments to Attach Modal-->
 
 <ng-template #attach_comment let-modalComm>
   <div class="modal-header" >
@@ -345,14 +346,25 @@
     </button>
   </div>
   <div class="modal-body">
-    <div class="checkbox" *ngFor="let selected of objectKeys(attachComments)">
-      <label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{attachComments[selected]['content']}}" style="margin-right: 10px">{{attachComments[selected]['content']}}</label>
+
+    <label for="att-username">Username</label>
+    <div class="input-group">
+      <input type="text" placeholder="type username.." #att_user_val id="att-username" class="username-input" required>
     </div>
+    <section class="attach-section">
+      <mat-checkbox class="attach-margin" *ngFor="let selected of objectKeys(attachComments)" [(ngModel)]="checkedComments[selected]">{{attachComments[selected]['content']}}</mat-checkbox>
+    </section>
+
+    <!--<div class="checkbox" *ngFor="let selected of objectKeys(attachComments)">-->
+      <!--<label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{attachComments[selected]['content']}}" style="margin-right: 10px">{{attachComments[selected]['content']}}</label>-->
+    <!--</div>-->
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline-dark" (click)="attachCommentSubmission(modalComm)">Submit Comments</button>
+    <button class="btn btn-outline-dark" (click)="attachCommentSubmission(modalComm, att_user_val.value)">Submit Comments</button>
   </div>
 </ng-template>
+
+
 <div *ngIf="isAttachTestCasesMode">
   <button class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases()">Attach to Selected Test Cases</button>
   <button class="btn btn-dark fixed-bottom-left" (click)="isAttachTestCasesMode = false; deselectAll()">Cancel Operation</button>
@@ -363,3 +375,40 @@
   </span>
 </div>
 
+
+<!-- Deleting Comment Modal -->
+<ng-template #delete_comment_modal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="modalDelComm-basic-title">
+      Adding New Comment
+      <span *ngIf="loading">
+        <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
+      </span>
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <div class="alert alert-danger" *ngIf="showError">{{errorResult}}</div>
+      <label for="del-username">Username</label>
+      <div class="input-group">
+        <input type="text" placeholder="type username.." #del_user_val id="del-username" class="username-input" required>
+      </div>
+      <div class="checkbox">
+        <mat-radio-group class="del-radio-group" name="del-radio" [(ngModel)]="del_option">
+          <mat-radio-button class="del-radio-button" [value]="1">
+            Delete for this test case only
+          </mat-radio-button>
+          <mat-radio-button class="del-radio-button" [value]="2">
+            Delete for all test cases
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-dark" (click)="modal.close(del_user_val.value)">Save</button>
+    </div>
+  </div>
+</ng-template>

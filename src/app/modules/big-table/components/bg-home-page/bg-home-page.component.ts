@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GetJsonService } from '../../../../shared/get-json.service';
+import {ql} from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-bg-home-page',
@@ -14,6 +15,7 @@ export class BgHomePageComponent implements OnInit {
   environmentTableData: any = {};
 
   columnNames: string[] = [];
+  excludedColumns: string[] = [];
   environmentColumnNames: string[] = [];
   // it maps the column name to is order in the given json
   columnIndices: any = {};
@@ -34,8 +36,26 @@ export class BgHomePageComponent implements OnInit {
     if (newParams === "" || newParams === null || newParams === undefined) return;
     this.gettingData = true;
     this.emptyAllData();
+    this._getJsonService.getCustomSettings().subscribe(data => {
+      data.sort((a, b) => {
+        if (a.index < b.index)
+          return -1;
+        else if (a.index === b.index)
+          return 0;
+        return 1;
+      });
+      data.forEach( row => {
+        this.columnIndices[row['col_name']] = row['index'];
+        this.columnNames.push(row['col_name']);
+        this.excludedColumns.push(row['col_name']);
+      });
+    }, error => {
+      console.log(error);
+    });
+    console.log(this.columnNames);
+    console.log(this.excludedColumns);
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
-      let cnt = 0;
+      let cnt = this.columnNames.length;
       // for all submissions
       for (let index in data) {
         let cur_row: any = {};
@@ -46,9 +66,12 @@ export class BgHomePageComponent implements OnInit {
             // special case for test instance counts and environment
             if (key === 'test_instance_counts') {
               for (let in_key in data[index][key]) {
-                this.columnNames.push(in_key);
-                this.columnIndices[in_key] = cnt;
-                cnt += 1;
+                if (this.excludedColumns.indexOf(in_key) === -1) {
+                  // if this column wasn't in the excluded columns
+                  this.columnNames.push(in_key);
+                  this.columnIndices[in_key] = cnt;
+                  cnt += 1;
+                }
               }
             } else if(key === 'environment') {
               for (let in_key in data[index][key]) {
@@ -56,9 +79,12 @@ export class BgHomePageComponent implements OnInit {
                 this.environmentTableData[in_key] = data[index][key][in_key];
               }
             } else {
-              this.columnNames.push(key);
-              this.columnIndices[key] = cnt;
-              cnt += 1;
+              if (this.excludedColumns.indexOf(key) === -1) {
+                // if it wasn't in the excluded columns
+                this.columnNames.push(key);
+                this.columnIndices[key] = cnt;
+                cnt += 1;
+              }
             }
           }
           if (this.columnsToFilterByRowMap.hasOwnProperty(key)) {
@@ -92,8 +118,12 @@ export class BgHomePageComponent implements OnInit {
       // fill the visibility of columns to false except name and status
       this.columnVisibility = new Array(this.columnNames.length);
       this.columnVisibility.fill(false);
-      this.columnVisibility[this.columnIndices['name']] = true;
-      this.columnVisibility[this.columnIndices['status']] = true;
+
+      // mark excluded columns as true to be visible
+      this.excludedColumns.forEach (excludedColumn => {
+        this.columnVisibility[this.columnIndices[excludedColumn]] = true;
+      });
+
       this.gettingData = false;
     }, error1 => {
       console.log("ERROR", error1);
