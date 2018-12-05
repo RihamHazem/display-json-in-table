@@ -1,7 +1,7 @@
 [
   {
     "col_name": "status",
-    "index": 0
+    "index": 4
   },
   {
     "col_name": "name",
@@ -17,6 +17,6 @@
   },
   {
     "col_name": "KILLED",
-    "index": 4
+    "index": 0
   }
 ]

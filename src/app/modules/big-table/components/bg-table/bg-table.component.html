@@ -1,5 +1,6 @@
 <dts-select-container #container="dts-select-container"
-                      [(selectedItems)]="selectedIDs">
+                      [(selectedItems)]="selectedIDs"
+                      [selectWithShortcut]="true">
   <div class="my-container"
       (click)="hideAllPopUps()">
     <div class="basic-container">
@@ -40,7 +41,7 @@
     <h2>Environment</h2>
     <span (click)="hideAllPopUps()">×</span>
   </div>
-  <table style="margin-top: 70px">
+  <table style="margin-top: 70px" class="table table-striped">
     <tr *ngFor="let col of environmentColumnNames">
       <th> {{col}} </th>
       <td> {{environmentTableData[col]}} </td>
