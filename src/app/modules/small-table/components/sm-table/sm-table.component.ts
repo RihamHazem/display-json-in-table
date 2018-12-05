@@ -16,6 +16,7 @@ export class SmTableComponent implements OnInit {
   @Input() rowVisibility = {};
   @Input() test_case_comments = {};
   @Input() comment_test_cases = {};
+  @Input() test_case_DEIs = {};
   heightWindow = "0";
   filteredTable = [];
   curRow: any[] = [];
@@ -58,6 +59,12 @@ export class SmTableComponent implements OnInit {
       return item.hasOwnProperty('comment') === true && item['comment'] === test;
     });
   }
+
+  public setDEISelected(test) {
+    this.selectContainer.selectItems((item) => {
+      return item.hasOwnProperty('dei') === true && item['dei'] === test;
+    });
+  }
   public setStatusSelected(row, id) {
     this.myIndex = id;
     this.selectContainer.selectItems((item) => {
@@ -96,6 +103,7 @@ export class SmTableComponent implements OnInit {
   hideAllPopUps() {
     this.isSubTableVisible = false;
     this.isShowCommentsMode = false;
+    this.isShowDEIsMode = false;
     this.deselectAll();
   }
 
@@ -262,7 +270,6 @@ export class SmTableComponent implements OnInit {
       }
     }
   }
-
   attachCommentModal(attach_comment) {
     this.attachComments = [];
     let commentMap = {}; // filter test_case_comments to get rid of duplicates
@@ -278,7 +285,6 @@ export class SmTableComponent implements OnInit {
     }
     this.attachCommentList(attach_comment);
   }
-
   attachCommentSubmission(modal, att_user: string) {
     // in this step I've already chosen the test_case_comments and It's time to choose test cases
     console.log(att_user);
@@ -293,7 +299,6 @@ export class SmTableComponent implements OnInit {
     this.isAttachTestCasesMode = true;
     modal.close();
   }
-
   sendAttachedTestCases() {
     this.isAttachTestCasesMode = false;
     this.isLoadingAttach = true;
@@ -391,7 +396,6 @@ export class SmTableComponent implements OnInit {
       this.loading = false;
     });
   }
-
   addNewComment(content) {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(() => {
       this.deselectAll();
@@ -461,10 +465,14 @@ export class SmTableComponent implements OnInit {
       this.errorCommentMsg = "There's an error in updating comment content. Please, check your internet connection!";
     });
   }
-  openDeleteCommentModal(delete_comment_modal, cur_tab, cur_comment) {
-    this.modalService.open(delete_comment_modal, {ariaLabelledBy: 'modalDelComm-basic-title'}).result.then((del_user_val) => {
+  openDeleteCommentOrDEIModal(delete_comment_modal, cur_tab, cur_comment_or_dei) {
+    this.modalService.open(delete_comment_modal, {ariaLabelledBy: 'modalDel-basic-title'}).result.then((del_user_val) => {
       this.deselectAll();
-      this.deleteComment(cur_tab, cur_comment, del_user_val, this.del_option === 2);
+
+      if (this.isShowCommentsMode)
+        this.deleteComment(cur_tab, cur_comment_or_dei, del_user_val, this.del_option === 2);
+      else this.deleteDEI(cur_tab, cur_comment_or_dei, del_user_val, this.del_option === 2);
+
       this.showError = false;
     }, () => {
       console.log(`Dismissed`);
@@ -514,6 +522,70 @@ export class SmTableComponent implements OnInit {
       this.errorCommentMsg = "There's an error in deleting comment. Please, check your internet connection!";
     });
 
+  }
+//  DEI Operations
+  shownDEIs = [];
+  isShowDEIsMode = false;
+  DEIOperation = {};
+  showDEIErrors = {};
+  errorDEIMsg = "";
+  showDEI() {
+    this.isShowDEIsMode = true;
+    this.shownDEIs = [];
+    let selectedDEIs = this.selectedDocuments.filter(item => item.hasOwnProperty('dei') === true);
+    this.shownTestCases = [];
+    for (let selected in selectedDEIs) {
+      let test_name = selectedDEIs[selected]['dei'];
+      this.shownDEIs.push(this.test_case_DEIs[test_name]);
+      this.shownTestCases.push(test_name);
+      this.showDEIErrors[selected] = false;
+
+      for (let selected_dei in this.test_case_DEIs[ test_name ]) {
+        if (this.DEIOperation.hasOwnProperty(selected) === false) this.DEIOperation[selected] = {};
+        this.DEIOperation[selected][selected_dei] = "normal";
+      }
+    }
+  }
+  deleteDEI(cur_tab, cur_dei, del_user, allow_detach_all) {
+    console.log(cur_tab, cur_dei, del_user, allow_detach_all);
+    this.DEIOperation[cur_tab][cur_dei] = "loadingDEIDelete";
+    let dei_id = this.shownDEIs[cur_tab][cur_dei];
+    let test_id = this.allTableData[ this.shownTestCases[cur_tab] ][0]['id'];
+    let params = {
+      "actor": del_user,
+      "note_ids": [dei_id],
+      "test_instance_ids": allow_detach_all? [] : [test_id],
+      "allow_detach_all": allow_detach_all
+    };
+    this._getJsonService.detachNotes(params).subscribe(data => {
+      if (data.hasOwnProperty("result") && data["result"] === "OK") {
+        // success
+        console.log("DEI detached =D");
+        if (allow_detach_all) {
+          // detach from all test cases
+          // let test_names = this.comment_test_cases[dei_id];
+          // test_names.forEach( (test_name) => {
+          //   let comment_pos = this.test_case_comments[test_name].findIndex(v => v.id === comment_id);
+          //   this.test_case_comments[test_name].splice(comment_pos, 1);
+          // });
+        } else {
+          // detach from current test case only
+          this.shownDEIs[cur_tab].splice(Number(cur_dei), 1);
+        }
+      } else {
+        console.log(data);
+        // error
+        this.showDEIErrors[cur_tab] = true;
+        this.DEIOperation[cur_tab][cur_dei] = "normal";
+        this.errorDEIMsg = "There's an error in deleting DEI. Please, check your internet connection!";
+      }
+    }, error1 => {
+      console.log(error1);
+      // error
+      this.showDEIErrors[cur_tab] = true;
+      this.DEIOperation[cur_tab][cur_dei] = "normal";
+      this.errorDEIMsg = "There's an error in deleting DEI. Please, check your internet connection!";
+    });
   }
 //  -------------------------------------------------------------------------
 //  Test Context Menu

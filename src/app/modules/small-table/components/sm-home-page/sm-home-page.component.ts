@@ -16,6 +16,7 @@ export class SmHomePageComponent implements OnInit {
   columnNames: string[] = ["Tests"];
   test_case_comments = {};
   comment_test_cases = {};
+  test_case_DEIs = {};
   // toggle sidebar visibility
   isSideMenuVisible = true;
   // it holds all rows for all columns
@@ -55,12 +56,16 @@ export class SmHomePageComponent implements OnInit {
           let curTestCase = curData[j];
           let test_name: string = curTestCase['test_name'];
           let test_comments = curTestCase['notes'];
-
+          let test_DEIs = curTestCase['attached_dei_gids'];
+          test_DEIs.push("cq:dts0101234567");
+          test_DEIs.push("caljira:FOO-1234");
           if (!this.myTableData.hasOwnProperty(test_name)) {
             // if this test cases wasn't seen before
             this.myTableData[test_name] = new Array(data.length);
             // add test case test_case_comments
             this.test_case_comments[test_name] = test_comments;
+            // add test case DEIs
+            this.test_case_DEIs[test_name] = test_DEIs;
             // for each comment attach cur test case
             test_comments.forEach( item => {
               if (this.comment_test_cases.hasOwnProperty(item['id']) === false) {
@@ -117,12 +122,7 @@ export class SmHomePageComponent implements OnInit {
           } else {
             this.columnsToFilterMap['Test Owner']["---"]++;
           }
-          if (!this.columnsToFilterMap['DEI'].hasOwnProperty("---")) {
-            this.columnsToFilterMap['DEI']["---"] = 1;
-            this.columnsToFilterVisibility['DEI']["---"] = true;
-          } else {
-            this.columnsToFilterMap['DEI']["---"]++;
-          }
+
           if (curRow[index] === undefined || curRow[index] === null) {
             if (!this.columnsToFilterMap['fstatus'].hasOwnProperty("---")) {
               this.columnsToFilterMap['fstatus']["---"] = 0;

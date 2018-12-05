@@ -85,10 +85,12 @@ h4 {
   position: fixed;
   left: 10%;
   width: 80%;
+  max-height: 80%;
+  min-height: 50%;
   top: 10%;
-  height: 80%;
   overflow: auto;
   z-index: 1;
+  border-radius: 5px;
 }
 .small-container .controls {
   background-color: #FAFAFA;
@@ -198,4 +200,9 @@ h4 {
 
 .del-selected-value {
   margin: 15px 0;
+}
+
+.custom-list {
+  width: 95%;
+  margin: 20px auto;
 }

@@ -65,7 +65,11 @@
                 [dtsSelectItem]="{'comment': row['Tests']}">
               {{ test_case_comments[row['Tests']].length === 0? "No Comment" : test_case_comments[row['Tests']].length + " Comments" }}
             </td>
-            <td id="DEI">---</td>
+            <td id="DEI"
+                [contextMenu]="deiMenu"
+                (contextmenu)="setDEISelected(row['Tests'])"
+                [contextMenuSubject]="row['Tests']"
+                [dtsSelectItem]="{'dei': row['Tests']}">{{ test_case_DEIs[row['Tests']].length === 0? "No DEI" : test_case_DEIs[row['Tests']].length + " DEIs" }}</td>
             <td id="Tags">---</td>
             <td id="Severity">---</td>
           </tr>
@@ -208,6 +212,7 @@
                (execute)="showPopUpTableStatus(selectedDocuments.length === 0? $event.item['test'] : selectedDocuments[0]['testName'])">Show More Info</ng-template>
 </context-menu>
 
+<!--Context menu for comments-->
 <context-menu #commentMenu>
   <ng-template contextMenuItem (execute)="addNewComment(content)">
     Add New Comment
@@ -219,9 +224,22 @@
     Attach Comment(s) to Test Case(s)
   </ng-template>
 </context-menu>
+
+<!--Context menu for DEIs-->
+<context-menu #deiMenu>
+  <ng-template contextMenuItem (execute)="showDEI()">
+    Show DEIs
+  </ng-template>
+  <ng-template contextMenuItem>
+    Attach DEI(s) to Test Case(s)
+  </ng-template>
+</context-menu>
+
+
+
 <!--It's just the dark window that appears behind the pop up table-->
 <div id="whole-window"
-     *ngIf="isSubTableVisible || isShowCommentsMode"
+     *ngIf="isSubTableVisible || isShowCommentsMode || isShowDEIsMode"
      (click)="hideAllPopUps()"></div>
 <!--------------------------------------------------------------------------------------------------->
 <div class="small-container" *ngIf="isSubTableVisible">
@@ -234,7 +252,7 @@
       <ngb-tab *ngFor="let cur_tab of tabs">
         <ng-template ngbTabTitle ><span title="{{cur_tab['testName']}}">{{cur_tab.val}}</span></ng-template>
         <ng-template ngbTabContent>
-          <table style="background-color:#fff;">
+          <table style="background-color:#fff;" class="table table-striped">
             <tr *ngFor="let col of allColumnData">
               <th> {{col}} </th>
               <td>
@@ -306,7 +324,7 @@
               <button *ngIf="commentOperation[cur_tab][cur_comment] !== 'submit' && commentOperation[cur_tab][cur_comment] !== 'loadingUpdate'"
                       style="margin-right: 10px; margin-top: -7px; padding: 5px"
                       class="pull-right btn btn-danger"
-                      (click)="openDeleteCommentModal(delete_comment_modal, cur_tab, cur_comment)">
+                      (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_comment)">
                 <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingDelete'"
                    class="fa fa-spinner fa-pulse fa-fw"
                    style="font-size: 1.6em"></i>
@@ -315,7 +333,7 @@
             </div>
             <div class="card-body">
               <div class="alert alert-danger" *ngIf="showCommentErrors[cur_tab][cur_comment] === true">{{errorCommentMsg}}</div>
-              <table style="background-color:#fff;">
+              <table style="background-color:#fff;" class="table table-striped">
                 <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_comment])">
                   <th class="card-title"> {{col}} </th>
                   <td>
@@ -354,10 +372,6 @@
     <section class="attach-section">
       <mat-checkbox class="attach-margin" *ngFor="let selected of objectKeys(attachComments)" [(ngModel)]="checkedComments[selected]">{{attachComments[selected]['content']}}</mat-checkbox>
     </section>
-
-    <!--<div class="checkbox" *ngFor="let selected of objectKeys(attachComments)">-->
-      <!--<label><input type="checkbox" [(ngModel)]="checkedComments[selected]" name="checked_{{selected}}" value="{{attachComments[selected]['content']}}" style="margin-right: 10px">{{attachComments[selected]['content']}}</label>-->
-    <!--</div>-->
   </div>
   <div class="modal-footer">
     <button class="btn btn-outline-dark" (click)="attachCommentSubmission(modalComm, att_user_val.value)">Submit Comments</button>
@@ -377,10 +391,10 @@
 
 
 <!-- Deleting Comment Modal -->
-<ng-template #delete_comment_modal let-modal>
+<ng-template #delete_comment_or_dei_modal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title" id="modalDelComm-basic-title">
-      Adding New Comment
+    <h5 class="modal-title" id="modalDel-basic-title">
+      Deleting {{isShowDEIsMode? 'DEI' : 'Comment'}}
       <span *ngIf="loading">
         <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
       </span>
@@ -412,3 +426,35 @@
     </div>
   </div>
 </ng-template>
+<!--DEIs popup just to show them-->
+
+<div class="small-container" *ngIf="isShowDEIsMode">
+  <div class="controls">
+    <h2>DEI Info</h2>
+    <span (click)="hideAllPopUps()">×</span>
+  </div>
+  <div  style="margin-top: 70px">
+    <ngb-tabset>
+      <ngb-tab *ngFor="let cur_tab of objectKeys(shownDEIs)">
+        <ng-template ngbTabTitle ><span title="">Test Case #{{cur_tab}}</span></ng-template>
+        <ng-template ngbTabContent>
+          <span style="margin: 20px" *ngIf="shownDEIs[cur_tab].length === 0"> There's no DEIs for this test case.</span>
+            <div class="alert alert-danger" style="margin: 20px;" *ngIf="showDEIErrors[cur_tab] === true">{{errorDEIMsg}}</div>
+            <ul class="list-group custom-list">
+              <li class="list-group-item" *ngFor="let cur_DEI of objectKeys(shownDEIs[cur_tab])">
+                {{shownDEIs[cur_tab][cur_DEI]}}
+                <button style="margin-right: 10px; padding: 5px"
+                        class="pull-right btn btn-danger"
+                        (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_DEI)">
+                  <i *ngIf="DEIOperation[cur_tab][cur_DEI] === 'loadingDEIDelete'"
+                     class="fa fa-spinner fa-pulse fa-fw"
+                     style="font-size: 1.6em"></i>
+                  <img *ngIf="DEIOperation[cur_tab][cur_DEI] !== 'loadingDEIDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
+                </button>
+              </li>
+            </ul>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</div>

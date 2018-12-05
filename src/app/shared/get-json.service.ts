@@ -33,4 +33,11 @@ export class GetJsonService {
   detachNotes(params) {
     return this.http.post<any>(this.apiUrl + 'note/detach', params, this.options);
   }
+  // DEI Operations
+  attachDEI(params) {
+    return this.http.post<any>(this.apiUrl + 'dei/attach', params, this.options);
+  }
+  detachDEI(params) {
+    return this.http.post<any>(this.apiUrl + 'dei/detach', params, this.options);
+  }
 }

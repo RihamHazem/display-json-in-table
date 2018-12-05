@@ -36,6 +36,7 @@ export class BgHomePageComponent implements OnInit {
     if (newParams === "" || newParams === null || newParams === undefined) return;
     this.gettingData = true;
     this.emptyAllData();
+    // get user preference data
     this._getJsonService.getCustomSettings().subscribe(data => {
       data.sort((a, b) => {
         if (a.index < b.index)
@@ -52,8 +53,7 @@ export class BgHomePageComponent implements OnInit {
     }, error => {
       console.log(error);
     });
-    console.log(this.columnNames);
-    console.log(this.excludedColumns);
+    // get json table
     this._getJsonService.getJsonTable(newParams).subscribe(data => {
       let cnt = this.columnNames.length;
       // for all submissions
