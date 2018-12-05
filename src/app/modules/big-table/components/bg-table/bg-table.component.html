@@ -44,7 +44,7 @@
   <table style="margin-top: 70px" class="table table-striped">
     <tr *ngFor="let col of environmentColumnNames">
       <th> {{col}} </th>
-      <td> {{environmentTableData[col]}} </td>
+      <td [innerHTML]="displayContent(environmentTableData[col])">  </td>
     </tr>
   </table>
 </div>

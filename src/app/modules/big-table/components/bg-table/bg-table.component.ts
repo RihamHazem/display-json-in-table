@@ -50,4 +50,34 @@ export class BgTableComponent implements OnInit {
   selectRow(id) {
     this.selectContainer.selectItems(item => item === id);
   }
+  // a recursive function for displaying table
+  // arrays displayed in list
+  // json displays in table
+  displayContent(value) {
+    if (Array.isArray(value) === true) {
+      let res = "<ul class=\"list-group custom-list\">\n";
+      value.forEach( (item) => {
+        if (typeof item === 'object') {
+          item = this.displayContent(item);
+        } else if (item === null || item === undefined) item = "---";
+        res += "<li class=\"list-group-item\" *ngFor=\"let cur_DEI of objectKeys(shownDEIs[cur_tab])\">\n" + item + "</li>\n";
+      });
+      res += "</ul>";
+      return res;
+    } else if (typeof value === 'object') {
+      let res = "<table  class=\"table table-striped\">";
+      for (let key in value) {
+        let item = value[key];
+        if (typeof item === 'object') {
+          item = this.displayContent(item);
+        } else if (item === null || item === undefined) item = "---";
+        res += "<tr> <th>" + key + "</th> <td>" + item + "</td> </tr>";
+      }
+      res += "</table>";
+      return res;
+    } else if (value === null || typeof value === 'undefined') {
+      return "---";
+    }
+    return value;
+  }
 }

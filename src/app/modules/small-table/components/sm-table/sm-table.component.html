@@ -255,8 +255,7 @@
           <table style="background-color:#fff;" class="table table-striped">
             <tr *ngFor="let col of allColumnData">
               <th> {{col}} </th>
-              <td>
-                {{JSONstringify(allTableData[cur_tab['testName']][cur_tab.j][col])}}
+              <td [innerHTML]="displayContent(allTableData[ cur_tab['testName'] ][cur_tab.j][col])">
               </td>
             </tr>
           </table>
