@@ -110,8 +110,8 @@ export class SmHomePageComponent implements OnInit {
         }
       }
       this.columnNames.push("Comment");
-      this.columnNames.push("Test Owner");
       this.columnNames.push("DEI");
+      this.columnNames.push("Test Owner");
       this.columnNames.push("Tags");
       for (let key in this.myTableData) {
         let curRow = this.myTableData[key];
