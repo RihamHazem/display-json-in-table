@@ -16,7 +16,6 @@ export class SmTableComponent implements OnInit {
   @Input() rowVisibility = {};
   @Input() test_case_comments = {};
   @Input() comment_test_cases = {};
-  @Input() test_case_DEIs = {};
   heightWindow = "0";
   filteredTable = [];
   curRow: any[] = [];
@@ -269,7 +268,7 @@ export class SmTableComponent implements OnInit {
   shownComments = [];
   shownTestCases = []; // shown test cases in the comments window
   isShowCommentsMode = false;
-  isAttachTestCasesMode = false;
+  isAttachTestCasesMode_comments = false;
   showInputs = {};
   commentOperation = {};
   showCommentErrors = {};
@@ -319,26 +318,37 @@ export class SmTableComponent implements OnInit {
     // in this step I've already chosen the test_case_comments and It's time to choose test cases
     console.log(att_user);
     console.log(this.checkedComments);
-    if (att_user === '' || Object.values(this.checkedComments).indexOf(false) !== -1) {
+    if (att_user === '' || Object.values(this.checkedComments).indexOf(true) === -1) {
       this.attachError = true;
       this.attachErrorMsg = "Please fill all fields";
       return;
     }
     this.attachError = false;
     this.attach_user = att_user;
-    this.isAttachTestCasesMode = true;
+    this.isAttachTestCasesMode_comments = true;
     modal.close();
   }
-  sendAttachedTestCases() {
-    this.isAttachTestCasesMode = false;
+  sendAttachedTestCases(mode: boolean) { // mode => true: comment, false: dei
+    this.isAttachTestCasesMode_comments = false;
+    this.isAttachTestCasesMode_deis = false;
+
     this.isLoadingAttach = true;
     let selectedTestCases = this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true);
     let test_case_ids = [];
-    let note_ids = [];
     for (let selected in selectedTestCases) {
       let testName = selectedTestCases[selected]['test']['Tests'];
       test_case_ids.push(this.allTableData[ testName ][0]['id']);
     }
+    if (mode == true) {
+      // comment
+      this.sendAttachedTestCases_comment(test_case_ids, selectedTestCases);
+    } else {
+      // dei
+      this.sendAttachedTestCases_dei(test_case_ids, selectedTestCases);
+    }
+  }
+  sendAttachedTestCases_comment(test_case_ids, selectedTestCases) {
+    let note_ids = [];
     let checkedCommentsData = [];
     for (let selected in this.attachComments) {
       if (this.checkedComments[selected] === true) {
@@ -361,7 +371,14 @@ export class SmTableComponent implements OnInit {
         // attach these test_case_comments to selected test cases on the UI
         for (let test_case in selectedTestCases) {
           let testName = selectedTestCases[test_case]['test']['Tests'];
-          checkedCommentsData.forEach(item => this.test_case_comments[testName].push(item));
+          checkedCommentsData.forEach(item => {
+            let found = false;
+            this.test_case_comments[testName].forEach(node => {
+              if (node['id'] === item['id']) found = true;
+            });
+            if (!found)
+              this.test_case_comments[testName].push(item);
+          });
         }
       } else {
         // error
@@ -559,6 +576,12 @@ export class SmTableComponent implements OnInit {
   DEIOperation = {};
   showDEIErrors = {};
   errorDEIMsg = "";
+  attachDEIs = [];
+  checkedDEIs = {};
+  attachDEIError = false;
+  attach_dei_user = "";
+  isAttachTestCasesMode_deis = false;
+  @Input() test_case_DEIs = {};
   showDEI() {
     this.isShowDEIsMode = true;
     this.shownDEIs = [];
@@ -587,7 +610,7 @@ export class SmTableComponent implements OnInit {
       "test_instance_ids": allow_detach_all? [] : [test_id],
       "allow_detach_all": allow_detach_all
     };
-    this._getJsonService.detachNotes(params).subscribe(data => {
+    this._getJsonService.detachDEI(params).subscribe(data => {
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
         console.log("DEI detached =D");
@@ -615,6 +638,81 @@ export class SmTableComponent implements OnInit {
       this.showDEIErrors[cur_tab] = true;
       this.DEIOperation[cur_tab][cur_dei] = "normal";
       this.errorDEIMsg = "There's an error in deleting DEI. Please, check your internet connection!";
+    });
+  }
+
+  attachDEIModal(attach_dei) {
+    this.attachDEIs = [];
+    let deiMap = {}; // filter test_case_deis to get rid of duplicates
+    let selectedDEIs = this.selectedDocuments.filter(item => item.hasOwnProperty('dei') === true); // list contains test cases that has all test_case_comments
+    for (let selected in selectedDEIs) {
+      let curTestCase = this.test_case_DEIs[ selectedDEIs[selected]['dei'] ]; // getting test_case_DEIs of the current test case
+      for (let dei in curTestCase) {
+        if (deiMap.hasOwnProperty(curTestCase[dei]) === false) {
+          deiMap[ curTestCase[dei] ] = true;
+          this.attachDEIs.push( curTestCase[dei] );
+        }
+      }
+    }
+    this.attachDEIList(attach_dei);
+  }
+  attachDEIList(attach_dei) {
+    for (let selected in this.attachDEIs) { // empty checked test_case_comments
+      this.checkedDEIs[selected] = false;
+    }
+    this.modalService.open(attach_dei, {ariaLabelledBy: 'modalDEI-basic-title'}).result.then(() => {
+      this.deselectAll();
+    }, () => {
+      console.log(`Dismissed`);
+    });
+  }
+  attachDEISubmission(modal, att_dei_user: string) {
+    // in this step I've already chosen the test_case_comments and It's time to choose test cases
+    console.log(att_dei_user);
+    console.log(this.checkedDEIs);
+    if (att_dei_user === '' || Object.values(this.checkedDEIs).indexOf(true) === -1) {
+      this.attachError = true;
+      this.attachErrorMsg = "Please fill all fields";
+      return;
+    }
+    this.attachDEIError = false;
+    this.attach_dei_user = att_dei_user;
+    this.isAttachTestCasesMode_deis = true;
+    modal.close();
+  }
+  sendAttachedTestCases_dei(test_case_ids, selectedTestCases) {
+    let params = {
+      "dei_gids": this.attachDEIs,
+      "test_instance_ids": test_case_ids,
+      "actor": this.attach_dei_user
+    };
+    this._getJsonService.attachDEI(params).subscribe((data) => {
+      this.isLoadingAttach = false;
+      if (data.hasOwnProperty("result") && data["result"] === "OK") {
+        // success
+        console.log("DEIs Attached =D");
+        this.submittedAttach = true;
+        this.attachError = false;
+        // attach these test_case_comments to selected test cases on the UI
+        for (let test_case in selectedTestCases) {
+          let testName = selectedTestCases[test_case]['test']['Tests'];
+          this.attachDEIs.forEach(item => {
+            if(this.test_case_DEIs[testName].indexOf(item) === -1) this.test_case_DEIs[testName].push(item);
+          });
+        }
+      } else {
+        // error
+        console.log("ERROR", data);
+        this.attachError = true;
+        this.attachErrorMsg = "Selected DEI(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
+        this.isLoadingAttach = false;
+      }
+    }, error1 => {
+      // error
+      console.log("ERROR", error1);
+      this.attachError = true;
+      this.attachErrorMsg = "Selected DEI(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
+      this.isLoadingAttach = false;
     });
   }
 //  -------------------------------------------------------------------------

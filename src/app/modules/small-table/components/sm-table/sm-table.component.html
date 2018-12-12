@@ -62,6 +62,7 @@
             <td [contextMenu]="commentMenu"
                 (contextmenu)="setCommentSelected(row['Tests'])"
                 [contextMenuSubject]="row['Tests']"
+
                 [dtsSelectItem]="{'comment': row['Tests']}">
               {{ test_case_comments[row['Tests']].length === 0? "No Comment" : test_case_comments[row['Tests']].length + " Comments" }}
             </td>
@@ -220,7 +221,7 @@
   <ng-template contextMenuItem (execute)="showComment()">
     Show Comments
   </ng-template>
-  <ng-template contextMenuItem (execute)="attachCommentModal(attach_comment)">
+  <ng-template contextMenuItem (execute)="attachCommentModal(attach_comment)" [enabled]="!isAttachTestCasesMode_comments && !isAttachTestCasesMode_deis">
     Attach Comment(s) to Test Case(s)
   </ng-template>
 </context-menu>
@@ -230,7 +231,7 @@
   <ng-template contextMenuItem (execute)="showDEI()">
     Show DEIs
   </ng-template>
-  <ng-template contextMenuItem>
+  <ng-template contextMenuItem (execute)="attachDEIModal(attach_dei)" [enabled]="!isAttachTestCasesMode_comments && !isAttachTestCasesMode_deis">
     Attach DEI(s) to Test Case(s)
   </ng-template>
 </context-menu>
@@ -296,6 +297,7 @@
     </form>
   </div>
 </ng-template>
+
 <!--Comment Small Table; shows test_case_comments for test case(s)-->
 <div id="comment-table" class="small-container" *ngIf="isShowCommentsMode">
   <div class="controls">
@@ -352,7 +354,6 @@
 </div>
 
 <!--Select Comments to Attach Modal-->
-
 <ng-template #attach_comment let-modalComm>
   <div class="modal-header" >
     <h5 class="modal-title" id="modalComm-basic-title">
@@ -378,12 +379,12 @@
 </ng-template>
 
 
-<div *ngIf="isAttachTestCasesMode">
-  <button class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases()">Attach to Selected Test Cases</button>
-  <button class="btn btn-dark fixed-bottom-left" (click)="isAttachTestCasesMode = false; deselectAll()">Cancel Operation</button>
+<div *ngIf="isAttachTestCasesMode_comments || isAttachTestCasesMode_deis">
+  <button class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases(isAttachTestCasesMode_comments)">Attach to Selected Test Cases</button> <!-- ture => comment, false => dei -->
+  <button class="btn btn-dark fixed-bottom-left" (click)="isAttachTestCasesMode_comments = false; isAttachTestCasesMode_deis = false; deselectAll()">Cancel Operation</button>
 </div>
 <div *ngIf="isLoadingAttach">
-  <span class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases()">
+  <span class="btn btn-dark fixed-bottom-right">
     Loading <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
   </span>
 </div>
@@ -425,8 +426,8 @@
     </div>
   </div>
 </ng-template>
-<!--DEIs popup just to show them-->
 
+<!--DEIs popup just to show them-->
 <div class="small-container" *ngIf="isShowDEIsMode">
   <div class="controls">
     <h2>DEI Info</h2>
@@ -457,3 +458,28 @@
     </ngb-tabset>
   </div>
 </div>
+
+<!-- Creating DEI Modal -->
+<ng-template #attach_dei let-modalDEI>
+  <div class="modal-header" >
+    <h5 class="modal-title" id="modalDEI-basic-title">
+      Choose DEIs to Attach
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modalDEI.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <label for="att-dei-username">Username</label>
+    <div class="input-group">
+      <input type="text" placeholder="type username.." #att_dei_user_val id="att-dei-username" class="username-input" required>
+    </div>
+    <section class="attach-section">
+      <mat-checkbox class="attach-margin" *ngFor="let selected of objectKeys(attachDEIs)" [(ngModel)]="checkedDEIs[selected]">{{attachDEIs[selected]}}</mat-checkbox>
+    </section>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-dark" (click)="attachDEISubmission(modalDEI, att_dei_user_val.value)">Submit DEIs</button>
+  </div>
+</ng-template>

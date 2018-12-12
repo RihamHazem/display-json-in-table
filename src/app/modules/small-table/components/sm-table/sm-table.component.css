@@ -178,14 +178,12 @@ h4 {
 /* Attach Modal */
 
 .attach-section {
-  display: flex;
-  align-content: center;
-  align-items: center;
-  height: 60px;
+  /*height: 60px;*/
 }
 
 .attach-margin {
   margin: 0 10px;
+  display: block;
 }
 
 /* Delete Modal */

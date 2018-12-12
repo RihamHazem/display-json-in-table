@@ -11,7 +11,7 @@ export class SmTableParamsComponent implements OnInit, AfterViewInit {
   constructor() {
     let href_arr = window.location.href.split('?');
     if (href_arr.length > 1) {
-      this.query = decodeURI(href_arr[1]);
+      this.query = decodeURIComponent(href_arr[1]);
     }
   }
 
