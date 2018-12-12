@@ -204,3 +204,18 @@ h4 {
   width: 95%;
   margin: 20px auto;
 }
+/* Update Test Instance */
+.upd-test-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.full-width {
+  width: 80%;
+}
+
+.upd-test-radio-button {
+  margin: 5px;
+  width: 40%;
+}

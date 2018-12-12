@@ -36,6 +36,7 @@ context-menu-content .ngx-contextmenu a {
 context-menu-content .ngx-contextmenu a:hover {
   background-color: lightgray;
 }
-.hasSubMenu[_ngcontent-c9]:before {
-  content: "➤" !important;
+.hasSubMenu[_ngcontent-c9]:before, .hasSubMenu[_ngcontent-c11]:before {
+  padding-left: 5px;
+  content: "⮞" !important;
 }

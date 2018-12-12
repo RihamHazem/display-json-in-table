@@ -721,6 +721,47 @@ export class SmTableComponent implements OnInit {
       this.isLoadingAttach = false;
     });
   }
+
+//  Update Test Instances
+  inputs_upd_tests = [{'key': "Actor", 'val': ""}, {'key': "Evaluation Owner", 'val': ""}];
+  radio_upd_tests_ev_status = ["READY ", "IN_PROGRESS", "COMPLETE", "PENDING"];
+  ev_status_option = "READY";
+  radio_upd_tests_ev_res = ["NOT_EVALUATED ", "FAIL", "EXPECTED_FAIL", "WAIVED", "BROKEN_TEST", "VALIDATED"];
+  ev_res_option = "NOT_EVALUATED";
+  updateTestInstancesModal(modal) {
+    this.modalService.open(modal, {ariaLabelledBy: 'modalUpdateTest-basic-title'}).result.then(() => {
+      this.deselectAll();
+    }, () => {
+      console.log(`Dismissed`);
+    });
+  }
+  sendUpdatedTestInstances() {
+    for (let inp in this.inputs_upd_tests) {
+      if (inp['val'] === '') {
+        this.errorResult = "Please fill all fields";
+        this.showError = true;
+        return;
+      }
+    }
+    this.showError = false;
+    let selectedTests = [];
+    this.selectedDocuments.forEach(item => {
+      if (item.hasOwnProperty('test') === true)
+        selectedTests.push(this.allTableData[item['testName']][0]['id']);
+    }); // list contains selected test cases
+    let params = {
+      "actor": this.inputs_upd_tests[0]['val'],
+      "test_instance_ids": selectedTests,
+      "evaluation_owner": this.inputs_upd_tests[1]['val'],
+      "evaluation_status": this.ev_status_option,
+      "evaluation_result": this.ev_res_option
+    };
+    this._getJsonService.updateTests(params).subscribe(data => {
+      // success
+    }, error1 => {
+
+    });
+  }
 //  -------------------------------------------------------------------------
 //  Test Context Menu
   public applyColor() {

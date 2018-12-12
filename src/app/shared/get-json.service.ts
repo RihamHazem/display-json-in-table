@@ -40,4 +40,8 @@ export class GetJsonService {
   detachDEI(params) {
     return this.http.post<any>(this.apiUrl + 'dei/detach', params, this.options);
   }
+  // Update Test Instances
+  updateTests(params) {
+    return this.http.post<any>(this.apiUrl + 'test/update', params, this.options);
+  }
 }

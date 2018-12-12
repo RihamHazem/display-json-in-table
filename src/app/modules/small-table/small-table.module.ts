@@ -10,7 +10,7 @@ import { SmTableParamsComponent } from './components/sm-table-params/sm-table-pa
 import { SelectedDocFilterPipe } from './shared/selectedDoc-filter.pipe';
 import {ContextMenuModule} from 'ngx-contextmenu';
 import {DragToSelectModule} from 'ngx-drag-to-select';
-import {MatAutocompleteModule, MatCheckboxModule, MatFormFieldModule, MatRadioModule} from '@angular/material';
+import {MatAutocompleteModule, MatCheckboxModule, MatFormFieldModule, MatInputModule, MatRadioModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbTabsetModule, NgbCarouselModule} from '@ng-bootstrap/ng-bootstrap';
 import { SubmissionsTableComponent } from './components/submissions-table/submissions-table.component';
@@ -22,6 +22,7 @@ import { SubmissionsTableComponent } from './components/submissions-table/submis
     ContextMenuModule,
     MatAutocompleteModule,
     MatFormFieldModule,
+    MatInputModule,
     MatRadioModule,
     MatCheckboxModule,
     FormsModule,

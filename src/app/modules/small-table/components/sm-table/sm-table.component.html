@@ -78,9 +78,9 @@
     </div>
   </dts-select-container>
 </div>
-<!-- Context Menu for test name -->
 
-<context-menu #testMenu (close)="deselectAll()">
+<!-- Context Menu for test name -->
+<context-menu #testMenu >
   <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event)"
                [subMenu]="subTestMenu"
@@ -96,6 +96,10 @@
       </ng-template>
     </span>
   </context-menu>
+  <ng-template contextMenuItem
+               (execute)="updateTestInstancesModal(update_test)">
+    Update Test Instances
+  </ng-template>
   <ng-template contextMenuItem
                (execute)="applyColor()">
     Apply Color (to all selected cells)
@@ -265,6 +269,7 @@
     </ngb-tabset>
   </div>
 </div>
+
 <!-- Creating Comment Modal -->
 <ng-template #content let-modal>
   <div class="modal-header">
@@ -378,7 +383,7 @@
   </div>
 </ng-template>
 
-
+<!--Attach Comment or DEI Buttons-->
 <div *ngIf="isAttachTestCasesMode_comments || isAttachTestCasesMode_deis">
   <button class="btn btn-dark fixed-bottom-right" (click)="sendAttachedTestCases(isAttachTestCasesMode_comments)">Attach to Selected Test Cases</button> <!-- ture => comment, false => dei -->
   <button class="btn btn-dark fixed-bottom-left" (click)="isAttachTestCasesMode_comments = false; isAttachTestCasesMode_deis = false; deselectAll()">Cancel Operation</button>
@@ -388,7 +393,6 @@
     Loading <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
   </span>
 </div>
-
 
 <!-- Deleting Comment Modal -->
 <ng-template #delete_comment_or_dei_modal let-modal>
@@ -410,7 +414,7 @@
       <div class="input-group">
         <input type="text" placeholder="type username.." #del_user_val id="del-username" class="username-input" required>
       </div>
-      <div class="checkbox">
+      <div class="radio">
         <mat-radio-group class="del-radio-group" name="del-radio" [(ngModel)]="del_option">
           <mat-radio-button class="del-radio-button" [value]="1">
             Delete for this test case only
@@ -481,5 +485,41 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-outline-dark" (click)="attachDEISubmission(modalDEI, att_dei_user_val.value)">Submit DEIs</button>
+  </div>
+</ng-template>
+
+<!-- Update Test Instance Modal -->
+<ng-template #update_test let-modalUpdateTest>
+  <div class="modal-header" >
+    <h5 class="modal-title" id="modalUpdateTest-basic-title">
+      Update Selected Test Instances
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="modalUpdateTest.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="upd-test-form">
+      <mat-form-field class="full-width" *ngFor="let inp of inputs_upd_tests">
+        <input matInput placeholder="{{inp['key']}}" [value]="inp['val']"> <br><br>
+      </mat-form-field>
+
+      <mat-radio-group name="upd-test-radio-status" [(ngModel)]="ev_status_option">
+        <label>Evaluation Status</label><br>
+        <mat-radio-button class="upd-test-radio-button" *ngFor="let ev_status_item of radio_upd_tests_ev_status" [value]="ev_status_item">
+          {{ev_status_item}}
+        </mat-radio-button>
+      </mat-radio-group>
+      <br><br>
+      <mat-radio-group name="upd-test-radio-res" [(ngModel)]="ev_res_option">
+        <label>Evaluation Result</label><br>
+        <mat-radio-button class="upd-test-radio-button" *ngFor="let ev_res_item of radio_upd_tests_ev_res" [value]="ev_res_item">
+          {{ev_res_item}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline-dark" (click)="modalUpdateTest.close()">Update Test Instances</button>
   </div>
 </ng-template>
