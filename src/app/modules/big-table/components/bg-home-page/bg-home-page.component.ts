@@ -46,9 +46,11 @@ export class BgHomePageComponent implements OnInit {
         return 1;
       });
       data.forEach( row => {
-        this.columnIndices[row['col_name']] = row['index'];
-        this.columnNames.push(row['col_name']);
-        this.excludedColumns.push(row['col_name']);
+        if (row['visibility'] === true) {
+          this.columnIndices[row['col_name']] = row['index'];
+          this.columnNames.push(row['col_name']);
+          this.excludedColumns.push(row['col_name']);
+        }
       });
     }, error => {
       console.log(error);
