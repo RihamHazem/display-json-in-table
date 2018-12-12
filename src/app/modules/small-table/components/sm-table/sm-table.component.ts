@@ -385,6 +385,7 @@ export class SmTableComponent implements OnInit {
         // error
         console.log("ERROR", data);
         this.attachError = true;
+        this.submittedAttach = false;
         this.attachErrorMsg = "Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
         this.isLoadingAttach = false;
       }
@@ -392,6 +393,7 @@ export class SmTableComponent implements OnInit {
       // error
       console.log("ERROR", error1);
       this.attachError = true;
+      this.submittedAttach = false;
       this.attachErrorMsg = "Selected Comment(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
       this.isLoadingAttach = false;
     });
@@ -706,6 +708,7 @@ export class SmTableComponent implements OnInit {
         // error
         console.log("ERROR", data);
         this.attachError = true;
+        this.submittedAttach = false;
         this.attachErrorMsg = "Selected DEI(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
         this.isLoadingAttach = false;
       }
@@ -713,6 +716,7 @@ export class SmTableComponent implements OnInit {
       // error
       console.log("ERROR", error1);
       this.attachError = true;
+      this.submittedAttach = false;
       this.attachErrorMsg = "Selected DEI(s) didn't Attach Successfully to Selected Test Case(s). Please Try again!";
       this.isLoadingAttach = false;
     });
