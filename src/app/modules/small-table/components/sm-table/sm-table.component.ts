@@ -380,6 +380,7 @@ export class SmTableComponent implements OnInit {
               this.test_case_comments[testName].push(item);
           });
         }
+        this.deselectAll();
       } else {
         // error
         console.log("ERROR", data);
@@ -700,6 +701,7 @@ export class SmTableComponent implements OnInit {
             if(this.test_case_DEIs[testName].indexOf(item) === -1) this.test_case_DEIs[testName].push(item);
           });
         }
+        this.deselectAll();
       } else {
         // error
         console.log("ERROR", data);
