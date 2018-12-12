@@ -53,9 +53,8 @@
                 (contextmenu)="setStatusSelected(row, j)"
                 [dtsSelectItem]="{'status': row, 'testName': row['Tests'], 'id': j}">
               <span>{{item["exec_state"]}}</span>
-              <br><br>
-              <span *ngIf="item['fstatus'][0] === '---'">---</span>
-              <ul style="margin-left: 15px" *ngIf="item['fstatus'][0] !== '---'">
+              <span *ngIf="item['fstatus'][0] === '---'"><br>---</span>
+              <ul style="margin-left: 15px; margin-bottom: 0" *ngIf="item['fstatus'][0] !== '---'">
                 <li *ngFor="let f_s of item['fstatus']">{{f_s}}</li>
               </ul>
             </td>
@@ -64,13 +63,13 @@
                 [contextMenuSubject]="row['Tests']"
 
                 [dtsSelectItem]="{'comment': row['Tests']}">
-              {{ test_case_comments[row['Tests']].length === 0? "No Comment" : test_case_comments[row['Tests']].length + " Comments" }}
+              {{ getCommentsNumber(row['Tests']) }}
             </td>
             <td id="DEI"
                 [contextMenu]="deiMenu"
                 (contextmenu)="setDEISelected(row['Tests'])"
                 [contextMenuSubject]="row['Tests']"
-                [dtsSelectItem]="{'dei': row['Tests']}">{{ test_case_DEIs[row['Tests']].length === 0? "No DEI" : test_case_DEIs[row['Tests']].length + " DEIs" }}</td>
+                [dtsSelectItem]="{ 'dei': row['Tests'] }">{{ getDEIsNumber(row['Tests']) }}</td>
             <td id="Tags">---</td>
             <td id="Severity">---</td>
           </tr>
@@ -97,10 +96,6 @@
     </span>
   </context-menu>
   <ng-template contextMenuItem
-               (execute)="updateTestInstancesModal(update_test)">
-    Update Test Instances
-  </ng-template>
-  <ng-template contextMenuItem
                (execute)="applyColor()">
     Apply Color (to all selected cells)
   </ng-template>
@@ -120,13 +115,20 @@
 </context-menu>
 
 <!--Context menu for status-->
-<context-menu #statusMenu (close)="deselectAll()">
+<context-menu #statusMenu>
   <!-- Item #1 with its sub-context-menu -->
   <ng-template contextMenuItem
                (execute)="showMessage('Hi, ' + $event.item)"
                [subMenu]="subStatusMenu"
                let-data>
     Cur Selected: {{data['cur']['exec_state']}}
+  </ng-template>
+  <ng-template contextMenuItem
+               (execute)="updateTestInstancesModal(update_test)">
+    Update Test Status
+  </ng-template>
+  <ng-template contextMenuItem (execute)="addNewComment(content)">
+    Add New Comment
   </ng-template>
   <context-menu #subStatusMenu>
     <span *ngFor="let doc of selectedDocuments; let i = index">
@@ -219,9 +221,6 @@
 
 <!--Context menu for comments-->
 <context-menu #commentMenu>
-  <ng-template contextMenuItem (execute)="addNewComment(content)">
-    Add New Comment
-  </ng-template>
   <ng-template contextMenuItem (execute)="showComment()">
     Show Comments
   </ng-template>
@@ -314,42 +313,46 @@
       <ngb-tab *ngFor="let cur_tab of objectKeys(shownComments)">
         <ng-template ngbTabTitle ><span title="">Test Case #{{cur_tab}}</span></ng-template>
         <ng-template ngbTabContent>
-          <span style="margin: 20px" *ngIf="shownComments[cur_tab].length === 0"> There's no comments for this test case.</span>
-          <div class="card" style="width: 48%; margin: 10px; display: inline-block" *ngFor="let cur_comment of objectKeys(shownComments[cur_tab])">
-            <div class="card-header">Comment #{{cur_comment}}
-              <!--Update Button-->
-              <button style="margin-top: -7px; padding: 5px;"
-                      class="pull-right btn btn-info"
-                      *ngIf="commentOperation[cur_tab][cur_comment] !== 'loadingDelete'"
-                      (click)="updateCommentMode(cur_tab, cur_comment)">
-                <span *ngIf="commentOperation[cur_tab][cur_comment] === 'submit'">Submit Changes</span>
-                <img *ngIf="commentOperation[cur_tab][cur_comment] === 'normal'" src="./assets/images/edit.svg" alt="" style="width: 25px">
-                <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingUpdate'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
-              </button>
-              <!--Delete Button-->
-              <button *ngIf="commentOperation[cur_tab][cur_comment] !== 'submit' && commentOperation[cur_tab][cur_comment] !== 'loadingUpdate'"
-                      style="margin-right: 10px; margin-top: -7px; padding: 5px"
-                      class="pull-right btn btn-danger"
-                      (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_comment)">
-                <i *ngIf="commentOperation[cur_tab][cur_comment] === 'loadingDelete'"
-                   class="fa fa-spinner fa-pulse fa-fw"
-                   style="font-size: 1.6em"></i>
-                <img *ngIf="commentOperation[cur_tab][cur_comment] !== 'loadingDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
-              </button>
-            </div>
-            <div class="card-body">
-              <div class="alert alert-danger" *ngIf="showCommentErrors[cur_tab][cur_comment] === true">{{errorCommentMsg}}</div>
-              <table style="background-color:#fff;" class="table table-striped">
-                <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_comment])">
-                  <th class="card-title"> {{col}} </th>
-                  <td>
-                    <span *ngIf="showInputs[cur_tab][cur_comment] === false || col !== 'content'">{{shownComments[cur_tab][cur_comment][col]}}</span>
-                    <input type="text" [(ngModel)]="shownComments[cur_tab][cur_comment][col]" name="{{cur_tab}}_{{cur_comment}}" class="content-comment"
-                           *ngIf="showInputs[cur_tab][cur_comment] === true && col === 'content'">
-                  </td>
+          <span style="margin: 20px" *ngIf="objectKeys(shownComments[cur_tab]).length === 0"> There's no comments for this test case.</span>
+          <div *ngFor="let cur_status of objectKeys(shownComments[cur_tab])">
+            <div style="margin: 15px 10px 10px 10px;">Status #{{cur_status}}</div>
+            <span style="margin: 20px" *ngIf="shownComments[cur_tab][cur_status].length === 0"> There's no comments for this status.</span>
+            <div class="card" style="width: 48%; margin: 10px; display: inline-block"  *ngFor="let cur_comment of objectKeys(shownComments[cur_tab][cur_status])">
+              <div class="card-header">Comment #{{cur_comment}}
+                <!--Update Button-->
+                <button style="margin-top: -7px; padding: 5px;"
+                        class="pull-right btn btn-info"
+                        *ngIf="commentOperation[cur_tab][cur_status][cur_comment] !== 'loadingDelete'"
+                        (click)="updateCommentMode(cur_tab, cur_status, cur_comment)">
+                  <span *ngIf="commentOperation[cur_tab][cur_status][cur_comment] === 'submit'">Submit Changes</span>
+                  <img *ngIf="commentOperation[cur_tab][cur_status][cur_comment] === 'normal'" src="./assets/images/edit.svg" alt="" style="width: 25px">
+                  <i *ngIf="commentOperation[cur_tab][cur_status][cur_comment] === 'loadingUpdate'" class="fa fa-spinner fa-pulse fa-fw" style="font-size: 1.6em"></i>
+                </button>
+                <!--Delete Button-->
+                <button *ngIf="commentOperation[cur_tab][cur_status][cur_comment] !== 'submit' && commentOperation[cur_tab][cur_status][cur_comment] !== 'loadingUpdate'"
+                        style="margin-right: 10px; margin-top: -7px; padding: 5px"
+                        class="pull-right btn btn-danger"
+                        (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_status, cur_comment)">
+                  <i *ngIf="commentOperation[cur_tab][cur_status][cur_comment] === 'loadingDelete'"
+                     class="fa fa-spinner fa-pulse fa-fw"
+                     style="font-size: 1.6em"></i>
+                  <img *ngIf="commentOperation[cur_tab][cur_status][cur_comment] !== 'loadingDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-danger" *ngIf="showCommentErrors[cur_tab][cur_status][cur_comment] === true">{{errorCommentMsg}}</div>
+                <table style="background-color:#fff;" class="table table-striped">
+                  <tr *ngFor="let col of objectKeys(shownComments[cur_tab][cur_status][cur_comment])">
+                    <th class="card-title"> {{col}} </th>
+                    <td>
+                      <span *ngIf="showInputs[cur_tab][cur_status][cur_comment] === false || col !== 'content'">{{shownComments[cur_tab][cur_status][cur_comment][col]}}</span>
+                      <input type="text" [(ngModel)]="shownComments[cur_tab][cur_status][cur_comment][col]" name="{{cur_tab}}_{{cur_status}}_{{cur_comment}}" class="content-comment"
+                             *ngIf="showInputs[cur_tab][cur_status][cur_comment] === true && col === 'content'">
+                    </td>
 
-                </tr>
-              </table>
+                  </tr>
+                </table>
+              </div>
             </div>
           </div>
         </ng-template>
@@ -442,21 +445,25 @@
       <ngb-tab *ngFor="let cur_tab of objectKeys(shownDEIs)">
         <ng-template ngbTabTitle ><span title="">Test Case #{{cur_tab}}</span></ng-template>
         <ng-template ngbTabContent>
-          <span style="margin: 20px" *ngIf="shownDEIs[cur_tab].length === 0"> There's no DEIs for this test case.</span>
+          <span style="margin: 20px" *ngIf="objectKeys(shownDEIs[cur_tab]).length === 0"> There's no DEIs for this test case.</span>
             <div class="alert alert-danger" style="margin: 20px;" *ngIf="showDEIErrors[cur_tab] === true">{{errorDEIMsg}}</div>
-            <ul class="list-group custom-list">
-              <li class="list-group-item" *ngFor="let cur_DEI of objectKeys(shownDEIs[cur_tab])">
-                {{shownDEIs[cur_tab][cur_DEI]}}
-                <button style="margin-right: 10px; padding: 5px"
-                        class="pull-right btn btn-danger"
-                        (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_DEI)">
-                  <i *ngIf="DEIOperation[cur_tab][cur_DEI] === 'loadingDEIDelete'"
-                     class="fa fa-spinner fa-pulse fa-fw"
-                     style="font-size: 1.6em"></i>
-                  <img *ngIf="DEIOperation[cur_tab][cur_DEI] !== 'loadingDEIDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
-                </button>
-              </li>
-            </ul>
+            <div *ngFor="let cur_status of objectKeys(shownDEIs[cur_tab])">
+              <span style="margin: 20px" *ngIf="shownDEIs[cur_tab][cur_status].length === 0"> There's no DEIs for this test case.</span>
+              <ul class="list-group custom-list">
+                <div>Status #{{cur_status}}</div>
+                <li class="list-group-item" *ngFor="let cur_DEI of objectKeys(shownDEIs[cur_tab][cur_status])">
+                  {{shownDEIs[cur_tab][cur_status][cur_DEI]}}
+                  <button style="margin-right: 10px; padding: 5px"
+                          class="pull-right btn btn-danger"
+                          (click)="openDeleteCommentOrDEIModal(delete_comment_or_dei_modal, cur_tab, cur_status, cur_DEI)">
+                    <i *ngIf="DEIOperation[cur_tab][cur_status][cur_DEI] === 'loadingDEIDelete'"
+                       class="fa fa-spinner fa-pulse fa-fw"
+                       style="font-size: 1.6em"></i>
+                    <img *ngIf="DEIOperation[cur_tab][cur_status][cur_DEI] !== 'loadingDEIDelete'" src="./assets/images/delete.svg" alt="" style="width: 25px">
+                  </button>
+                </li>
+              </ul>
+            </div>
         </ng-template>
       </ngb-tab>
     </ngb-tabset>
@@ -493,15 +500,19 @@
   <div class="modal-header" >
     <h5 class="modal-title" id="modalUpdateTest-basic-title">
       Update Selected Test Instances
+      <span *ngIf="updateTestsloading">
+        <img style="max-width: 50px" src="./assets/images/loader.gif" alt="">
+      </span>
     </h5>
     <button type="button" class="close" aria-label="Close" (click)="modalUpdateTest.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="showError">{{errorResult}}</div>
     <form class="upd-test-form">
       <mat-form-field class="full-width" *ngFor="let inp of inputs_upd_tests">
-        <input matInput placeholder="{{inp['key']}}" [value]="inp['val']"> <br><br>
+        <input matInput placeholder="{{inp['key']}}" name="{{inp['key']}}" [(ngModel)]="inp['val']"> <br><br>
       </mat-form-field>
 
       <mat-radio-group name="upd-test-radio-status" [(ngModel)]="ev_status_option">
@@ -520,6 +531,6 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline-dark" (click)="modalUpdateTest.close()">Update Test Instances</button>
+    <button class="btn btn-outline-dark" (click)="sendUpdatedTestInstances(modalUpdateTest); ">Update Test Instances</button>
   </div>
 </ng-template>

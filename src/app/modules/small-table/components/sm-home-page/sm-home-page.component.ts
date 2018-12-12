@@ -56,23 +56,27 @@ export class SmHomePageComponent implements OnInit {
           let curTestCase = curData[j];
           let test_name: string = curTestCase['test_name'];
           let test_comments = curTestCase['notes'];
+
+          // add test case test_case_comments
+          if (this.test_case_comments.hasOwnProperty(test_name) === false) this.test_case_comments[test_name] = {};
+          this.test_case_comments[test_name][i] = test_comments;
+          // for each comment attach cur test case
+          test_comments.forEach( item => {
+            if (this.comment_test_cases.hasOwnProperty(item['id']) === false) {
+              this.comment_test_cases[item['id']] = [];
+            }
+            this.comment_test_cases[item['id']].push({'test_name': test_name, 'status_index': i});
+          });
+
           let test_DEIs = curTestCase['attached_dei_gids'];
-          test_DEIs.push("cq:dts0101234567");
-          test_DEIs.push("caljira:FOO-1234");
+          test_DEIs.push("cq:dts0101291211");
+          // add test case DEIs
+          if (this.test_case_DEIs.hasOwnProperty(test_name) === false) this.test_case_DEIs[test_name] = {};
+          this.test_case_DEIs[test_name][i] = test_DEIs;
+
           if (!this.myTableData.hasOwnProperty(test_name)) {
             // if this test cases wasn't seen before
             this.myTableData[test_name] = new Array(data.length);
-            // add test case test_case_comments
-            this.test_case_comments[test_name] = test_comments;
-            // add test case DEIs
-            this.test_case_DEIs[test_name] = test_DEIs;
-            // for each comment attach cur test case
-            test_comments.forEach( item => {
-              if (this.comment_test_cases.hasOwnProperty(item['id']) === false) {
-                this.comment_test_cases[item['id']] = [];
-              }
-              this.comment_test_cases[item['id']].push(test_name);
-            });
           }
           let exec_status = curTestCase['exec_state'];
           let f_status = curTestCase['fstatus'];

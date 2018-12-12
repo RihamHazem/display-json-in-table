@@ -67,6 +67,7 @@ export class SmTableComponent implements OnInit {
   public setStatusSelected(row, id) {
     this.myIndex = id;
     this.selectContainer.selectItems((item) => {
+      console.log(item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id);
       return item.hasOwnProperty('status') === true && item['status'] === row && item['id'] === id;
     });
   }
@@ -281,6 +282,13 @@ export class SmTableComponent implements OnInit {
   submittedAttach = false;
   isLoadingAttach = false;
   del_option = 1;
+  getCommentsNumber(testName) {
+    let cnt = 0;
+    for (let testCaseCommentKey in this.test_case_comments[testName]) {
+      cnt += this.test_case_comments[testName][ testCaseCommentKey ].length;
+    }
+    return (cnt === 0? "No Comments": cnt + " Comments");
+  }
   showComment() {
     this.isShowCommentsMode = true;
     this.shownComments = [];
@@ -289,13 +297,18 @@ export class SmTableComponent implements OnInit {
       let test_name = selectedComments[selected]['comment'];
       this.shownComments.push(this.test_case_comments[test_name]);
       this.shownTestCases.push(test_name);
-      for (let selected_comm in this.test_case_comments[ test_name ]) {
+      for (let selected_status in this.test_case_comments[ test_name ]) {
         if (this.showInputs.hasOwnProperty(selected) === false) this.showInputs[selected] = {};
         if (this.commentOperation.hasOwnProperty(selected) === false) this.commentOperation[selected] = {};
         if (this.showCommentErrors.hasOwnProperty(selected) === false) this.showCommentErrors[selected] = {};
-        this.commentOperation[selected][selected_comm] = "normal";
-        this.showInputs[selected][selected_comm] = false;
-        this.showCommentErrors[selected][selected_comm] = false;
+        for (let selected_comm in this.test_case_comments[ test_name ][ selected_status ]) {
+          if (this.showInputs[selected].hasOwnProperty(selected_status) === false) this.showInputs[selected][selected_status] = {};
+          if (this.commentOperation[selected].hasOwnProperty(selected_status) === false) this.commentOperation[selected][selected_status] = {};
+          if (this.showCommentErrors[selected].hasOwnProperty(selected_status) === false) this.showCommentErrors[selected][selected_status] = {};
+          this.commentOperation[selected][selected_status][selected_comm] = "normal";
+          this.showInputs[selected][selected_status][selected_comm] = false;
+          this.showCommentErrors[selected][selected_status][selected_comm] = false;
+        }
       }
     }
   }
@@ -305,10 +318,12 @@ export class SmTableComponent implements OnInit {
     let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true); // list contains test cases that has all test_case_comments
     for (let selected in selectedComments) {
       let curTestCase = this.test_case_comments[ selectedComments[selected]['comment'] ]; // getting test_case_comments of the current test case
-      for (let comm in curTestCase) {
-        if (commentMap.hasOwnProperty(curTestCase[comm]['id']) === false) {
-          commentMap[ curTestCase[comm]['id'] ] = true;
-          this.attachComments.push( curTestCase[comm] );
+      for (let status in curTestCase) {
+        for (let comm in curTestCase[status]) {
+          if (commentMap.hasOwnProperty(curTestCase[status][comm]['id']) === false) {
+            commentMap[ curTestCase[status][comm]['id'] ] = true;
+            this.attachComments.push( curTestCase[status][comm] );
+          }
         }
       }
     }
@@ -333,11 +348,12 @@ export class SmTableComponent implements OnInit {
     this.isAttachTestCasesMode_deis = false;
 
     this.isLoadingAttach = true;
-    let selectedTestCases = this.selectedDocuments.filter((item) => item.hasOwnProperty('test') === true);
+    let selectedTestCases = this.selectedDocuments.filter((item) => item.hasOwnProperty('status') === true);
     let test_case_ids = [];
     for (let selected in selectedTestCases) {
-      let testName = selectedTestCases[selected]['test']['Tests'];
-      test_case_ids.push(this.allTableData[ testName ][0]['id']);
+      let testName = selectedTestCases[selected]['testName'];
+      let statusIndex = selectedTestCases[selected]['id'];
+      test_case_ids.push(this.allTableData[ testName ][ statusIndex ]['id']);
     }
     if (mode == true) {
       // comment
@@ -370,14 +386,18 @@ export class SmTableComponent implements OnInit {
         this.attachError = false;
         // attach these test_case_comments to selected test cases on the UI
         for (let test_case in selectedTestCases) {
-          let testName = selectedTestCases[test_case]['test']['Tests'];
+          let testName = selectedTestCases[test_case]['testName'];
+          let statusIndex = selectedTestCases[test_case]['id'];
           checkedCommentsData.forEach(item => {
             let found = false;
-            this.test_case_comments[testName].forEach(node => {
+            if (!this.test_case_comments.hasOwnProperty(testName)) this.test_case_comments[testName] = {};
+            if (!this.test_case_comments[testName].hasOwnProperty(statusIndex)) this.test_case_comments[testName][statusIndex] = [];
+            this.test_case_comments[testName][statusIndex].forEach(node => {
               if (node['id'] === item['id']) found = true;
             });
-            if (!found)
-              this.test_case_comments[testName].push(item);
+            if (!found) {
+              this.test_case_comments[testName][statusIndex].push(item);
+            }
           });
         }
         this.deselectAll();
@@ -399,10 +419,12 @@ export class SmTableComponent implements OnInit {
     });
   }
   sendComment(txt_val, user_val, selectedComments, modal) {
+    console.log("HELLO1", selectedComments);
     let selected_ids = []; // selected test cases ids
     for (let selected in selectedComments) {
-      let testName = selectedComments[selected]['comment'];
-      selected_ids.push(this.allTableData[ testName ][0]['id']);
+      let testName = selectedComments[selected]['testName'];
+      console.log("HELLO", selectedComments[selected]['testName'], this.allTableData[ testName ][ selectedComments[selected]['id'] ]);
+      selected_ids.push(this.allTableData[ testName ][ selectedComments[selected]['id'] ]['id']);
     }
     let params = {
       "note": {
@@ -417,19 +439,23 @@ export class SmTableComponent implements OnInit {
       // if the request is successful then close the modal
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // add test_case_comments to the table
-        this.comment_test_cases[data['content']] = [];
+        this.comment_test_cases[ data['content'] ] = [];
         for (let selected in selectedComments) {
-          let testName = selectedComments[selected]['comment'];
+          let testName = selectedComments[selected]['testName'];
+          let status_index = selectedComments[selected]['id'];
           if (!this.test_case_comments.hasOwnProperty(testName)) {
-            this.test_case_comments[testName] = [];
+            this.test_case_comments[testName] = {};
           }
-          this.test_case_comments[testName].push({
+          if (!this.test_case_comments[testName].hasOwnProperty(status_index)) {
+            this.test_case_comments[testName][status_index] = [];
+          }
+          this.test_case_comments[testName][status_index].push({
             'content': txt_val,
             'id': data['content'],
             'type': 'GENERAL',
             'creator': user_val
           });
-          this.comment_test_cases[data['content']].push(testName);
+          this.comment_test_cases[ data['content'] ].push({ 'test_name': testName, 'status_index': status_index });
         }
         modal.close();
       } else {
@@ -474,54 +500,54 @@ export class SmTableComponent implements OnInit {
     }
     // *show loader to indicate that there's some processing*
     this.loading = true;
-    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('comment') === true);
+    let selectedComments = this.selectedDocuments.filter(item => item.hasOwnProperty('status') === true);
     this.sendComment(txt_val, user_val, selectedComments, modal);
     this.showError = false;
   }
-  updateCommentMode(cur_tab, cur_comment) {
+  updateCommentMode(cur_tab, cur_status, cur_comment) {
     // shows the inputs to edit the comment content
-    if (this.showInputs[cur_tab][cur_comment] === false) { // begin editing mode
-      this.commentOperation[cur_tab][cur_comment] = "submit";
-      this.showInputs[cur_tab][cur_comment] = true;
+    if (this.showInputs[cur_tab][cur_status][cur_comment] === false) { // begin editing mode
+      this.commentOperation[cur_tab][cur_status][cur_comment] = "submit";
+      this.showInputs[cur_tab][cur_status][cur_comment] = true;
     } else { // submit edits
-      this.commentOperation[cur_tab][cur_comment] = "loadingUpdate";
-      console.log(this.shownComments[cur_tab][cur_comment]['content']);
+      this.commentOperation[cur_tab][cur_status][cur_comment] = "loadingUpdate";
+      console.log(this.shownComments[cur_tab][cur_status][cur_comment]['content']);
       this.updateCommentContent({
-        "note_id": this.shownComments[cur_tab][cur_comment]['id'],
-        "content": this.shownComments[cur_tab][cur_comment]['content'],
-        "actor": this.shownComments[cur_tab][cur_comment]['creator']
-      }, cur_tab, cur_comment);
+        "note_id": this.shownComments[cur_tab][cur_status][cur_comment]['id'],
+        "content": this.shownComments[cur_tab][cur_status][cur_comment]['content'],
+        "actor": this.shownComments[cur_tab][cur_status][cur_comment]['creator']
+      }, cur_tab, cur_status, cur_comment);
     }
   }
-  updateCommentContent(params, cur_tab, cur_comment) {
+  updateCommentContent(params, cur_tab, cur_status, cur_comment) {
     // sending updates to the service
     this._getJsonService.updateNote(params).subscribe(data => {
       if (data.hasOwnProperty("result") && data["result"] === "OK") {
         // success
         console.log("Comment Updated =D");
-        this.commentOperation[cur_tab][cur_comment] = "normal";
-        this.showInputs[cur_tab][cur_comment] = false;
-        this.showCommentErrors[cur_tab][cur_comment] = false;
+        this.commentOperation[cur_tab][cur_status][cur_comment] = "normal";
+        this.showInputs[cur_tab][cur_status][cur_comment] = false;
+        this.showCommentErrors[cur_tab][cur_status][cur_comment] = false;
       } else {
         console.log(data);
-        this.commentOperation[cur_tab][cur_comment] = "submit";
-        this.showCommentErrors[cur_tab][cur_comment] = true;
+        this.commentOperation[cur_tab][cur_status][cur_comment] = "submit";
+        this.showCommentErrors[cur_tab][cur_status][cur_comment] = true;
         this.errorCommentMsg = "There's an error in updating comment content. Please, check your internet connection!";
       }
     }, (error1) => {
       console.log(error1);
-      this.commentOperation[cur_tab][cur_comment] = "submit";
-      this.showCommentErrors[cur_tab][cur_comment] = true;
+      this.commentOperation[cur_tab][cur_status][cur_comment] = "submit";
+      this.showCommentErrors[cur_tab][cur_status][cur_comment] = true;
       this.errorCommentMsg = "There's an error in updating comment content. Please, check your internet connection!";
     });
   }
-  openDeleteCommentOrDEIModal(delete_comment_modal, cur_tab, cur_comment_or_dei) {
+  openDeleteCommentOrDEIModal(delete_comment_modal, cur_tab, cur_status, cur_comment_or_dei) {
     this.modalService.open(delete_comment_modal, {ariaLabelledBy: 'modalDel-basic-title'}).result.then((del_user_val) => {
       this.deselectAll();
 
       if (this.isShowCommentsMode)
-        this.deleteComment(cur_tab, cur_comment_or_dei, del_user_val, this.del_option === 2);
-      else this.deleteDEI(cur_tab, cur_comment_or_dei, del_user_val, this.del_option === 2);
+        this.deleteComment(cur_tab, cur_status, cur_comment_or_dei, del_user_val, this.del_option === 2);
+      else this.deleteDEI(cur_tab, cur_status, cur_comment_or_dei, del_user_val, this.del_option === 2);
 
       this.showError = false;
     }, () => {
@@ -529,11 +555,11 @@ export class SmTableComponent implements OnInit {
       this.showError = false;
     });
   }
-  deleteComment(cur_tab, cur_comment, del_user_val, allow_detach_all) {
+  deleteComment(cur_tab, cur_status, cur_comment, del_user_val, allow_detach_all) {
     // sending detach one comment from one test case to the service
-    this.commentOperation[cur_tab][cur_comment] = "loadingDelete";
-    let comment_id = this.shownComments[cur_tab][cur_comment]['id'];
-    let test_id = this.allTableData[this.shownTestCases[cur_tab]][0]['id'];
+    this.commentOperation[cur_tab][cur_status][cur_comment] = "loadingDelete";
+    let comment_id = this.shownComments[cur_tab][cur_status][cur_comment]['id'];
+    let test_id = this.allTableData[ this.shownTestCases[cur_tab] ][ cur_status ]['id'];
     let params = {
       "actor": del_user_val,
       "note_ids": [comment_id],
@@ -547,28 +573,30 @@ export class SmTableComponent implements OnInit {
         if (allow_detach_all) {
           // detach from all test cases
           let test_names = this.comment_test_cases[comment_id];
-          test_names.forEach( (test_name) => {
-            let comment_pos = this.test_case_comments[test_name].findIndex(v => v.id === comment_id);
-            this.test_case_comments[test_name].splice(comment_pos, 1);
+          test_names.forEach( (item) => {
+            let test_name = item['test_name'];
+            let status_index = item['status_index'];
+            let comment_pos = this.test_case_comments[test_name][status_index].findIndex(v => v.id === comment_id);
+            this.test_case_comments[test_name][status_index].splice(comment_pos, 1);
           });
         } else {
           // detach from current test case only
-          this.shownComments[cur_tab].splice(Number(cur_comment), 1);
+          this.shownComments[cur_tab][cur_status].splice(Number(cur_comment), 1);
         }
-        this.showCommentErrors[cur_tab][cur_comment] = false;
-        this.commentOperation[cur_tab][cur_comment] = "normal";
+        this.showCommentErrors[cur_tab][cur_status][cur_comment] = false;
+        this.commentOperation[cur_tab][cur_status][cur_comment] = "normal";
       } else {
         console.log(data);
         // error
-        this.showCommentErrors[cur_tab][cur_comment] = true;
-        this.commentOperation[cur_tab][cur_comment] = "normal";
+        this.showCommentErrors[cur_tab][cur_status][cur_comment] = true;
+        this.commentOperation[cur_tab][cur_status][cur_comment] = "normal";
         this.errorCommentMsg = "There's an error in deleting comment. Please, check your internet connection!";
       }
     }, (error1) => {
       console.log(error1);
       // error
-      this.showCommentErrors[cur_tab][cur_comment] = true;
-      this.commentOperation[cur_tab][cur_comment] = "normal";
+      this.showCommentErrors[cur_tab][cur_status][cur_comment] = true;
+      this.commentOperation[cur_tab][cur_status][cur_comment] = "normal";
       this.errorCommentMsg = "There's an error in deleting comment. Please, check your internet connection!";
     });
 
@@ -585,6 +613,13 @@ export class SmTableComponent implements OnInit {
   attach_dei_user = "";
   isAttachTestCasesMode_deis = false;
   @Input() test_case_DEIs = {};
+  getDEIsNumber(testName) {
+    let cnt = 0;
+    for (let test_case_DEIKey in this.test_case_DEIs[testName]) {
+      cnt += this.test_case_DEIs[testName][ test_case_DEIKey ].length;
+    }
+    return (cnt === 0? "No DEIs": cnt + " DEIs");
+  }
   showDEI() {
     this.isShowDEIsMode = true;
     this.shownDEIs = [];
@@ -594,19 +629,24 @@ export class SmTableComponent implements OnInit {
       let test_name = selectedDEIs[selected]['dei'];
       this.shownDEIs.push(this.test_case_DEIs[test_name]);
       this.shownTestCases.push(test_name);
-      this.showDEIErrors[selected] = false;
+      if (!this.showDEIErrors.hasOwnProperty(selected)) this.showDEIErrors[selected] = {};
 
-      for (let selected_dei in this.test_case_DEIs[ test_name ]) {
+      for (let selected_status in this.test_case_DEIs[ test_name ]) {
+        this.showDEIErrors[selected][selected_status] = false;
         if (this.DEIOperation.hasOwnProperty(selected) === false) this.DEIOperation[selected] = {};
-        this.DEIOperation[selected][selected_dei] = "normal";
+
+        for (let selected_dei in this.test_case_DEIs[ test_name ][ selected_status ]) {
+          if (this.DEIOperation[selected].hasOwnProperty(selected_status) === false) this.DEIOperation[selected][selected_status] = {};
+
+          this.DEIOperation[selected][selected_status][selected_dei] = "normal";
+        }
       }
     }
   }
-  deleteDEI(cur_tab, cur_dei, del_user, allow_detach_all) {
-    console.log(cur_tab, cur_dei, del_user, allow_detach_all);
-    this.DEIOperation[cur_tab][cur_dei] = "loadingDEIDelete";
-    let dei_id = this.shownDEIs[cur_tab][cur_dei];
-    let test_id = this.allTableData[ this.shownTestCases[cur_tab] ][0]['id'];
+  deleteDEI(cur_tab, cur_status, cur_dei, del_user, allow_detach_all) {
+    this.DEIOperation[cur_tab][cur_status][cur_dei] = "loadingDEIDelete";
+    let dei_id = this.shownDEIs[cur_tab][cur_status][cur_dei];
+    let test_id = this.allTableData[ this.shownTestCases[cur_tab] ][ cur_status ]['id'];
     let params = {
       "actor": del_user,
       "note_ids": [dei_id],
@@ -626,19 +666,19 @@ export class SmTableComponent implements OnInit {
           // });
         } else {
           // detach from current test case only
-          this.shownDEIs[cur_tab].splice(Number(cur_dei), 1);
+          this.shownDEIs[cur_tab][cur_status].splice(Number(cur_dei), 1);
         }
       } else {
         console.log(data);
         // error
-        this.showDEIErrors[cur_tab] = true;
-        this.DEIOperation[cur_tab][cur_dei] = "normal";
+        this.showDEIErrors[cur_tab][cur_status] = true;
+        this.DEIOperation[cur_tab][cur_status][cur_dei] = "normal";
         this.errorDEIMsg = "There's an error in deleting DEI. Please, check your internet connection!";
       }
     }, error1 => {
       console.log(error1);
       // error
-      this.showDEIErrors[cur_tab] = true;
+      this.showDEIErrors[cur_tab][cur_status] = true;
       this.DEIOperation[cur_tab][cur_dei] = "normal";
       this.errorDEIMsg = "There's an error in deleting DEI. Please, check your internet connection!";
     });
@@ -650,10 +690,12 @@ export class SmTableComponent implements OnInit {
     let selectedDEIs = this.selectedDocuments.filter(item => item.hasOwnProperty('dei') === true); // list contains test cases that has all test_case_comments
     for (let selected in selectedDEIs) {
       let curTestCase = this.test_case_DEIs[ selectedDEIs[selected]['dei'] ]; // getting test_case_DEIs of the current test case
-      for (let dei in curTestCase) {
-        if (deiMap.hasOwnProperty(curTestCase[dei]) === false) {
-          deiMap[ curTestCase[dei] ] = true;
-          this.attachDEIs.push( curTestCase[dei] );
+      for (let status in curTestCase) {
+        for (let dei in curTestCase[status]) {
+          if (deiMap.hasOwnProperty(curTestCase[status][dei]) === false) {
+            deiMap[ curTestCase[status][dei] ] = true;
+            this.attachDEIs.push( curTestCase[status][dei] );
+          }
         }
       }
     }
@@ -725,9 +767,10 @@ export class SmTableComponent implements OnInit {
 //  Update Test Instances
   inputs_upd_tests = [{'key': "Actor", 'val': ""}, {'key': "Evaluation Owner", 'val': ""}];
   radio_upd_tests_ev_status = ["READY ", "IN_PROGRESS", "COMPLETE", "PENDING"];
-  ev_status_option = "READY";
+  ev_status_option = "";
   radio_upd_tests_ev_res = ["NOT_EVALUATED ", "FAIL", "EXPECTED_FAIL", "WAIVED", "BROKEN_TEST", "VALIDATED"];
-  ev_res_option = "NOT_EVALUATED";
+  ev_res_option = "";
+  updateTestsloading = false;
   updateTestInstancesModal(modal) {
     this.modalService.open(modal, {ariaLabelledBy: 'modalUpdateTest-basic-title'}).result.then(() => {
       this.deselectAll();
@@ -735,19 +778,21 @@ export class SmTableComponent implements OnInit {
       console.log(`Dismissed`);
     });
   }
-  sendUpdatedTestInstances() {
+  sendUpdatedTestInstances(modalUpdateTest) {
+    this.updateTestsloading = true;
     for (let inp in this.inputs_upd_tests) {
       if (inp['val'] === '') {
         this.errorResult = "Please fill all fields";
         this.showError = true;
+        this.updateTestsloading = false;
         return;
       }
     }
     this.showError = false;
     let selectedTests = [];
     this.selectedDocuments.forEach(item => {
-      if (item.hasOwnProperty('test') === true)
-        selectedTests.push(this.allTableData[item['testName']][0]['id']);
+      if (item.hasOwnProperty('status') === true)
+        selectedTests.push( this.allTableData[ item['testName'] ][ item['id'] ]['id'] );
     }); // list contains selected test cases
     let params = {
       "actor": this.inputs_upd_tests[0]['val'],
@@ -757,9 +802,28 @@ export class SmTableComponent implements OnInit {
       "evaluation_result": this.ev_res_option
     };
     this._getJsonService.updateTests(params).subscribe(data => {
-      // success
+      if (data.hasOwnProperty('result') && data['result'] === "OK") {
+        // success
+        this.selectedDocuments.forEach(item => {
+          if (item.hasOwnProperty('status') === true) {
+            this.allTableData[ item['testName'] ][ item['id'] ]['evaluation_owner'] = this.inputs_upd_tests[1]['val'];
+            this.allTableData[ item['testName' ]] [item['id'] ]['evaluation_status'] = this.ev_status_option;
+            this.allTableData[ item['testName'] ] [item['id'] ]['evaluation_result'] = this.ev_res_option;
+          }
+        }); // list contains selected test cases
+        this.updateTestsloading = false;
+        modalUpdateTest.close();
+      } else {
+        console.log("ERROR", data);
+        this.errorResult = "Updating test status failed, Please check your internet connection!";
+        this.showError = true;
+        this.updateTestsloading = false;
+      }
     }, error1 => {
-
+      console.log("ERROR", error1);
+      this.errorResult = "Updating test status failed, Please check your internet connection!";
+      this.showError = true;
+      this.updateTestsloading = false;
     });
   }
 //  -------------------------------------------------------------------------
